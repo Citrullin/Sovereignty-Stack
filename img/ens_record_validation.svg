@@ -1,0 +1,24 @@
+<svg width="400" height="600" xmlns="http://www.w3.org/2000/svg">
+<text x="200" y="30" font-size="16" font-family="Arial" text-anchor="middle">ENS Record Validation</text>
+<rect x="50" y="50" width="300" height="40" fill="#e8ffe8" stroke="black"/>
+<text x="200" y="75" text-anchor="middle" font-size="13" font-family="Arial">Query ENS Domain</text>
+<line x1="200" y1="90" x2="200" y2="112" stroke="black" marker-end="url(#arrow)"/>
+<rect x="50" y="121" width="300" height="40" fill="#e6f0ff" stroke="black"/>
+<text x="200" y="146" text-anchor="middle" font-size="13" font-family="Arial">Fetch vIBAN Text Record</text>
+<line x1="200" y1="161" x2="200" y2="186" stroke="black" marker-end="url(#arrow)"/>
+<rect x="50" y="192" width="300" height="40" fill="#e6f0ff" stroke="black"/>
+<text x="200" y="217" text-anchor="middle" font-size="13" font-family="Arial">Fetch Accepted Chains/Tokens</text>
+<line x1="200" y1="232" x2="200" y2="255" stroke="black" marker-end="url(#arrow)"/>
+<rect x="50" y="263" width="300" height="40" fill="#ffdddd" stroke="black"/>
+<text x="200" y="288" text-anchor="middle" font-size="13" font-family="Arial">Verify Signed Message</text>
+<line x1="200" y1="303" x2="200" y2="325" stroke="black" marker-end="url(#arrow)"/>
+<rect x="50" y="334" width="300" height="40" fill="#e6f0ff" stroke="black"/>
+<text x="200" y="359" text-anchor="middle" font-size="13" font-family="Arial">Match with Resolver Data</text>
+<line x1="200" y1="374" x2="200" y2="395" stroke="black" marker-end="url(#arrow)"/>
+<rect x="50" y="405" width="300" height="40" fill="#ffdddd" stroke="black"/>
+<text x="200" y="430" text-anchor="middle" font-size="13" font-family="Arial">Double Check Bank Confirmation</text>
+<line x1="200" y1="445" x2="200" y2="468" stroke="black" marker-end="url(#arrow)"/>
+<rect x="50" y="476" width="300" height="40" fill="#e8ffe8" stroke="black"/>
+<text x="200" y="501" text-anchor="middle" font-size="13" font-family="Arial">Valid if All Match</text>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="black" /></marker></defs>
+</svg>

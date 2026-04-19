@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1100" height="550"
+     viewBox="0 0 1100 550"
+     xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10"
+            refX="10" refY="3" orient="auto">
+      <path d="M0,0 L10,3 L0,6 Z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <text x="550" y="40" font-size="24" text-anchor="middle"
+        font-family="Arial" font-weight="bold">
+    Medium Payment (Authority Approved)
+  </text>
+
+  <!-- NFC -->
+  <rect x="50" y="200" width="230" height="140"
+        rx="15" ry="15"
+        fill="#fff0e6" stroke="#000" stroke-width="2"/>
+  <text x="165" y="235" font-size="15" text-anchor="middle"
+        font-family="Arial" font-weight="bold">
+    NFC (Key A)
+  </text>
+
+  <!-- Smart Account -->
+  <rect x="360" y="200" width="280" height="140"
+        rx="15" ry="15"
+        fill="#f2f2f2" stroke="#000" stroke-width="2"/>
+  <text x="500" y="235" font-size="15" text-anchor="middle"
+        font-family="Arial" font-weight="bold">
+    Smart Account
+  </text>
+  <text x="380" y="265" font-size="13" font-family="Arial">
+    Requires Key B approval
+  </text>
+
+  <!-- Authority -->
+  <rect x="360" y="380" width="280" height="120"
+        rx="15" ry="15"
+        fill="#e6f0ff" stroke="#000" stroke-width="2"/>
+  <text x="500" y="415" font-size="15" text-anchor="middle"
+        font-family="Arial" font-weight="bold">
+    Authority (Key B)
+  </text>
+  <text x="380" y="445" font-size="13" font-family="Arial">
+    Approve / Reject
+  </text>
+
+  <!-- Merchant -->
+  <rect x="760" y="200" width="230" height="140"
+        rx="15" ry="15"
+        fill="#e8ffe8" stroke="#000" stroke-width="2"/>
+  <text x="875" y="240" font-size="15" text-anchor="middle"
+        font-family="Arial" font-weight="bold">
+    Merchant
+  </text>
+
+  <!-- Arrows -->
+  <line x1="280" y1="270" x2="360" y2="270"
+        stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="500" y1="340" x2="500" y2="380"
+        stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="640" y1="270" x2="760" y2="270"
+        stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <text x="550" y="520" font-size="14" text-anchor="middle"
+        font-family="Arial" font-style="italic">
+    Authority protects against loss or misuse without breaking cash UX.
+  </text>
+
+</svg>
