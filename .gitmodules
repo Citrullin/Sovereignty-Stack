@@ -1,0 +1,9 @@
+[submodule "software/tinyblock/microblock_ldraw"]
+	path = software/tinyblock/microblock_ldraw
+	url = git@github.com:bind-systems/ldraw_microblock.git
+[submodule "software/web-of-things/RIOT-OS"]
+	path = software/web-of-things/RIOT-OS
+	url = git@github.com:namib-project/RIOT.git
+[submodule "software/web-of-things/arduino"]
+	path = software/web-of-things/arduino
+	url = git@github.com:Citrullin/web-of-thing-arduino.git

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cirrus Start</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge;" />
+    <script defer src="/manifest.js"></script><script defer src="/vendors-node_modules_three_examples_jsm_controls_OrbitControls_js-node_modules_three_examples-7b7da6.js"></script><script defer src="/main.js"></script><link href="/styles.css" rel="stylesheet"></head>
+    <body>
+        <div id="stars"></div>
+
+        <div class="layer__section">
+            <div class="header header-fixed unselectable header-animated">
+                <div class="header-brand">
+                    <div class="nav-item no-hover">
+                        <a><img src="/img/bind_systems_logo.svg" style="width: 10rem;"/></a>
+                    </div>
+                    <div class="nav-item nav-btn" id="header-btn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <div class="header-nav" id="header-menu">
+                    <div class="nav-left">
+
+                        <div class="nav-item text-center">
+                            <a href="#">
+                                <span class="icon">
+                                    <i class="fab fa-wrapper fa-github" aria-hidden="true"></i>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="nav-item text-center">
+                            <a href="#">
+                                <span class="icon">
+                                    <i class="fab fa-wrapper fa-slack" aria-hidden="true"></i>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="nav-item text-center">
+                            <a href="#">
+                                <span class="icon">
+                                    <i class="fab fa-wrapper fa-twitter" aria-hidden="true"></i>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="#">Shop</a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="#">The Story behind it</a>
+                        </div>
+                        <div class="nav-item has-sub toggle-hover" id="dropdown">
+                            <a class="nav-dropdown-link">Animated</a>
+                            <ul class="dropdown-menu dropdown-animated" role="menu">
+                                <li role="menu-item"><a href="#test">First Item</a></li>
+                                <li role="menu-item"><a href="#">Second Item</a></li>
+                                <li role="menu-item"><a href="#">Third Item</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="nav-right">
+                        <div class="nav-item active">
+                            <a href="#">Active</a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="#">Link 1</a>
+                        </div>
+                        <div class="nav-item has-sub" id="dropdown">
+                            <a class="nav-dropdown-link">Click Me</a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li role="menu-item"><a href="#test">First Item</a></li>
+                                <li role="menu-item"><a href="#">Second Item</a></li>
+                                <li role="menu-item"><a href="#">Third Item</a></li>
+                                <li class="dropdown-menu-divider"></li>
+                                <li role="menu-item"><a href="#">Fourth Item</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <section class=" section">
+                <div class="content">
+                    <div class="row">
+                        <div class="main_headline col-12">
+                            <h1 class="text-white u-text-center">
+                                W3C Web of Things:
+                            </h1>
+                            <h1 class="text-white u-text-center">
+                                The open and free standard for the IoT
+                            </h1>
+                        </div>
+                    </div>
+    
+    
+                    <div class="row">
+
+                        <div class="col-12">
+
+                            <div class="card">
+                                <div class="row">
+                                    <div class="col-5">
+                                        <img src="img/first_webcam.webp"/>
+                                    </div>
+                                    <div class="col-7">
+                                        <h6>Tackling a Complex Challenge with Patience and Dedication</h6>
+                                        <p class="">
+                                            Back in 2007, researchers began exploring ways to address the separation of ecosystems in IoT.<br/>
+                                            At that time, lower-level standards were lacking, <br/>
+                                            making it difficult to create a solution that truly worked for constrained devices.<br/>
+                                        </p>
+                                        <h6>The W3C guides the Standardization Process</h6>
+                                        <p>
+                                            Seven years later, the W3C took the lead in steering the standardization process. <br/>
+                                            Led by Dave Raggett, known for his work on HTML, Siemens and Google joined the collaborative effort. <br/>
+                                            Siemens eventually assumed a leadership role, together with Intel.<br/>
+                                            Google stepped back from the standardization effort.
+                                        </p>
+                                        <h6>The Thing Description becomes a W3C Standard</h6>
+                                        <p>
+                                            By 2020, Thing Description 1.0 gained W3C recognition as a recommended standard. <br/>
+                                            Organizations can now seamlessly incorporate Thing Description (TD) into their processes, akin to HTML or CSS.
+                                        </p>
+                                        <h6>Discovery and TD 1.1</h6>
+                                        <p>
+                                            In 2023, a pivotal moment unfolded as Web of Things Discovery joined the recommended standards. <br/>
+                                            Together, they usher in a new era of easily scalable, interoperable IoT systems.
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-12">
+
+                            <div class="card">
+                                <div class="row">
+                                    <div class="col-7">
+                                        <h6>Addressing the Challenge of Outdated Tools</h6>
+                                        <p class="">
+                                            In 2018, while at the European big data analytics company Webtrekk, Philipp Blum encountered a hurdle. <br/>
+                                            A cost-saving initiative demanded a hardware-driven IoT approach, exposing a major issue: <br/>
+                                            Outdated tools across the IoT spectrum, from CI/CD to libraries, stuck in the 80s, 90s, or early 2000s. <br/>
+                                        </p>
+                                        <h6>Exploring the Synergy of Distributed Ledger and IoT</h6>
+                                        <p>
+                                            A year later, Blum embraced a role in a cryptocurrency venture. <br/>
+                                            Aiming to contribute to Distributed Ledger development with a focus on IoT. <br/>
+                                            Delving into IoT intricacies and associated technologies, <br/>
+                                            he realized that bridging the gap between the current state and the envisioned reality required substantial foundational groundwork before addressing higher-level topics. <br/>
+                                        </p>
+                                    </div>
+                                    <div class="col-5">
+                                        <img src="img/outdated_tools.webp"/>
+                                    </div>
+
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="row">
+                                    <div class="col-5">
+                                        <img src="img/first_prototypes.webp"/>
+                                    </div>
+                                    <div class="col-7">
+                                        <h6>Navigating 2020: Pandemic, W3C, and the Evolution of Web of Things</h6>
+                                        <p>
+                                            In 2020, amid global lockdowns, Philipp Blum utilized the pandemic downtime to explore Web of Things. <br/>
+                                            The same year, the W3C Web of Things working group invited him to join standardization efforts, with a focus on constrained devices and security.
+                                        </p>
+                                        <h6>Propelling Constrained Devices into the Future</h6>
+                                        <p>
+                                            Leveraging his RIOT OS experience, Blum began implementing the Web of Things Thing Description for RIOT OS. <br/>
+                                            A year later, Jan Romann joined, enhancing the project with code autogeneration and tools. <br/>
+                                            As Romann took over development, Blum shifted focus to a hardware development kit.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-12">
+
+                            <div class="card">
+                                <div class="row">
+                                    <div class="col-7">
+                                        <h6>Filling the Gap</h6>
+                                        <p>
+                                            From implementation work arose a crucial question: <br/>
+                                            How do we put Web of Things (WoT) directly into engineers' hands? <br/>
+                                            They need a tool that's both fun and easy, showing the practical benefits of WoT standards. <br/>
+                                            The years 2022 and 2023 focused on creating this tool, starting with BLE, CoAP, and RIOT OS. <br/>
+                                            But there's a hurdle: the tech is complex for beginners.
+
+                                        </p>
+                                        <h6>Keep It Simple</h6>
+                                        The priority is a low entry barrier, not a perfect tech stack. <br/>
+                                        Engineers must grasp true interoperability and the impact of a universal IoT standard. <br/>
+                                        Enter bit.block, an engaging device for learning next-gen web and IoT standards. <br/>
+                                        Use it as a doorbell, get server downtime alerts, or create a game. <br/>
+                                        These tools let you explore IoT, turning your ideas into highly scalable, interoperable systems accessible from browsers and enhanced with AI.
+                                        </p>
+                                    </div>
+                                    <div class="col-5">
+                                        <img src="img/all_good_prototypes.webp"/>
+                                    </div>
+
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </section>
+        </div>
+        
+    </body>
+
+</html>

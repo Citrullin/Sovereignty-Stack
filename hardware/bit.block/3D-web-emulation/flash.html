@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cirrus Start</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge;" />
+    <script defer src="/manifest.js"></script><script defer src="/vendors-node_modules_three_examples_jsm_controls_OrbitControls_js-node_modules_three_examples-7b7da6.js"></script><script defer src="/main.js"></script><link href="/styles.css" rel="stylesheet"></head>
+    <body>
+        <div id="stars"></div>
+
+        <div class="layer__section">
+            <div class="header header-fixed unselectable header-animated">
+                <div class="header-brand">
+                    <div class="nav-item no-hover">
+                        <a><img src="/img/bind_systems_logo.svg" style="width: 10rem;"/></a>
+                    </div>
+                    <div class="nav-item nav-btn" id="header-btn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <div class="header-nav" id="header-menu">
+                    <div class="nav-left">
+
+                        <div class="nav-item text-center">
+                            <a href="#">
+                                <span class="icon">
+                                    <i class="fab fa-wrapper fa-github" aria-hidden="true"></i>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="nav-item text-center">
+                            <a href="#">
+                                <span class="icon">
+                                    <i class="fab fa-wrapper fa-slack" aria-hidden="true"></i>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="nav-item text-center">
+                            <a href="#">
+                                <span class="icon">
+                                    <i class="fab fa-wrapper fa-twitter" aria-hidden="true"></i>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="#">Shop</a>
+                        </div>
+                        <div class="nav-item">
+                            <a href="web-of-things.html">History</a>
+                        </div>
+                        <div class="nav-item has-sub toggle-hover" id="dropdown">
+                            <a class="nav-dropdown-link">Bit.block</a>
+                            <ul class="dropdown-menu dropdown-animated" role="menu">
+                                <li role="menu-item"><a href="open-source.html">Software</a></li>
+                                <li role="menu-item"><a href="beyond-boundaries.html">Learn modern engineering</a></li>
+                                <li role="menu-item"><a href="#">Third Item</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                
+                </div>
+            </div>
+            <section class=" section">
+                <div class="content card">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row">
+                                <h3>Bitcoin: Track transaction status</h3>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <b>Description</b><br/>
+                                In this tutorial we create a Bitcoin application that can issue transactions and observe them.<br/>
+                                We utilize a crypto chip in order to store and create transactions securly. <br/>
+                                We also add a small OLED screen and create a small UI on it. <br/>
+                            </div>
+                            <div class="col-6">
+                                <b>Flash this application</b>
+                                <div class="row">
+                                    <label>Application version</label>
+                                    <select class="select" placeholder="Application version">
+                                        <option>Release/1.0</option>
+                                        <option>Alpha/1.1</option>
+                                    </select>
+                                </div>
+                                <div class="row">
+                                    <label>Board</label>
+                                    <select class="select" placeholder="Choose your board">
+                                        <option>bit.block Astronaut</option>
+                                        <option>bit.block bear</option>
+                                    </select>
+                                </div>
+                                <div class="row">
+                                    <label>Board version</label>
+                                    <select class="select" placeholder="Version">
+                                        <option>1.0</option>
+                                        <option>1.1</option>
+                                    </select>
+                                </div>
+                                <div class="row">
+                                    <label>Port</label>
+                                    <select class="select" placeholder="Port">
+                                        <option>COM1</option>
+                                        <option>COM4</option>
+                                    </select>
+                                </div>
+                                <div class="row">
+                                    <label>Cloud</label>
+                                    <select class="select" placeholder="Port">
+                                        <option>Kubernetes</option>
+                                        <option>Docker</option>
+                                    </select>
+                                </div>
+                                <div class="row">
+                                    <div class="btn">Deploy application</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </section>
+        </div>
+        
+    </body>
+
+</html>

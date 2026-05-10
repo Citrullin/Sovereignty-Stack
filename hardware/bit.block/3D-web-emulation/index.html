@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Bit.block 3D/VR Emulation</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge;" />
+    <script defer src="/manifest.js"></script><script defer src="/vendors-node_modules_three_examples_jsm_controls_OrbitControls_js-node_modules_three_examples-7b7da6.js"></script><script defer src="/main.js"></script><link href="/styles.css" rel="stylesheet"></head>
+    <body>
+        <div id="stars"></div>
+
+        <div class="layer__section">
+            <section class=" section">
+                <div class="content">
+                    <div class="row">
+                        <div class="main_headline col-12">
+                            <h1 class="text-white u-text-center">
+                                Web Meets IoT: Effortlessly Integrate IoT and Web Technologies
+                            </h1>
+                            <h4 class="text-white u-text-center">
+                                Empower Your Devices by Combining IoT and Web Capabilities Effortlessly!
+                            </h4>
+                        </div>
+                    </div>
+    
+                    <div class="row" id="3d_row">
+                        <div class="col-6">
+                            <div class="u-center">
+                                <canvas style="height: 600px;" id="canvas">
+                                </canvas>
+                                <div id="vr_button"></div>
+                            </div>
+                        </div>
+                        <div class="card col-6">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5>Feel the possibilites with this Emulation</h5>
+                                    <p>
+                                        Experience the Future of bit.blocks and Web of Things.<br/>
+                                        Bear in mind, not all Features are available in this emulation.<br/>
+                                    </p>                                    
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-12">
+                                    <textarea autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="width: 100%; min-height: 200px;" id="editor">
+//The other action is lightUpHead
+Thing.invokeAction('lightUpMoon', {repeat: 1, data: [[1000, 255, 0, 0], [1000, 0, 255, 0], [1000, 0, 0, 255]]}).then(response => console.log(response.message));     
+
+/* Comment this out in order to run this example
+function createColorGradientArray(){
+    let data = [];
+    let red_gradient = 0;
+    let green_gradient = 0;
+    let blue_gradient = 0;
+   
+    while(red_gradient < 255){
+       data.push([
+          100,
+          red_gradient,
+          green_gradient,
+          blue_gradient
+       ]);
+       red_gradient = red_gradient+5;
+    }
+    while(blue_gradient < 255){
+       data.push([
+          100,
+          red_gradient,
+          green_gradient,
+          blue_gradient
+       ]);
+       if(red_gradient > 0 && green_gradient < 255){
+          red_gradient = red_gradient-5;
+          green_gradient = green_gradient+5;
+       }
+       if(green_gradient > 0 && blue_gradient < 255){
+          green_gradient = green_gradient-5;
+          blue_gradient = blue_gradient+5;
+       }
+    }
+    while(red_gradient < 255){
+       data.push([
+          100,
+          red_gradient,
+          green_gradient,
+          blue_gradient
+       ]);
+       if(blue_gradient > 0 && red_gradient < 255){
+          blue_gradient = blue_gradient-5;
+          red_gradient = red_gradient+5;
+       }
+    }
+ 
+    return data;
+ }
+ 
+ Thing.invokeAction('lightUpMoon', {repeat: 1, data: createColorGradientArray()}).then(response => console.log(response.message));
+ 
+*/ 
+                                    </textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4">
+                                    <button class="btn-dark btn--md font-bold capitalize" onClick="runCode()">Run</button>
+                                    <a href="https://shop.bind.systems/Bit.block-Micro-Space-Exploration-Founders-Edition/BBM0002" 
+                                    class="btn btn-info btn--md btn-info font-bold capitalize" target="_blank" style="font-weight: 700;" disabled>Buy</a>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div id="run_message">
+                                </div>
+                            </div>
+                            
+
+
+                        </div>
+                    </div>
+                    
+            </section>
+        </div>
+        
+    </body>
+
+</html>
