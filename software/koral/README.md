@@ -8,3 +8,6 @@ The second demo (OICD_SIWE) is a demo about the flow to log in with your wallet.
 ![Koral Hub Sign in with Ethereum Demo](demo/OIDC_SIWE_demo.mp4)
 This OIDC Request is Relayed and fulfilled by the wallet sign request. Linking OIDC backend auth to wallet.
 Enabling new innovative business models by combining blockchains and Federated Open Source Software.
+I, Philipp Blum, cannot open source this part yet. I would love to, but I work on Nordic Tech Labs with a partner.
+We are currently focused on SME businesses in Denmark. And we don't want to cut into our business before it even started.
+Certainly this perspective can be changed, if the incentive structure changes.
