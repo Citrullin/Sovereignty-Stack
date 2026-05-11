@@ -7,8 +7,8 @@ The idea is also to have the DAO led Tinyblock community to create those data-se
 
 ## Models
 
-- [**Clownfish**](clownfish): Simple two page instruction with each part on each page. (webp) 
-- [**Black Cat**](black_cat): A longer instruction with multiple pictures. (jpeg)
-- [**Snake**](snake): Two page more complex instruction with rotations. (jpeg)
-- [**Soldier**](soldier): Instructions with stickers and uncommon parts. (jpeg)
-- [**Kitty Airplane**](kitty_airplane): Two page vertical scanned instructions. (png)
+- [**Clownfish**](clownfish): Simple two page instructFiion with each part on each page. (.webp) 
+- [**Black Cat**](black_cat): A longer instruction with multiple pictures. (.jpeg)
+- [**Snake**](snake): Two page more complex instruction with rotations. (.jpeg)
+- [**Soldier**](soldier): Instructions with stickers and uncommon parts. (.jpeg)
+- [**Kitty Airplane**](kitty_airplane): Two page vertical scanned instructions. (.png)
