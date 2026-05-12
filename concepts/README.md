@@ -3,107 +3,122 @@
 A Recursive Manifesto for Industrial Sovereignty, Velocity Economics, and the
 Physicalization of Trust.
 
-_Table of Contents_
+> This document is the **full original manifesto** (preserved for search/reference).
+> Each section is also available as a standalone file in the subdirectories below.
+> The standalone files are the canonical, cross-referenced versions.
+> → [$TINY Token Model](tokenomics/TINY_token_model.md) — synthesized token spec
 
-#### Part I: The Philosophical & Sociological Perspective
+---
 
-1.  _The Syndicate Critique_: Anatomy of the "eez" and the Capture of
-    Permissionless Rails
-2.  _The Loneliness of the Virtual_: Sociology of Detachment and the
-    "Beep-to-Verify" Cohesion
-3.  _Fukuyama’s High-Trust Thesis_: Modeling Trust as an Automated Protocol
-    Byproduct
-4.  _The Sovereignty Manifesto_: Reclaiming the "Tools for Sovereignty" from the
-    Banking Backend
+## Index
 
-#### Part II: Monetary Policy – The Velocity Engine
+### [Part I: The Philosophical & Sociological Perspective](philosophy/)
 
-5.  _Beyond Sound Money_: Scarcity creates stagnation, velocity ($V$) is the
-    primary driver of output ($Q$)
-6.  _Velotile Assets & Forex Routing_: Designing for Instant
-    $\text{Yuan} \leftrightarrow \text{EURe}$ Swaps without the SWIFT Tax
-7.  _Elastic Supply & The Security Salary_: How MMT-Driven Inflation Funds the
-    L1 Miners and L2 Maintainers
+| § | Title | File |
+|---|---|---|
+| 0 | The W3C Failure | [00_w3c_critique.md](philosophy/00_w3c_critique.md) |
+| 1 | The Syndicate Critique | [01_syndicate_critique.md](philosophy/01_syndicate_critique.md) |
+| 2 | The Loneliness of the Virtual | [02_loneliness_of_the_virtual.md](philosophy/02_loneliness_of_the_virtual.md) |
+| 3 | Fukuyama's High-Trust Thesis | [03_fukuyama_high_trust.md](philosophy/03_fukuyama_high_trust.md) |
+| 4 | The Sovereignty Manifesto | [04_sovereignty_manifesto.md](philosophy/04_sovereignty_manifesto.md) |
 
-#### Part III: Recursive Technical Architecture (L1–L4)
+### [Part II: Monetary Policy – The Velocity Engine](monetary-policy/)
 
-8.  _L1: The Sahara Node_: The 64 kbit/s "PoW Rock" (ETC) as the immutable
-    physical anchor
-9.  _L2: Elysium Quantum Backbone_: High-throughput (600 Gbit/s) Based Rollup
-    with ML-DSA Hardening
-10. _L2/L3: Commodity Based Rollups_: Specialized Regional Rollups for Local
-    Liquidity and Resource Settlement
-11. _L3/L4: Based Nano-Rollups_: Using $\log N$/Logtrees to Scale State Updates
-    for Million Sensors/Actuators
+| § | Title | File |
+|---|---|---|
+| 5 | Beyond Sound Money | [05_beyond_sound_money.md](monetary-policy/05_beyond_sound_money.md) |
+| 6 | Velotile Assets & Forex Routing | [06_velotile_assets.md](monetary-policy/06_velotile_assets.md) |
+| 7 | Elastic Supply & The Security Salary | [07_elastic_supply.md](monetary-policy/07_elastic_supply.md) |
 
-#### Part IV: Industrial Oracles & Actuators
+### [Part III: Recursive Technical Architecture (L1–L4)](architecture/)
 
-12. _Heartbeat Oracles_: Secure Element-based Proof of Productivity ($Q$) and
-    Hardware Health
-13. _Physical Action Oracles (Actuators)_: The "Code is Law" Kill-Switch
+| § | Title | File |
+|---|---|---|
+| 8 | L1: The Sahara Node | [08_l1_sahara_node.md](architecture/08_l1_sahara_node.md) |
+| 9 | L2: Elysium Quantum Backbone | [09_l2_elysium_backbone.md](architecture/09_l2_elysium_backbone.md) |
+| 10 | L2/L3: Commodity Based Rollups | [10_l2_l3_commodity_rollups.md](architecture/10_l2_l3_commodity_rollups.md) |
+| 11 | L3/L4: Based Nano-Rollups | [11_l3_l4_nano_rollups.md](architecture/11_l3_l4_nano_rollups.md) |
 
-#### Part V: The Recycling Game & Edge AI
+### [Part IV: Industrial Oracles & Actuators](oracles/)
 
-14. _AI-Enhanced Infrastructure_: Smart Containers with Computer Vision for
-    Waste Management
-15. _Recycling Bottle NFTs and the Incentivization of Social Labor_
+| § | Title | File |
+|---|---|---|
+| 12 | Heartbeat Oracles | [12_heartbeat_oracles.md](oracles/12_heartbeat_oracles.md) |
+| 13 | Physical Action Oracles (Actuators) | [13_actuator_oracles.md](oracles/13_actuator_oracles.md) |
 
-#### Part VI: Identity, Security & Governance
+### [Part V: The Recycling Game & Edge AI](recycling-game/)
 
-16. _The SIWE-OIDC Bridge_: Gating Federated Web 2.5 via Hardware Wallets
-17. _TinyMeritRank_: Sybil-Resistant Status via Personalized PageRank and
-    Soulbound AI Agents
-18. _3-Factor Sovereign Auth_: Combining `NFC` Badges, Smartphones, and
-    Passwords for Tiered Access
-19. _The Miner DAO_: Formalizing the L1 Power Block as a Check against L2
-    "Syndicate" Capture
-20. _DSLA (Decentralized SLA)_: The Trustless Liability Layer
-21. _The Maintenance Shift_: A Nash Equilibrium Proof for Sustainable Industrial
-    Maintenance
+| § | Title | File |
+|---|---|---|
+| 14 | AI-Enhanced Infrastructure (Smart Containers) | [14_smart_containers.md](recycling-game/14_smart_containers.md) |
+| 15 | Recycling Bottle NFTs | [15_recycling_nfts.md](recycling-game/15_recycling_nfts.md) |
 
-#### Part VII: Sovereign Finance & Infrastructure
+### [Part VI: Identity, Security & Governance](identity-governance/)
 
-22. _Crypto-Native Cash_: The Consortium Model
-23. _deIBAN & deSWIFT_: The On-Chain Banking Stack
-24. _Vibe-Collateralized Bonds_: Reputation-backed Tranches for Industrial
-    Inventory
-25. _Geographic Hash-Maps (Regional DAOs)_: The Miner’s Forge
-26. _Proof-of-Green-Energy (PoGE) Oracles_: The Zero-Knowledge ESG Shield
-27. _The Grid-Stabilization Marketplace_: Turning Mining into an Essential
-    Utility
-28. _Hardware Lifecycle DAO_: The Secondary Market for "Antique Silicon"
+| § | Title | File |
+|---|---|---|
+| 16 | The SIWE-OIDC Bridge | [16_siwe_oidc_bridge.md](identity-governance/16_siwe_oidc_bridge.md) |
+| 17 | TinyMeritRank | [17_tinymeritrank.md](identity-governance/17_tinymeritrank.md) |
+| 18 | 3-Factor Sovereign Auth | [18_3factor_auth.md](identity-governance/18_3factor_auth.md) |
+| 19 | The Miner DAO | [19_miner_dao.md](identity-governance/19_miner_dao.md) |
+| 20 | DSLA (Decentralized SLA) | [20_dsla.md](identity-governance/20_dsla.md) |
+| 21 | The Maintenance Shift | [21_maintenance_shift.md](identity-governance/21_maintenance_shift.md) |
 
-#### Part VIII: Market Dynamics & Protocol Neutrality
+### [Part VII: Banking & Physicalization](banking-physicalization/)
 
-29. _L2 Diversity Scorecards_: Real-Time Monitoring of "Inclusion Latency"
-30. _Prover-as-a-Service (PaaS) Auctions_: The Open Market for Cryptographic
-    Truth
-31. _Cross-Domain Intent Mempools_: The "Neutral Ground" for Multi-Chain
-    Sovereignty
-32. _TEE-Based Builders_: Enforcing Neutrality in Block Construction
+| § | Title | File |
+|---|---|---|
+| 22 | Crypto-Native Cash: The Consortium Model | [22_crypto_native_cash.md](banking-physicalization/22_crypto_native_cash.md) |
+| 23 | deIBAN & deSWIFT | [23_deiban_deswift.md](banking-physicalization/23_deiban_deswift.md) |
+| 24 | Vibe-Collateralized Bonds | [24_vibe_collateralized_bonds.md](banking-physicalization/24_vibe_collateralized_bonds.md) |
+| 25 | Geographic Hash-Maps (Regional DAOs) | [25_geographic_daos.md](banking-physicalization/25_geographic_daos.md) |
+| 26 | Proof-of-Green-Energy (PoGE) Oracles | [26_poge_oracles.md](banking-physicalization/26_poge_oracles.md) |
+| 27 | The Grid-Stabilization Marketplace | [27_grid_stabilization.md](banking-physicalization/27_grid_stabilization.md) |
+| 28 | Hardware Lifecycle DAO | [28_hardware_lifecycle_dao.md](banking-physicalization/28_hardware_lifecycle_dao.md) |
 
-#### Part IX: Inter-DAO Coordination & Transparency
+### [Part VIII: Market Dynamics & Protocol Neutrality](market-dynamics/)
 
-33. _Inter-DAO Escrow (The "Treaty" Tool)_: Mutual Stake Management
-34. _The Veto Dashboard_: The "Big Red Button" for the Anarchy DAO
-35. _The "Social Slag" Archive_: The Permanent Ledger of Broken Promises
+| § | Title | File |
+|---|---|---|
+| 29 | L2 Diversity Scorecards | [29_l2_diversity_scorecards.md](market-dynamics/29_l2_diversity_scorecards.md) |
+| 30 | Prover-as-a-Service (PaaS) Auctions | [30_prover_as_a_service.md](market-dynamics/30_prover_as_a_service.md) |
+| 31 | Cross-Domain Intent Mempools | [31_cross_domain_intent_mempools.md](market-dynamics/31_cross_domain_intent_mempools.md) |
+| 32 | TEE-Based Builders | [32_tee_builders.md](market-dynamics/32_tee_builders.md) |
 
-#### Part X: Infrastructure Resilience & Defensive Topology
+### [Part IX: Inter-DAO Coordination & Transparency](inter-dao/)
 
-36. _The Checkpoint Guild_: State-as-a-Service (StaaS) & The "Sneakernet"
-37. _The Sovereign Mesh_: Hackerspace Interconnects & Local IXPs
-38. _The Vibe-Shield_: Reputation-Gated Networking
+| § | Title | File |
+|---|---|---|
+| 33 | Inter-DAO Escrow (The "Treaty" Tool) | [33_inter_dao_escrow.md](inter-dao/33_inter_dao_escrow.md) |
+| 34 | The Veto Dashboard | [34_veto_dashboard.md](inter-dao/34_veto_dashboard.md) |
+| 35 | The "Social Slag" Archive | [35_social_slag_archive.md](inter-dao/35_social_slag_archive.md) |
 
-#### Part XI: Advanced AI & Tokenomics
+### [Part X: Infrastructure Resilience & Defensive Topology](resilience/)
 
-39. _Web3 Collateralized Bonds_
-40. _Prediction Markets for the Microblock Industry_
-41. _Merit-Driven Token Distribution Evolution_
-42. _Extending ENS (Ethereum Name Service) with IBAN_
-43. _Crypto Native Cash_: p2p physical crypto cash
-44. _Parsing instructions and genAI microblock sets_
-45. _Vibes is all you need_: Resonant Meritocracy
-46. _Governance for Decentralized Autonomous Organizations_
+| § | Title | File |
+|---|---|---|
+| 36 | The Checkpoint Guild (StaaS & Sneakernet) | [36_checkpoint_guild.md](resilience/36_checkpoint_guild.md) |
+| 37 | The Sovereign Mesh | [37_sovereign_mesh.md](resilience/37_sovereign_mesh.md) |
+| 38 | The Vibe-Shield | [38_vibe_shield.md](resilience/38_vibe_shield.md) |
+
+### [Part XI: Advanced AI & Tokenomics](tokenomics/)
+
+| § | Title | File |
+|---|---|---|
+| — | **$TINY Token Model** | [TINY_token_model.md](tokenomics/TINY_token_model.md) |
+| 39 | Web3 Collateralized Bonds | [39_web3_collateralized_bonds.md](tokenomics/39_web3_collateralized_bonds.md) |
+| 40 | Prediction Markets for the Microblock Industry | [40_prediction_markets.md](tokenomics/40_prediction_markets.md) |
+| 41 | Merit-Driven Token Distribution Evolution | [41_merit_token_distribution.md](tokenomics/41_merit_token_distribution.md) |
+| 42 | Extending ENS with IBAN | [42_ens_iban_extension.md](tokenomics/42_ens_iban_extension.md) |
+| 43 | Crypto Native Cash (p2p physical) | [43_crypto_native_cash_spec.md](tokenomics/43_crypto_native_cash_spec.md) |
+| 44 | Parsing Instructions & GenAI Microblock Sets | [44_ai_instruction_parser.md](tokenomics/44_ai_instruction_parser.md) |
+| 45 | Vibes is all you need: Resonant Meritocracy | [45_resonant_meritocracy.md](tokenomics/45_resonant_meritocracy.md) |
+| 46 | Governance for DAOs | [46_dao_governance.md](tokenomics/46_dao_governance.md) |
+
+---
+
+## Full Manifesto (original, inline)
+
 
 # Part I: The Philosophical & Sociological Perspective
 
