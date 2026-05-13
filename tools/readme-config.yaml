@@ -1,0 +1,142 @@
+# README Generator Configuration
+#
+# This file drives tools/manifesto-scripts/generate_readmes.py (or equivalent).
+# Never hardcode target directories or cross-references in scripts — edit here.
+#
+# Rule: Scripts are temporary (run from /tmp, never committed).
+#       Config and templates are permanent (live in tools/).
+
+target_dirs:
+  - path: concepts/philosophy
+    title: "Part I: Philosophy & Sociological Perspective"
+    sections: [0, 1, 2, 3, 4]
+
+  - path: concepts/monetary-policy
+    title: "Part II: Monetary Policy – The Velocity Engine"
+    sections: [5, 6, 7]
+
+  - path: concepts/architecture
+    title: "Part III: Recursive Technical Architecture (L1–L4)"
+    sections: [8, 9, 10, 11]
+
+  - path: concepts/oracles
+    title: "Part IV: Oracle Layer – Heartbeat & Actuator"
+    sections: [12, 13]
+
+  - path: concepts/recycling-game
+    title: "Part V: The Recycling Game"
+    sections: [14, 15]
+
+  - path: concepts/identity-governance
+    title: "Parts VI–VII: Identity, DSLA & Governance"
+    sections: [16, 17, 18, 19, 20, 21]
+
+  - path: concepts/banking-physicalization
+    title: "Part VIII: Banking Physicalization"
+    sections: [22, 23, 24, 25, 26, 27, 28]
+
+  - path: concepts/inter-dao
+    title: "Parts IX & XIV: Inter-DAO Relations & Meta-Governance"
+    sections: [29, 30, 31, 32, 33, 34, 35, 54]
+
+  - path: concepts/resilience
+    title: "Part X: Resilience – Checkpoints, Mesh & Vibe Shield"
+    sections: [36, 37, 38]
+
+  - path: concepts/tokenomics
+    title: "Part XI: Tokenomics – $TINY, Bonds & Meritocracy"
+    sections: [39, 40, 41, 42, 43, 44, 45, 46]
+
+  - path: concepts/sociological-discovery
+    title: "Part XII: Sociological Discovery"
+    sections: [47, 48, 49]
+
+  - path: concepts/verification
+    title: "Part XIII: Decentralized Verification & The AI Auditor"
+    sections: [50, 51, 52, 53]
+    cross_refs:
+      - docs/architecture/A2A_COMMUNICATION_PROTOCOL.md
+      - docs/a2a_telemetry/verification_history.jsonl
+
+  - path: concepts/market-dynamics
+    title: "Market Dynamics & Attack Surface Analysis"
+    sections: []
+
+  - path: concepts/resources
+    title: "External References & Bibliography"
+    sections: []
+
+  - path: docs
+    title: "Documentation"
+    cross_refs:
+      - docs/architecture/THREAT_MODEL.md
+      - docs/architecture/A2A_COMMUNICATION_PROTOCOL.md
+
+  - path: docs/architecture
+    title: "Architecture Documentation"
+    cross_refs:
+      - docs/architecture/A2A_COMMUNICATION_PROTOCOL.md
+      - docs/architecture/THREAT_MODEL.md
+
+  - path: docs/a2a_telemetry
+    title: "A2A Telemetry & Verification Logs"
+    description: |
+      The A2A telemetry system allows autonomous agents to audit the repository
+      without human intermediary. The JSONL log tracks commit-to-invariant
+      mappings over time. The chart_telemetry.py script visualizes verification
+      velocity for the Auditor Agent.
+    cross_refs:
+      - concepts/verification/53_agentic_protocol_auditor.md
+      - docs/architecture/A2A_COMMUNICATION_PROTOCOL.md
+
+  - path: docs/pitch
+    title: "Investment Pitch Materials"
+    cross_refs:
+      - concepts/README.md
+
+  - path: docs/architecture/testing
+    title: "BDD Testing Framework"
+    description: |
+      Gherkin .feature files define the sociological intent of the stack.
+      They map directly to Rust FSM implementations and eventually TLA+
+      formal specifications. This is the first layer of the Epistemological
+      Pipeline.
+    cross_refs:
+      - software/identity-worker/tests/cucumber_test.rs
+      - concepts/verification/52_formal_verification_and_physical_oracles.md
+
+  - path: hardware
+    title: "Hardware"
+    cross_refs:
+      - concepts/architecture/11_l3_l4_nano_rollups.md
+
+  - path: software
+    title: "Software"
+    cross_refs:
+      - concepts/verification/50_ai_auditor_and_decentralized_verification.md
+
+  - path: software/mcp-server
+    title: "MCP Server – Agentic Tool Interface"
+    description: |
+      A Model Context Protocol (MCP) server exposing tools for AI agents
+      to interact with Yocto manifests, OCI registries, and the verification
+      pipeline. This is the programmatic interface for the Agentic Auditor.
+    cross_refs:
+      - concepts/verification/53_agentic_protocol_auditor.md
+
+  - path: software/meta-sovereignty
+    title: "meta-sovereignty – Yocto Layer"
+    description: |
+      A Yocto/OpenEmbedded layer that compiles the identity-worker Rust
+      binary into an embedded Linux image. This is the bridge between the
+      software verification layer and physical deployment on constrained hardware.
+    cross_refs:
+      - concepts/verification/51_confidential_deployment_oci_surgery.md
+      - concepts/architecture/08_l1_sahara_node.md
+
+  - path: tools
+    title: "Tools"
+    description: |
+      Permanent utilities for the Sovereignty Stack development workflow.
+      One-shot generator scripts are run from /tmp and never committed.
+      Only reusable tools with stable interfaces live here.
