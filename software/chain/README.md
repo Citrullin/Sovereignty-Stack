@@ -59,6 +59,12 @@ ERC-20 with merit-distribution hooks:
 - 8-year backloaded vesting for core contributors (see §46.2 vesting table)
 - Inflation circuit breaker tied to Efficiency Ratio η = Q/V
 
+### WoT DAO Certification Anchor (§50)
+On-chain registry for Decentralized Verification:
+- **Reproducible Build Votes:** DAO members vote to confirm local Dagger/BuildKit hashes match the manufacturer's OCI CID.
+- **Threshold Signatures:** Upon passing, a multi-sig Cosign signature is generated.
+- **Transparency Log Anchoring:** The signature and CID are anchored to the L2/Gnosis chain, acting as the ultimate source of truth for the RAG AI Auditors.
+
 ## Concept References
 
 - [§39 — Web3 Collateralized Bonds](../../concepts/tokenomics/39_web3_collateralized_bonds.md)

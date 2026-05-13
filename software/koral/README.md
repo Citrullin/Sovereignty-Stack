@@ -29,9 +29,11 @@ or hardware wallet — no seed phrases in the UX, no crypto exchange required.
 
 ## Service Stack
 
-All services run in a **Kubernetes cluster** with **Istio zero-trust service mesh**
-(mTLS between all services). All services authenticate via a single **Authentik**
-OIDC provider. Add a service? It just needs OIDC support.
+## Service Stack
+
+All services run in a **Kubernetes cluster** fortified by two primary security layers:
+1. **Network Zero-Trust:** **Istio service mesh** enforces mTLS between all services. All services authenticate via a single **Authentik** OIDC provider.
+2. **Supply Chain Zero-Trust:** A **Kyverno admission controller** enforces Decentralized Verification ([§50](../../concepts/verification/50_ai_auditor_and_decentralized_verification.md)). The cluster will only pull and execute OCI images if the local AI Agent confirms the image CID has a valid DAO signature on the public transparency log.
 
 | Service | Role | Sovereignty Notes |
 |---|---|---|

@@ -40,12 +40,11 @@ the Safe{CON} 2024 bit.block firmware depends on this library for `Thing.h` and
 ## What These Enable
 
 Together these tools allow building **sovereign IoT devices** — devices that:
-- Expose machine-readable APIs (Thing Descriptions) without cloud lock-in
-- Can be discovered and controlled by any WoT-compatible client
-- Serve as the device-layer building blocks for Heartbeat and Actuator Oracles
+- Expose machine-readable APIs (Thing Descriptions) without cloud lock-in.
+- Serve as the device-layer building blocks for Heartbeat and Actuator Oracles.
+- **Enable Public Verification:** The Thing Description (TD) serves as the expected capability manifest. By extending the TD's `@context`, devices can natively report their **DID (Decentralized Identifier)** and **current OCI firmware hash (CID)**. When an AI Auditor ([§50](../../concepts/verification/50_ai_auditor_and_decentralized_verification.md)) interacts with a device, it parses the TD, extracts the reported firmware hash, and automatically cross-references it against the DAO transparency log on-chain to verify the build's safety.
 
-Neither has been battle-tested in full production deployments yet, though RIOT-OS
-has been validated in W3C plugfest scenarios.
+> **Transition Note:** As per the Decentralized Verification spec, the Sovereignty Stack is moving away from Git submodules toward OCI-on-IPFS. In the future, these RIOT and Arduino dependencies will be resolved as cryptographically certified OCI artifacts rather than fragile Git pointers.
 
 ## Concept References
 

@@ -123,6 +123,12 @@ Physicalization of Trust.
 | 48 | Fluid Privacy and Cross-Pod Syncing | [48_fluid_privacy.md](sociological-discovery/48_fluid_privacy.md) |
 | 49 | The Digital Third Place and Vibe-Collateralized Networks | [49_digital_third_place.md](sociological-discovery/49_digital_third_place.md) |
 
+### [Part XIII: Decentralized Verification & The AI Auditor](verification/)
+
+| § | Title | File |
+|---|---|---|
+| 50 | The Final Boss of DevOps: Decentralized Verification | [50_ai_auditor_and_decentralized_verification.md](verification/50_ai_auditor_and_decentralized_verification.md) |
+
 ---
 
 ## Full Manifesto (original, inline)
