@@ -1,0 +1,16 @@
+# Stage 1: Builder
+FROM rust:1.75-alpine AS builder
+
+# Install build dependencies for Rust and OpenSSL
+RUN apk add --no-cache musl-dev libressl-dev pkgconfig
+
+WORKDIR /usr/src/identity-worker
+COPY . .
+
+# Build the test binary (we just build it to cache it, we'll run it in the pod)
+RUN cargo test --no-run
+
+# We don't actually move a single binary to scratch because cucumber runs via cargo test.
+# For a full microservice, we would build --release. 
+# For this Sandbox, we'll run cargo test directly in the container.
+CMD ["cargo", "test", "--test", "cucumber_test"]

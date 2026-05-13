@@ -1,0 +1,11 @@
+[project]
+name = "sovereign-agentic-auditor"
+version = "0.1.0"
+description = "MCP Server for the Sovereignty Stack Automated Epistemology Engine"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=0.1.0"
+]
+
+[project.scripts]
+sovereign-mcp = "src.server:main"

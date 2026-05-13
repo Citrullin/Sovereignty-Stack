@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  blockchain-rpc:
+    image: ghcr.io/foundry-rs/foundry:latest
+    command: "anvil --host 0.0.0.0"
+    ports:
+      - "8545:8545"
+
+  ipfs-node:
+    image: ipfs/kubo:latest
+    ports:
+      - "5001:5001" # API
+      - "8080:8080" # Gateway
+    environment:
+      - IPFS_PROFILE=server
+
+  identity-worker:
+    build: 
+      context: .
+      dockerfile: Containerfile
+    image: sovereign-identity-worker:v0.1
+    depends_on:
+      - blockchain-rpc
+      - ipfs-node
+    environment:
+      - IPFS_RPC_URL=http://ipfs-node:5001
+      - ETH_RPC_URL=http://blockchain-rpc:8545
+    volumes:
+      - .:/usr/src/identity-worker

@@ -1,4 +1,4 @@
-# Sovereign Stack: An Industrial Lightbook [v0.1]
+# Sovereignty Stack: The Automated Epistemology Engine [v0.1]
 
 A Recursive Manifesto for Industrial Sovereignty, Velocity Economics, and the
 Physicalization of Trust.
@@ -128,6 +128,16 @@ Physicalization of Trust.
 | § | Title | File |
 |---|---|---|
 | 50 | The Final Boss of DevOps: Decentralized Verification | [50_ai_auditor_and_decentralized_verification.md](verification/50_ai_auditor_and_decentralized_verification.md) |
+| 51 | Confidential Deployment & OCI Surgery | [51_confidential_deployment_oci_surgery.md](verification/51_confidential_deployment_oci_surgery.md) |
+| 52 | Formal Verification & Physical AI Oracles | [52_formal_verification_and_physical_oracles.md](verification/52_formal_verification_and_physical_oracles.md) |
+| 53 | The Agentic Protocol Auditor (MCP & GraphRAG) | [53_agentic_protocol_auditor.md](verification/53_agentic_protocol_auditor.md) |
+| 54 | The Sovereignty Stack DAO & Monoculture Contagion | [54_sovereignty_stack_dao.md](inter-dao/54_sovereignty_stack_dao.md) |
+
+### [Part XIV: Meta-Governance & Systemic Threats](inter-dao/)
+
+| § | Title | File |
+|---|---|---|
+| 54 | The Sovereignty Stack DAO & Monoculture Contagion | [54_sovereignty_stack_dao.md](inter-dao/54_sovereignty_stack_dao.md) |
 
 ---
 

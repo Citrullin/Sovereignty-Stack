@@ -1,0 +1,25 @@
+{
+  "name": "sovereign_stack",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pdf": "node convert.js test.md",
+    "format": "prettier --write --prose-wrap always test.md",
+    "audit": "node audit.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "commander": "^14.0.3",
+    "markdown-it": "^14.1.1",
+    "markdown-it-katex": "^2.0.3",
+    "puppeteer": "^24.40.0"
+  },
+  "devDependencies": {
+    "pdf-parse": "^2.4.5",
+    "prettier": "^3.8.3"
+  }
+}
