@@ -7,3 +7,6 @@
 [submodule "software/web-of-things/arduino"]
 	path = software/web-of-things/arduino
 	url = git@github.com:Citrullin/web-of-thing-arduino.git
+[submodule "software/koral/k3s-hub"]
+	path = software/koral/k3s-hub
+	url = git@github.com:Citrullin/hub-ansible.git
