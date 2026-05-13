@@ -8,11 +8,6 @@ __pycache__/
 # --- Node ---
 node_modules/
 
-# --- One-shot generator scripts ---
-# Run from /tmp or delete before committing. Never commit these.
-tools/manifesto-scripts/generate_*.py
-tools/manifesto-scripts/formalize_*.py
-*_generator.py
 
 # --- Build artifacts ---
 *.pdf
@@ -22,3 +17,8 @@ output_assets/
 # --- OS ---
 .DS_Store
 Thumbs.db
+*.key
+docs/a2a_telemetry/history_buffer/
+docs/a2a_telemetry/history_buffer/raw_shell/
+docs/a2a_telemetry/traces/
+docs/a2a_telemetry/history_buffer/
