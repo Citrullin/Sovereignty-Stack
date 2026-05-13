@@ -115,6 +115,14 @@ Physicalization of Trust.
 | 45 | Vibes is all you need: Resonant Meritocracy | [45_resonant_meritocracy.md](tokenomics/45_resonant_meritocracy.md) |
 | 46 | Governance for DAOs | [46_dao_governance.md](tokenomics/46_dao_governance.md) |
 
+### [Part XII: Sociological Discovery & Thermodynamics](sociological-discovery/)
+
+| § | Title | File |
+|---|---|---|
+| 47 | Sociological Discovery and the Thermodynamics of Trust | [47_sociological_discovery.md](sociological-discovery/47_sociological_discovery.md) |
+| 48 | Fluid Privacy and Cross-Pod Syncing | [48_fluid_privacy.md](sociological-discovery/48_fluid_privacy.md) |
+| 49 | The Digital Third Place and Vibe-Collateralized Networks | [49_digital_third_place.md](sociological-discovery/49_digital_third_place.md) |
+
 ---
 
 ## Full Manifesto (original, inline)

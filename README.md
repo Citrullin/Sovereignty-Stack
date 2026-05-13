@@ -23,12 +23,12 @@ For the deep-dive philosophical background, read the **[Concepts Manifesto](conc
 
 ## Repository Map
 
-The full concept manifesto lives in [`concepts/`](concepts/). The 47-section
+The full concept manifesto lives in [`concepts/`](concepts/). The 50-section
 document is split into domain-specific subdirectories — read it as a stack, not a blog.
 
 | Directory | What it Contains | Key Concept Sections |
 |---|---|---|
-| [`concepts/`](concepts/) | Full manifesto, $TINY tokenomics model | §0–46 |
+| [`concepts/`](concepts/) | Full manifesto, $TINY tokenomics model | §0–49 |
 | [`hardware/bit.block/`](hardware/bit.block/) | Smart microbrick PCB (KiCAD), 3D prints, Three.js web emulator | §12, §13, §11 |
 | [`hardware/gachapon/`](hardware/gachapon/) | Gachapon machine — Physicalized Based Rollup Node | §3, §15, §22 |
 | [`hardware/tiny-pay/`](hardware/tiny-pay/) | NFC Tiny Disc (Social Badge + Wahfare branded disc) | §22, §18, §43 |
