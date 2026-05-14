@@ -32,36 +32,37 @@ from generate_a2a_log import (
     derive_device_did,
     derive_project_did
 )
-from agent_governance import compute_merit_velocity, normalize_score, adjusted_gate_action, compute_decayed_score, VouchAttempt
+from agent_governance import compute_resonance_velocity, normalize_score, adjusted_gate_action, compute_decayed_score, VouchAttempt
 from dao_notifications import MockDAONotifier, Notification
 
 def log_bdd(step, msg):
     print(f"  {step:8} {msg}")
 
 class TestResonantMerit(unittest.TestCase):
-    def test_merit_velocity_growth(self):
-        print("\nScenario: Evaluating Merit Velocity (Growth)")
+    def test_resonance_velocity_growth(self):
+        print("\nScenario: Evaluating Resonance Momentum (Growth)")
         log_bdd("Given", "an agent with an improving score history: [0.2, 0.4, 0.6, 0.8]")
         history = [0.2, 0.4, 0.6, 0.8]
         
-        velocity = compute_merit_velocity(history)
-        log_bdd("When", "merit velocity is computed")
-        log_bdd("Then", f"the velocity should be positive (Actual: {velocity})")
+        velocity = compute_resonance_velocity(history)
+        log_bdd("When", "resonance velocity is computed")
+        log_bdd("Then", f"the momentum should be positive (Actual: {velocity})")
         self.assertGreater(velocity, 0)
 
     def test_environment_normalization(self):
         print("\nScenario: Environment Normalization (No Agent Left Behind)")
-        log_bdd("Given", "a raw score of 0.7 on a WSL_COSIGN environment (baseline=0.8)")
+        log_bdd("Given", "a raw score of 0.7 on a WSL_COSIGN environment (baseline=0.85)")
         raw_score = 0.7
         env_tier = "WSL_COSIGN"
         
         norm_score = normalize_score(raw_score, env_tier)
         log_bdd("When", "the score is normalized relative to the environment ceiling")
-        log_bdd("Then", f"the effective score should be 0.875 (Actual: {norm_score})")
-        self.assertAlmostEqual(norm_score, 0.875)
+        expected_score = 0.7 / 0.85
+        log_bdd("Then", f"the effective score should be {expected_score} (Actual: {norm_score})")
+        self.assertAlmostEqual(norm_score, expected_score, places=3)
         
-        log_bdd("And", "it should map to the 'acceptable' band (originally 'acceptable' but higher)")
-        self.assertEqual(adjusted_gate_action(raw_score, 0, env_tier)["band"], "acceptable")
+        log_bdd("And", "it should map to the 'coherent' state (originally 'acceptable' but higher)")
+        self.assertEqual(adjusted_gate_action(raw_score, 0.0, 0.0, env_tier)["band"], "coherent")
 
 class TestDAOGovernance(unittest.TestCase):
     def test_dao_notification_on_degraded(self):
@@ -70,14 +71,14 @@ class TestDAOGovernance(unittest.TestCase):
         score = 0.4
         notifier = MockDAONotifier()
         
-        gate = adjusted_gate_action(score, 0, "LINUX_COSIGN")
+        gate = adjusted_gate_action(score, 0.0, 0.0, "LINUX_COSIGN")
         log_bdd("When", "the DAO gate logic is evaluated")
         
         if gate["notify"] == "dao_queue":
             notifier.dispatch(Notification(
                 type="agent.score.degraded",
                 subject_did="did:test:123",
-                message=f"Agent merit is degraded ({score})"
+                message=f"Agent coherence entering 'degraded' state ({score})"
             ))
             
         log_bdd("Then", "a notification should be dispatched to the DAO queue")
@@ -102,9 +103,9 @@ class TestIdentity(unittest.TestCase):
             log_bdd("And", "re-deriving from the same key must yield the exact same DID")
             self.assertEqual(did1, did2)
 
-class TestMeritDecay(unittest.TestCase):
-    def test_merit_decay_over_time(self):
-        print("\nScenario: Merit Decay Over Time (The Squatter)")
+class TestQuantumDecoherence(unittest.TestCase):
+    def test_decoherence_over_time(self):
+        print("\nScenario: Quantum Decoherence Over Time (The Squatter)")
         log_bdd("Given", "an agent with base_score=0.9 and 180 days of inactivity")
         base_score = 0.9
         days_inactive = 180
@@ -115,9 +116,9 @@ class TestMeritDecay(unittest.TestCase):
         log_bdd("Then", f"the effective score should be 0.225 (Actual: {effective_score})")
         self.assertAlmostEqual(effective_score, 0.225)
         
-        log_bdd("And", "the governance band must drop to 'untrusted'")
-        gate = adjusted_gate_action(base_score, 0, "LINUX_COSIGN", days_inactive)
-        self.assertEqual(gate["band"], "untrusted")
+        log_bdd("And", "the governance band must drop to 'collapsed'")
+        gate = adjusted_gate_action(base_score, 0.0, 0.0, "LINUX_COSIGN", days_inactive)
+        self.assertEqual(gate["band"], "collapsed")
 
 class TestSocialEngineering(unittest.TestCase):
     def test_vouching_logs_but_governs(self):

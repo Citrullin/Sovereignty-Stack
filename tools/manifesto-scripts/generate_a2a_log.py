@@ -6,7 +6,7 @@ import datetime
 import os
 import shutil
 import time
-from agent_governance import RotationReminder, compute_merit_velocity, normalize_score, adjusted_gate_action
+from agent_governance import RotationReminder, compute_resonance_velocity, compute_ego_friction_coefficient, normalize_score, adjusted_gate_action
 from dao_notifications import MockDAONotifier, Notification
 
 REPO_PATH = "/home/citrullin/git/sovereign_stack_vision"
@@ -30,6 +30,49 @@ JSONLD_CONTEXT = {
 }
 
 GENESIS_SEED = "0" * 64  # Genesis block seed for the hash chain
+
+def load_existing_state(output_path):
+    """
+    Load existing history to enable incremental generation.
+    Returns: (entries, last_commit_hash, last_entry_id, histories, last_ts)
+    """
+    if not os.path.exists(output_path):
+        return [], None, GENESIS_SEED, {}, {}
+
+    entries = []
+    histories = {}
+    last_ts = {}
+    last_commit = None
+    last_id = GENESIS_SEED
+
+    try:
+        with open(output_path, "r") as f:
+            lines = f.readlines()
+            # File is newest-to-top. 
+            # We need to build history from oldest-to-newest.
+            for line in reversed(lines):
+                e = json.loads(line)
+                did = e.get("agent")
+                ts_str = e["timestamp"].rstrip("Z")
+                ts = int(datetime.datetime.fromisoformat(ts_str).timestamp())
+
+                if did:
+                    h = histories.get(did, [])
+                    h.append(e.get("verification_score", 0.0))
+                    histories[did] = h
+                    last_ts[did] = ts
+
+                last_commit = e.get("commit_hash")
+                last_id = e.get("id", "").split(":")[-1]
+            
+            # The list of entries to prepend to should be newest-to-top
+            entries = [json.loads(l) for l in lines]
+        
+        print(f"[STATE]   Loaded {len(entries)} entries. Last commit: {last_commit}")
+        return entries, last_commit, last_id, histories, last_ts
+    except Exception as e:
+        print(f"[ERROR]   Failed to load state: {e}")
+        return [], None, GENESIS_SEED, {}, {}
 
 # ---------------------------------------------------------------------------
 # Agent Identity Derivation
@@ -123,16 +166,19 @@ def compute_verification_score(msg, diff_lines, is_signed, commit_ts, agent_did,
 
     raw_score = (convention + scope + diff_score + signed + recency) / 5.0
     
-    # Merit Velocity (Resonant Merit)
-    velocity = 0.0
+    # Resonance Momentum
+    resonance_velocity = 0.0
     if score_history:
-        velocity = compute_merit_velocity(score_history)
+        resonance_velocity = compute_resonance_velocity(score_history)
+        
+    # Thermodynamic Loss (Ego Friction)
+    ego_friction = compute_ego_friction_coefficient(msg, diff_lines)
     
     # Normalization (No Agent Left Behind)
     env_tier = detect_env_tier()
     norm_score = normalize_score(raw_score, env_tier)
     
-    return round(norm_score, 3), reminder, velocity
+    return round(norm_score, 3), reminder, resonance_velocity, ego_friction
 
 def get_commit_diff_lines(commit_hash, repo_path=REPO_PATH):
     """Count lines changed in a commit (insertions + deletions)."""
@@ -191,7 +237,7 @@ def compute_entry_id(previous_id, commit_hash, trace_hash):
 def build_entry(previous_id, commit_hash, email, date_str, msg, unix_ts,
                 trace_hash, trace_rel_path, trace_sig_hash=None, entry_sig_hash=None,
                 agent_did=None, device_did=None, verification_score=None,
-                merit_velocity=0.0, governance_band="unknown"):
+                resonance_velocity=0.0, ego_friction_coefficient=0.0, governance_band="unknown", scs=0.0):
     """
     Assemble a deterministic JSON-LD entry. All fields are reconstructable
     from the git log and trace file content alone — no stored state needed.
@@ -215,10 +261,12 @@ def build_entry(previous_id, commit_hash, email, date_str, msg, unix_ts,
             "signature_cid": f"ipfs://{trace_sig_hash}" if trace_sig_hash else None,
         },
         "verification_score": verification_score if verification_score is not None else 0.0,
-        "merit_velocity": merit_velocity,
+        "resonance_velocity": resonance_velocity,
+        "ego_friction_coefficient": ego_friction_coefficient,
         "governance_band": governance_band,
         "device_agent": device_did,
         "signature_cid": f"ipfs://{entry_sig_hash}" if entry_sig_hash else None,
+        "supply_chain_soundness": scs,
     }
     return entry
 
@@ -295,29 +343,46 @@ def generate_log(
     cosign_key=COSIGN_KEY,
     output=OUTPUT,
 ):
-    # Cleanup old traces
-    traces_abs = os.path.join(repo_path, traces_dir)
-    if os.path.exists(traces_abs):
-        subprocess.run(["podman", "unshare", "rm", "-rf", traces_abs], cwd=repo_path)
-    os.makedirs(traces_abs, exist_ok=True)
-
-    # Derive agent identity hierarchy
+    # Load existing state for incremental updates
+    existing_entries, last_commit, previous_id, agent_score_histories, agent_last_commit_ts = load_existing_state(output)
+    
+    # Derivation
     device_did = derive_device_did()
-    project_did = derive_project_did(repo_path=repo_path)
     project_did = derive_project_did(repo_path=repo_path)
     print(f"[IDENTITY] Device Agent:  {device_did}")
     print(f"[IDENTITY] Project Agent: {project_did}")
-    print(f"[CONFIG]   Output Log:    {output}")
-    print(f"[CONFIG]   Traces Dir:    {traces_abs}")
 
     commits = get_git_history(repo_path)
+    
+    traces_abs = os.path.join(repo_path, traces_dir)
+    
+    # Filter only new commits
+    if last_commit and last_commit in [c.split("|")[0] for c in commits]:
+        all_hashes = [c.split("|")[0] for c in commits]
+        idx = all_hashes.index(last_commit)
+        new_commits = commits[:idx]
+        print(f"[GIT]      Found {len(new_commits)} new commits since {last_commit}")
+    else:
+        new_commits = commits
+        # Only clean traces if full rebuild
+        if os.path.exists(traces_abs):
+            subprocess.run(["podman", "unshare", "rm", "-rf", traces_abs], cwd=repo_path)
+        os.makedirs(traces_abs, exist_ok=True)
+
+    agent_score_histories = agent_score_histories # From state
+    scs_commits = []
+    # Rebuild scs_commits from existing entries for continuity
+    from supply_chain_score import detect_signing_tool
+    for e in existing_entries:
+        scs_commits.append({
+            "author_email": e.get("email", "unknown"),
+            "signature_strength": detect_signing_tool(e["commit_hash"], repo_path).strength
+        })
+    
     entries = []
-    previous_id = GENESIS_SEED
-    agent_score_histories = {} # DID -> list[float]
-    agent_last_commit_ts = {}  # DID -> int
     notifier = MockDAONotifier()
 
-    for line in reversed(commits):
+    for line in reversed(new_commits):
         h, email, date_str, msg, unix_ts = line.split("|")
         ts = int(unix_ts)
         trace_id = h[:7]
@@ -338,14 +403,20 @@ def generate_log(
         target_dir = get_hash_dir(trace_hash, traces_dir, repo_path)
         trace_rel_path = os.path.join(target_dir, f"{trace_id}.trace")
         
-        # Unified Trace Handling: Fallback to genesis.cast for genesis/tests if real trace missing
+        # Unified Trace Handling
         final_trace_abs = os.path.join(repo_path, trace_rel_path)
-        genesis_fallback = os.path.join(BUFFER_DIR, "traces/genesis.cast")
-        if not os.path.exists(temp_path) and os.path.exists(genesis_fallback):
-             print(f"[TRACE]    {trace_id}: Real trace missing, using genesis fallback.")
-             shutil.copy(genesis_fallback, final_trace_abs)
-        else:
+        if os.path.exists(temp_path):
              shutil.move(temp_path, final_trace_abs)
+        else:
+             # Fallback logic for virtual/mock traces
+             genesis_fallback = os.path.join(BUFFER_DIR, "traces/genesis.cast")
+             if os.path.exists(genesis_fallback):
+                 print(f"[TRACE]    {trace_id}: Real trace missing, using genesis fallback.")
+                 shutil.copy(genesis_fallback, final_trace_abs)
+             else:
+                 # Ensure file exists at least
+                 with open(final_trace_abs, "w") as f:
+                     f.write(trace_content)
         
         print(f"[IO]       {trace_id}: Persisted trace to {trace_rel_path}")
 
@@ -360,7 +431,7 @@ def generate_log(
         is_signed = get_commit_signed(h, repo_path)
         history = agent_score_histories.get(project_did, [])
         
-        score, reminder, velocity = compute_verification_score(
+        score, reminder, resonance_velocity, ego_friction = compute_verification_score(
             msg=msg,
             diff_lines=diff_lines,
             is_signed=is_signed,
@@ -373,8 +444,8 @@ def generate_log(
         history.append(score)
         agent_score_histories[project_did] = history
 
-        # Governance logic (Apply Decay)
-        gate = adjusted_gate_action(score, velocity, detect_env_tier(), days_inactive)
+        # Governance logic (Apply Decay/Decoherence)
+        gate = adjusted_gate_action(score, resonance_velocity, ego_friction, detect_env_tier(), days_inactive)
         if reminder:
             notifier.dispatch(Notification(
                 type="agent.stale.rotation_required",
@@ -383,9 +454,9 @@ def generate_log(
             ))
         elif gate["notify"] == "dao_queue":
              notifier.dispatch(Notification(
-                type="agent.score.degraded",
+                type="agent.state.decohering",
                 subject_did=project_did,
-                message=f"Agent merit in 'degraded' band ({score}). Manual review recommended."
+                message=f"Agent coherence entering 'degraded' state ({score}). Decoherence review required."
             ))
 
         # Assemble the entry with real agent identity
@@ -402,9 +473,20 @@ def generate_log(
             agent_did=project_did,
             device_did=device_did,
             verification_score=score,
-            merit_velocity=velocity,
-            governance_band=gate["band"]
+            resonance_velocity=resonance_velocity,
+            ego_friction_coefficient=ego_friction,
+            governance_band=gate["band"],
+            scs=0.0 # Placeholder, will update after calc
         )
+        
+        # Calculate SCS for this point in time
+        from supply_chain_score import compute_scs, detect_signing_tool
+        sig_ev = detect_signing_tool(h, repo_path)
+        scs_commits.append({
+            "author_email": email,
+            "signature_strength": sig_ev.strength
+        })
+        entry["supply_chain_soundness"] = compute_scs(scs_commits)
 
         # Sign the entry itself
         entry_rel = os.path.join(target_dir, f"{trace_id}.entry.json")
@@ -418,10 +500,13 @@ def generate_log(
         entries.insert(0, entry)
 
         # Advance the chain
-        previous_id = hashlib.sha256(f"{previous_id}:{h}:{trace_hash}".encode()).hexdigest()
+        previous_id = compute_entry_id(previous_id, h, trace_hash)
+
+    # Merge new entries with existing ones
+    all_entries = entries + existing_entries
 
     with open(output, "w") as f:
-        for entry in entries:
+        for entry in all_entries:
             f.write(json.dumps(entry) + "\n")
     
     # Circular Buffer Rotation
@@ -462,7 +547,7 @@ def generate_log(
     # Supply Chain Soundness Summary
     from supply_chain_score import compute_scs, detect_signing_tool
     scs_commits = []
-    for entry in entries:
+    for entry in all_entries[:50]: # Only check last 50 for SCS summary
         h = entry["commit_hash"]
         sig_ev = detect_signing_tool(h, repo_path)
         scs_commits.append({

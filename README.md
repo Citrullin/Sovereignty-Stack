@@ -1,16 +1,19 @@
-# Sovereignty Stack: The Automated Epistemology Engine
+# Sovereignty Stack: The Prerequisite for the Quantum Field Engine
 
-The **Sovereignty Stack** is a technological framework and template for sovereign entities in the 21st century. It is a pragmatic, "boring reality" approach to decentralization—bringing functioning systems and societal structures on-chain and enforcing them with IoT, AI, and cryptography.
+The **Sovereignty Stack** is the foundational armor and engine for individual and collective "particles" within the broader framework of **Quantum Social Physics**. 
 
-Instead of waiting for a utopian Web3 future or relying on [decaying legacy institutions](concepts/philosophy/00_w3c_critique.md), the Sovereignty Stack provides tools that work *today*, using widely accessible hardware to build high-trust, resilient collectives.
+Before a macroscopic **Quantum Field Engine (QFE)** can safely operate—orchestrating complex socio-economic realities—the constituent particles *must* have absolute self-determination. Without deterministic, sovereign boundaries at the particle level, the quantum social field inevitably collapses into centralized capture or a chaotic singularity (a seismic event).
+
+The Sovereignty Stack provides this mandatory prerequisite. It is a pragmatic, "boring reality" approach to decentralization—bringing functioning systems and societal structures on-chain and enforcing them with IoT, AI, and cryptography to ensure the particle cannot be subsumed by hostile external field forces.
+
 
 ## What is it?
 
 The stack is a full-stack architecture that bridges the physical and digital worlds:
 - **Physicalization of Trust:** Hardware tools like the [NFC Social Badge](hardware/tiny-pay/img/NFC_Badge.png) (acting as crypto-native cash and identity) and smart [bit.block microbricks](hardware/bit.block/) (acting as physical Oracles).
 - **Federated Infrastructure:** The [Koral Hub](software/koral/), a Kubernetes-based stack of proven open-source tools (Nextcloud, ERPNext, Gitea) gated by Web3 identity (`SIWE-OIDC`).
-- **Entity-Agnostic Economy:** The `$TINY` token model and Resonant Meritocracy, which funds systemic vibe and industrial output rather than speculative farming.
-- **Automated Epistemology Engine:** A machine-verifiable pipeline that binds sociological intent ([Gherkin scenarios](docs/architecture/testing/features/)) to formal mathematical specifications (TLA+) and cryptographically signed execution traces ([OCI/TPM attestations](concepts/verification/51_confidential_deployment_oci_surgery.md)).
+- **Entity-Agnostic Economy:** The `$TINY` token model and Resonant Meritocracy, which funds systemic vibe and industrial output, acting as the particle's internal momentum.
+- **Automated Epistemology Engine:** A machine-verifiable pipeline that binds sociological intent ([Gherkin scenarios](docs/architecture/testing/features/)) to formal mathematical specifications (TLA+) and cryptographically signed execution traces ([OCI/TPM attestations](concepts/verification/51_confidential_deployment_oci_surgery.md)). This forms the absolute truth boundary of the particle.
 
 ## The Engine: How it Works (Epistemological Pipeline)
 

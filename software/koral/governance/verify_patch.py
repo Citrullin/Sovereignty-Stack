@@ -42,7 +42,7 @@ def verify_patch_merit(patch_path, agent_did):
     
     print(f"[KORAL-GOV] Agent Merit Score: {merit:.3f} ({band})")
     
-    if band in ["trusted", "acceptable"]:
+    if band in ["superconducting", "coherent"]:
         print(f"[KORAL-GOV] ✅ Patch Merit Approved. Proceeding to synthesis.")
         return True
     else:
