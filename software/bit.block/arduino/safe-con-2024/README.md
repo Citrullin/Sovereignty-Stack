@@ -44,9 +44,9 @@ The device exposes a W3C WoT Thing Description at `/.well-known/wot-thing-descri
 
 ## Concept References
 
-- [§12 — Heartbeat Oracles](../../../concepts/oracles/12_heartbeat_oracles.md):
+- [§12 — Heartbeat Oracles](../../../docs/architecture/hardware/12_heartbeat_oracles.md):
   This firmware is a minimal implementation of a device-layer Heartbeat Oracle
-- [§16 — SIWE-OIDC Bridge](../../../concepts/identity-governance/16_siwe_oidc_bridge.md):
+- [§16 — SIWE-OIDC Bridge](../../../docs/architecture/identity/16_siwe_oidc_bridge.md):
   Future iteration: gate WoT actions behind SIWE-verified identity
-- [§11 — L3/L4 Nano-Rollups](../../../concepts/architecture/11_l3_l4_nano_rollups.md):
+- [§11 — L3/L4 Nano-Rollups](../../../docs/architecture/network/11_based_nano_rollups.md):
   bit.block as an L4 device node in the sovereign mesh

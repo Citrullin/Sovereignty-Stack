@@ -13,7 +13,7 @@ The stack is a full-stack architecture that bridges the physical and digital wor
 - **Physicalization of Trust:** Hardware tools like the [NFC Social Badge](hardware/tiny-pay/img/NFC_Badge.png) (acting as crypto-native cash and identity) and smart [bit.block microbricks](hardware/bit.block/) (acting as physical Oracles).
 - **Federated Infrastructure:** The [Koral Hub](software/koral/), a Kubernetes-based stack of proven open-source tools (Nextcloud, ERPNext, Gitea) gated by Web3 identity (`SIWE-OIDC`).
 - **Entity-Agnostic Economy:** The `$TINY` token model and Resonant Meritocracy, which funds systemic vibe and industrial output, acting as the particle's internal momentum.
-- **Automated Epistemology Engine:** A machine-verifiable pipeline that binds sociological intent ([Gherkin scenarios](docs/architecture/testing/features/)) to formal mathematical specifications (TLA+) and cryptographically signed execution traces ([OCI/TPM attestations](concepts/verification/51_confidential_deployment_oci_surgery.md)). This forms the absolute truth boundary of the particle.
+- **Automated Epistemology Engine:** A machine-verifiable pipeline that binds sociological intent ([Gherkin scenarios](docs/architecture/testing/features/)) to formal mathematical specifications (TLA+) and cryptographically signed execution traces ([OCI/TPM attestations](docs/architecture/verification/51_confidential_deployment_oci_surgery.md)). This forms the absolute truth boundary of the particle.
 
 ## The Engine: How it Works (Epistemological Pipeline)
 

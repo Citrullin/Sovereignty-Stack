@@ -23,10 +23,10 @@ Recommended: **MLCAD** (Windows only, but stable and microblock-compatible). See
 
 ## Concept References
 
-- [§44 — AI Instruction Parser](../../../concepts/tokenomics/44_ai_instruction_parser.md):
+- [§44 — AI Instruction Parser](../../../docs/architecture/economics/40_governance_market_dynamics.md):
   These LDraw files are the target output format for the AI pipeline that converts
   2D microblock instructions into 3D models (MobileViT → Layer 0 → LDraw)
-- [§40 — Prediction Markets](../../../concepts/tokenomics/40_prediction_markets.md):
+- [§40 — Prediction Markets](../../../docs/architecture/economics/40_governance_market_dynamics.md):
   Set designs feed the microblock industry prediction market (demand forecasting)
 
 ## Related

@@ -86,7 +86,7 @@ target_dirs:
       mappings over time. The chart_telemetry.py script visualizes verification
       velocity for the Auditor Agent.
     cross_refs:
-      - concepts/verification/53_agentic_protocol_auditor.md
+      - docs/architecture/verification/53_agentic_protocol_auditor.md
       - docs/architecture/A2A_COMMUNICATION_PROTOCOL.md
 
   - path: docs/pitch
@@ -103,17 +103,17 @@ target_dirs:
       Pipeline.
     cross_refs:
       - software/identity-worker/tests/cucumber_test.rs
-      - concepts/verification/52_formal_verification_and_physical_oracles.md
+      - docs/architecture/verification/52_formal_verification_and_physical_oracles.md
 
   - path: hardware
     title: "Hardware"
     cross_refs:
-      - concepts/architecture/11_l3_l4_nano_rollups.md
+      - docs/architecture/network/11_based_nano_rollups.md
 
   - path: software
     title: "Software"
     cross_refs:
-      - concepts/verification/50_ai_auditor_and_decentralized_verification.md
+      - docs/architecture/verification/50_ai_auditor_and_decentralized_verification.md
 
   - path: software/mcp-server
     title: "MCP Server – Agentic Tool Interface"
@@ -122,7 +122,7 @@ target_dirs:
       to interact with Yocto manifests, OCI registries, and the verification
       pipeline. This is the programmatic interface for the Agentic Auditor.
     cross_refs:
-      - concepts/verification/53_agentic_protocol_auditor.md
+      - docs/architecture/verification/53_agentic_protocol_auditor.md
 
   - path: software/meta-sovereignty
     title: "meta-sovereignty – Yocto Layer"
@@ -131,8 +131,8 @@ target_dirs:
       binary into an embedded Linux image. This is the bridge between the
       software verification layer and physical deployment on constrained hardware.
     cross_refs:
-      - concepts/verification/51_confidential_deployment_oci_surgery.md
-      - concepts/architecture/08_l1_sahara_node.md
+      - docs/architecture/verification/51_confidential_deployment_oci_surgery.md
+      - docs/architecture/network/08_l1_sahara_node.md
 
   - path: tools
     title: "Tools"

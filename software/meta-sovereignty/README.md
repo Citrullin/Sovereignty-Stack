@@ -10,8 +10,8 @@ software verification layer and physical deployment on constrained hardware.
 
 ## Cross-References
 
-- [`51_confidential_deployment_oci_surgery.md`](../../concepts/verification/51_confidential_deployment_oci_surgery.md)
-- [`08_l1_sahara_node.md`](../../concepts/architecture/08_l1_sahara_node.md)
+- [`51_confidential_deployment_oci_surgery.md`](../../docs/architecture/verification/51_confidential_deployment_oci_surgery.md)
+- [`08_l1_sahara_node.md`](../../docs/architecture/network/08_l1_sahara_node.md)
 
 ## Subdirectories
 

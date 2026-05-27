@@ -4,7 +4,7 @@
 
 ## Cross-References
 
-- [`50_ai_auditor_and_decentralized_verification.md`](../concepts/verification/50_ai_auditor_and_decentralized_verification.md)
+- [`50_ai_auditor_and_decentralized_verification.md`](../docs/architecture/verification/50_ai_auditor_and_decentralized_verification.md)
 
 ## Subdirectories
 

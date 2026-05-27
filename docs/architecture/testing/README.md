@@ -12,7 +12,7 @@ Pipeline.
 ## Cross-References
 
 - [`cucumber_test.rs`](../../../software/identity-worker/tests/cucumber_test.rs)
-- [`52_formal_verification_and_physical_oracles.md`](../../../concepts/verification/52_formal_verification_and_physical_oracles.md)
+- [`52_formal_verification_and_physical_oracles.md`](../../../docs/architecture/verification/52_formal_verification_and_physical_oracles.md)
 
 ## Subdirectories
 

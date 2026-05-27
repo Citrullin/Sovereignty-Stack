@@ -1,2 +1,0 @@
-# Those who know
-

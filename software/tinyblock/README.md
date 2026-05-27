@@ -36,11 +36,11 @@ In the web viewer, different layout sizes don't cause issues.
 
 ## Concept References
 
-- [§44 — AI Instruction Parser](../../concepts/tokenomics/44_ai_instruction_parser.md):
+- [§44 — AI Instruction Parser](../../docs/architecture/economics/40_governance_market_dynamics.md):
   The full pipeline: MobileViT → Layer 0 ground truth → Offset Solver → LDraw
-- [§40 — Prediction Markets](../../concepts/tokenomics/40_prediction_markets.md):
+- [§40 — Prediction Markets](../../docs/architecture/economics/40_governance_market_dynamics.md):
   Set designs and instruction data feed the microblock industry forecasting market
-- [§41 — TinyMeritRank](../../concepts/tokenomics/41_merit_token_distribution.md):
+- [§41 — TinyMeritRank](../../docs/architecture/economics/TINY_token_model.md):
   The DAO community creates and validates instruction datasets — a merit-earning activity
 
 ## Related

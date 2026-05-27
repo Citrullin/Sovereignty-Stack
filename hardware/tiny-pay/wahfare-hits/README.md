@@ -17,11 +17,11 @@ ownership. No app required for basic transfers.
 
 ## Concept References
 
-- [§22 — Crypto-Native Cash](../../../concepts/banking-physicalization/22_crypto_native_cash.md):
+- [§22 — Crypto-Native Cash](../../../docs/architecture/economics/22_crypto_native_cash.md):
   Banknote Mode — the physical bearer instrument model
-- [§43 — Crypto-Native Cash Spec](../../../concepts/tokenomics/43_crypto_native_cash_spec.md):
+- [§43 — Crypto-Native Cash Spec](../../../docs/architecture/economics/22_crypto_native_cash.md):
   Physical form factor spec (fun, inexpensive ~0.3 EUR, collectible)
-- [§15 — Vibe Scout Economy](../../../concepts/recycling-game/15_recycling_nfts.md):
+- [§15 — Vibe Scout Economy](../../../concepts/04_federated_manifold/15_transient_harvesting.md):
   Wahfare disc used by "Vibe Scouts" to receive NFT value at Smart Containers
 
 ## Related Products

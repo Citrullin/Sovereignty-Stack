@@ -67,13 +67,13 @@ On-chain registry for Decentralized Verification:
 
 ## Concept References
 
-- [§39 — Web3 Collateralized Bonds](../../concepts/tokenomics/39_web3_collateralized_bonds.md)
-- [§41 — Merit-Driven Token Distribution](../../concepts/tokenomics/41_merit_token_distribution.md)
-- [§42 — ENS-IBAN Extension](../../concepts/tokenomics/42_ens_iban_extension.md)
-- [§43 — Crypto-Native Cash Spec](../../concepts/tokenomics/43_crypto_native_cash_spec.md)
-- [§20 — DSLA](../../concepts/identity-governance/20_dsla.md)
-- [§46 — DAO Governance & Tokenomics](../../concepts/tokenomics/46_dao_governance.md)
-- [TINY_token_model.md](../../concepts/tokenomics/TINY_token_model.md) — The full $TINY spec
+- [§39 — Web3 Collateralized Bonds](../../docs/architecture/economics/24_sovereign_bonds.md)
+- [§41 — Merit-Driven Token Distribution](../../docs/architecture/economics/TINY_token_model.md)
+- [§42 — ENS-IBAN Extension](../../docs/architecture/economics/23_deiban_deswift.md)
+- [§43 — Crypto-Native Cash Spec](../../docs/architecture/economics/22_crypto_native_cash.md)
+- [§20 — DSLA](../../docs/architecture/economics/20_dsla.md)
+- [§46 — DAO Governance & Tokenomics](../../docs/architecture/economics/40_governance_market_dynamics.md)
+- [TINY_token_model.md](../../docs/architecture/economics/TINY_token_model.md) — The full $TINY spec
 
 ## Related
 

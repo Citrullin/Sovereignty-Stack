@@ -33,9 +33,9 @@ concepts at the L4 (device) layer of the recursive architecture.
 
 ## Concept References
 
-- [§12 — Heartbeat Oracles](../../concepts/oracles/12_heartbeat_oracles.md):
+- [§12 — Heartbeat Oracles](../../docs/architecture/hardware/12_heartbeat_oracles.md):
   bit.block devices as Secure Element-based Proof of Productivity nodes
-- [§13 — Actuator Oracles](../../concepts/oracles/13_actuator_oracles.md):
+- [§13 — Actuator Oracles](../../docs/architecture/hardware/13_actuator_oracles.md):
   bit.block as a physical action oracle at the L4 device layer
-- [§11 — L3/L4 Nano-Rollups](../../concepts/architecture/11_l3_l4_nano_rollups.md):
+- [§11 — L3/L4 Nano-Rollups](../../docs/architecture/network/11_based_nano_rollups.md):
   How devices like bit.block fit into the logN/Logtree mesh

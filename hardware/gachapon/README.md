@@ -10,13 +10,13 @@ ecosystem. No crypto exchange required.
 
 ## Concept References
 
-- [§3 — Fukuyama High-Trust / Beep-to-Verify](../../concepts/identity-governance/16_siwe_oidc_bridge.md):
+- [§3 — Fukuyama High-Trust / Beep-to-Verify](../../docs/architecture/identity/16_siwe_oidc_bridge.md):
   The Gachapon with LCD panel demonstrates how an NFC badge "beep" can trigger
   smart contract interactions physically.
-- [§15 — Recycling NFTs](../../concepts/recycling-game/15_recycling_nfts.md):
+- [§15 — Recycling NFTs](../../concepts/04_federated_manifold/15_transient_harvesting.md):
   Gachapon machines can dispense physical assets tied to NFTs (e.g. Rare Bottle
   NFTs redeemed for capsule toys).
-- [§22 — Crypto-Native Cash](../../concepts/banking-physicalization/22_crypto_native_cash.md):
+- [§22 — Crypto-Native Cash](../../docs/architecture/economics/22_crypto_native_cash.md):
   Revenue from each capsule sale routes on-chain automatically: designer
   royalties, operator fees, DAO treasury — no middleware.
 

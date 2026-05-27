@@ -37,11 +37,11 @@ disc designed for everyday P2P value transfer.
 
 ## Concept References
 
-- [§22 — Crypto-Native Cash](../../concepts/banking-physicalization/22_crypto_native_cash.md):
+- [§22 — Crypto-Native Cash](../../docs/architecture/economics/22_crypto_native_cash.md):
   The full consortium model (Key A/B/C), banknote vs badge mode, ERC-4337 integration
-- [§18 — 3-Factor Sovereign Auth](../../concepts/identity-governance/18_3factor_auth.md):
+- [§18 — 3-Factor Sovereign Auth](../../docs/architecture/identity/18_3factor_auth.md):
   How NFC Badge + smartphone + password create tiered access (table)
-- [§43 — Crypto-Native Cash Spec](../../concepts/tokenomics/43_crypto_native_cash_spec.md):
+- [§43 — Crypto-Native Cash Spec](../../docs/architecture/economics/22_crypto_native_cash.md):
   Physical, digital and technical specification
 
 ## Related Hardware

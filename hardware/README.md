@@ -4,7 +4,7 @@
 
 ## Cross-References
 
-- [`11_l3_l4_nano_rollups.md`](../concepts/architecture/11_l3_l4_nano_rollups.md)
+- [`11_l3_l4_nano_rollups.md`](../docs/architecture/network/11_based_nano_rollups.md)
 
 ## Subdirectories
 

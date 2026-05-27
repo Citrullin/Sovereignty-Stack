@@ -11,7 +11,7 @@ velocity for the Auditor Agent.
 
 ## Cross-References
 
-- [`53_agentic_protocol_auditor.md`](../../concepts/verification/53_agentic_protocol_auditor.md)
+- [`53_agentic_protocol_auditor.md`](../../docs/architecture/verification/53_agentic_protocol_auditor.md)
 - [`A2A_COMMUNICATION_PROTOCOL.md`](../architecture/A2A_COMMUNICATION_PROTOCOL.md)
 
 ## Files

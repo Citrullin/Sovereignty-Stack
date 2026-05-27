@@ -6,7 +6,7 @@ over open protocols — no proprietary cloud required.
 
 > [!NOTE]
 > We leverage W3C Web of Things (WoT) standards as a pragmatic technical substrate, 
-> not as an endorsement of the [captured W3C institution](../../concepts/philosophy/00_w3c_critique.md) (§0). 
+> not as an endorsement of the [captured W3C institution](../../concepts/01_entropy_of_capture/00_w3c_failure.md) (§0). 
 > The Sovereignty Stack uses these tools to reclaim the physical web from 
 > centralized corporate boards.
 
@@ -42,17 +42,17 @@ the Safe{CON} 2024 bit.block firmware depends on this library for `Thing.h` and
 Together these tools allow building **sovereign IoT devices** — devices that:
 - Expose machine-readable APIs (Thing Descriptions) without cloud lock-in.
 - Serve as the device-layer building blocks for Heartbeat and Actuator Oracles.
-- **Enable Public Verification:** The Thing Description (TD) serves as the expected capability manifest. By extending the TD's `@context`, devices can natively report their **DID (Decentralized Identifier)** and **current OCI firmware hash (CID)**. When an AI Auditor ([§50](../../concepts/verification/50_ai_auditor_and_decentralized_verification.md)) interacts with a device, it parses the TD, extracts the reported firmware hash, and automatically cross-references it against the DAO transparency log on-chain to verify the build's safety.
+- **Enable Public Verification:** The Thing Description (TD) serves as the expected capability manifest. By extending the TD's `@context`, devices can natively report their **DID (Decentralized Identifier)** and **current OCI firmware hash (CID)**. When an AI Auditor ([§50](../../docs/architecture/verification/50_ai_auditor_and_decentralized_verification.md)) interacts with a device, it parses the TD, extracts the reported firmware hash, and automatically cross-references it against the DAO transparency log on-chain to verify the build's safety.
 
 > **Transition Note:** As per the Decentralized Verification spec, the Sovereignty Stack is moving away from Git submodules toward OCI-on-IPFS. In the future, these RIOT and Arduino dependencies will be resolved as cryptographically certified OCI artifacts rather than fragile Git pointers.
 
 ## Concept References
 
-- [§12 — Heartbeat Oracles](../../concepts/oracles/12_heartbeat_oracles.md):
+- [§12 — Heartbeat Oracles](../../docs/architecture/hardware/12_heartbeat_oracles.md):
   These WoT tools implement the device-side of the Heartbeat Oracle pattern
-- [§13 — Actuator Oracles](../../concepts/oracles/13_actuator_oracles.md):
+- [§13 — Actuator Oracles](../../docs/architecture/hardware/13_actuator_oracles.md):
   WoT Thing Actions are the interface layer for Physical Action Oracles
-- [§11 — L3/L4 Nano-Rollups](../../concepts/architecture/11_l3_l4_nano_rollups.md):
+- [§11 — L3/L4 Nano-Rollups](../../docs/architecture/network/11_based_nano_rollups.md):
   WoT devices feed data into L4 Based Nano-Rollups in the sovereign mesh
 
 ## Related

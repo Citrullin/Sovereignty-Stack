@@ -15,7 +15,7 @@ sovereign entities** — primarily SMEs, cooperatives, and cultural collectives 
 need institutional-grade tooling without cloud lock-in or vendor dependency.
 
 **The model:**
-- Buy or recycle used thin clients (recycled hardware → see [§28 Hardware Lifecycle DAO](../../concepts/banking-physicalization/28_hardware_lifecycle_dao.md))
+- Buy or recycle used thin clients (recycled hardware → see [§28 Hardware Lifecycle DAO](../../docs/architecture/hardware/28_hardware_lifecycle_dao.md))
 - Install the sovereign stack
 - Rent at low cost to organizations that want to own their data and identity
 
@@ -33,7 +33,7 @@ or hardware wallet — no seed phrases in the UX, no crypto exchange required.
 
 All services run in a **Kubernetes cluster** fortified by two primary security layers:
 1. **Network Zero-Trust:** **Istio service mesh** enforces mTLS between all services. All services authenticate via a single **Authentik** OIDC provider.
-2. **Supply Chain Zero-Trust:** A **Kyverno admission controller** enforces Decentralized Verification ([§50](../../concepts/verification/50_ai_auditor_and_decentralized_verification.md)). The cluster will only pull and execute OCI images if the local AI Agent confirms the image CID has a valid DAO signature on the public transparency log.
+2. **Supply Chain Zero-Trust:** A **Kyverno admission controller** enforces Decentralized Verification ([§50](../../docs/architecture/verification/50_ai_auditor_and_decentralized_verification.md)). The cluster will only pull and execute OCI images if the local AI Agent confirms the image CID has a valid DAO signature on the public transparency log.
 
 | Service | Role | Sovereignty Notes |
 |---|---|---|
@@ -81,15 +81,15 @@ SSO without modification — they only see a standard OIDC token.
 
 ## Concept References
 
-- [§4 — Sovereignty Manifesto](../../concepts/philosophy/04_sovereignty_manifesto.md):
+- [§4 — Sovereignty Manifesto](../../concepts/01_entropy_of_capture/04_metric_separation_manifesto.md):
   Koral is the "boring reality as a revolutionary act" — federated Web 2.5 gated by Web3 identity
-- [§16 — SIWE-OIDC Bridge](../../concepts/identity-governance/16_siwe_oidc_bridge.md):
+- [§16 — SIWE-OIDC Bridge](../../docs/architecture/identity/16_siwe_oidc_bridge.md):
   The technical architecture of the OIDC relay that ties wallet to federated stack
-- [§18 — 3-Factor Sovereign Auth](../../concepts/identity-governance/18_3factor_auth.md):
+- [§18 — 3-Factor Sovereign Auth](../../docs/architecture/identity/18_3factor_auth.md):
   NFC Badge + smartphone (FaceID) + password — tiered access across all hub services
-- [§28 — Hardware Lifecycle DAO](../../concepts/banking-physicalization/28_hardware_lifecycle_dao.md):
+- [§28 — Hardware Lifecycle DAO](../../docs/architecture/hardware/28_hardware_lifecycle_dao.md):
   Used thin clients as the physical substrate for hub nodes
-- [§46 — DAO Governance](../../concepts/tokenomics/46_dao_governance.md):
+- [§46 — DAO Governance](../../docs/architecture/economics/40_governance_market_dynamics.md):
   The organizational template the hub serves
 
 ## Related
