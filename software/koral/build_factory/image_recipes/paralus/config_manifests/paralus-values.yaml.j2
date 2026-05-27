@@ -1,0 +1,127 @@
+fqdn:
+  domain: "{{ homelab_domain }}"
+  hostname: "paralus"
+  coreConnectorSubdomain: "*.core-connector.paralus"
+  userSubdomain: "*.user.paralus"
+
+ingress:
+  enabled: true
+  tls:
+    - hosts:
+        - "paralus.{{ homelab_domain }}"
+      secretName: "homelab-tls"
+postgresql:
+  enable: false
+deploy:
+  contour:
+    enable: false
+  fluentbit:
+    enable: false
+  postgresql:
+    address: "paralus-postgresql.paralus.svc.cluster.local"
+    username: "paralus"
+    password: "paraluspassword"
+    database: "paralus"
+
+kratos:
+  kratos:
+    config:
+      selfservice:
+        methods:
+          oidc:
+            enabled: true
+            config:
+              providers:
+                - id: authentik
+                  provider: generic
+                  client_id: paralus-app
+                  client_secret: paralus-secret-token
+                  issuer_url: "https://authentik.{{ homelab_domain }}/application/o/paralus/"
+                  mapper_url: "base64://bG9jYWwgYz1zdGQuZXh0VmFyKCdjbGFpbXMnKSxyPWMucmF3X2NsYWltczt7aWRlbnRpdHk6e3RyYWl0czp7ZW1haWw6Yy5lbWFpbCxmaXJzdF9uYW1lOmMubmFtZSxsYXN0X25hbWU6IlUiLFtpZiAiZ3JvdXBzIiBpbiByIHRoZW4gImlkcF9ncm91cHMiIGVsc2UgbnVsbF06ci5ncm91cHMgKyBbIk9yZ2FuaXphdGlvbiBBZG1pbnMiLCAiQWxsIExvY2FsIFVzZXJzIl19LG1ldGFkYXRhX3B1YmxpYzp7T3JnYW5pemF0aW9uOiJQYXJhbHVzT3JnIixQYXJ0bmVyOiJQYXJhbHVzIixGb3JjZVJlc2V0OmZhbHNlfX19"
+                  scope:
+                    - openid
+                    - profile
+                    - email
+                    - groups
+    session:
+      cookie:
+        same_site: None
+        persistent: true
+        secure: true
+  deployment:
+    extraEnv:
+      - name: SERVE_PUBLIC_BASE_URL
+        value: "https://paralus.{{ homelab_domain }}"
+      - name: SELFSERVICE_DEFAULT_BROWSER_RETURN_URL
+        value: "https://paralus.{{ homelab_domain }}"
+      - name: SELFSERVICE_ALLOWED_RETURN_URLS
+        value: "https://paralus.{{ homelab_domain }}"
+      - name: SELFSERVICE_FLOWS_SETTINGS_UI_URL
+        value: "https://paralus.{{ homelab_domain }}/ksettings"
+      - name: SELFSERVICE_FLOWS_RECOVERY_UI_URL
+        value: "https://paralus.{{ homelab_domain }}/ksettings"
+      - name: SELFSERVICE_FLOWS_REGISTRATION_UI_URL
+        value: "https://paralus.{{ homelab_domain }}/registeroidc"
+      - name: SELFSERVICE_FLOWS_ERROR_UI_URL
+        value: "https://paralus.{{ homelab_domain }}/error-page"
+      - name: SELFSERVICE_METHODS_OIDC_CONFIG_BASE_REDIRECT_URI
+        value: "https://paralus.{{ homelab_domain }}/"
+      - name: SSL_CERT_FILE
+        value: /etc/ssl/certs/ca-certificates.crt
+    extraVolumes:
+      - name: other-configs
+        emptyDir: {}
+      - name: kratos-config-hooks
+        configMap:
+          name: kratos-config-hooks
+          defaultMode: 420
+      - name: homelab-ca
+        configMap:
+          name: homelab-ca
+          defaultMode: 420
+      - name: custom-ca-bundle
+        emptyDir: {}
+    extraVolumeMounts:
+      - name: other-configs
+        mountPath: /etc/kratos
+      - name: kratos-config-hooks
+        mountPath: /etc/kratos/hooks/kratos-config-hooks.yaml
+        subPath: kratos-config-hooks.yaml
+      - name: custom-ca-bundle
+        mountPath: /etc/ssl/certs/ca-certificates.crt
+        subPath: ca-certificates.crt
+    extraInitContainers: |
+      - name: create-file
+        image: "busybox:latest"
+        command: ['sh', '-c', 'touch /etc/kratos/providers.yaml']
+        volumeMounts:
+          - name: other-configs
+            mountPath: /etc/kratos
+      - name: create-login-hook-jsonnetfile
+        image: "busybox:latest"
+        command: ['sh', '-c', 'echo "function(ctx) { user_id: ctx.identity.id }" > /etc/kratos/body.jsonnet']
+        volumeMounts:
+          - name: other-configs
+            mountPath: /etc/kratos
+      - name: append-ca
+        image: "alpine:latest"
+        command: ['sh', '-c', 'apk add --no-cache ca-certificates && cat /etc/ssl/certs/ca-certificates.crt /custom-ca/homelab-ca.crt > /tmp/certs/ca-certificates.crt']
+        volumeMounts:
+          - name: homelab-ca
+            mountPath: /custom-ca
+          - name: custom-ca-bundle
+            mountPath: /tmp/certs
+
+hooks:
+  enable: true
+
+prompt:
+  extraVolumes:
+    - name: kubeconfig
+      hostPath:
+        path: /etc/rancher/k3s/k3s.yaml
+  extraVolumeMounts:
+    - name: kubeconfig
+      mountPath: /root/.kube/config
+    - name: kubeconfig
+      mountPath: /home/paralus/.kube/config

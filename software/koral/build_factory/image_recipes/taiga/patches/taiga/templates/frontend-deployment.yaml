@@ -1,0 +1,206 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "taiga.fullname" . }}-frontend
+  labels:
+    {{- include "taiga.labels" . | nindent 4 }}
+    app.kubernetes.io/component: frontend
+spec:
+  replicas: {{ .Values.frontend.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "taiga.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: frontend
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        {{- include "taiga.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: frontend
+    spec:
+      # hostAliases is managed by Ansible patching
+      initContainers:
+        - name: inject-plugins
+          image: alpine:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+              mkdir -p /plugins/oidc-auth/dist
+              echo "Downloading OIDC plugin source..."
+              wget https://raw.githubusercontent.com/taigaio/taiga-contrib-oidc-auth/ft/add_compiled_code/front/dist/oidc_auth.js -O /plugins/oidc-auth/dist/oidc_auth.js
+              
+              echo "Creating robust oidc-auth.js..."
+              
+              echo "var start = function() {
+                  if (!window.angular) { setTimeout(start, 200); return; }
+                  
+                  var \$document = window.angular.element(document);
+                  var init = function() {
+                      if (!\$document.injector()) { 
+                          console.log('OIDC: Injector not ready, retrying...');
+                          setTimeout(init, 200); 
+                          return; 
+                      }
+                      console.log('OIDC: Angular and Injector ready, initializing...');
+                      
+                      var \$compile = \$document.injector().get('\$compile');
+                      var \$rootScope = \$document.injector().get('\$rootScope');
+                      var \$timeout = \$document.injector().get('\$timeout');
+
+                      var doInject = function() {
+                          if (window.location.pathname.indexOf('/login') === -1) { return; }
+                          var loginForm = document.querySelector('.login-form');
+                          if (loginForm && !document.querySelector('.oidc-login-button')) {
+                              var scope = \$rootScope.\$new();
+                              var buttonText = 'Authentik';
+                              
+                              // Force trailing slash before ?next to avoid 404s
+                              var redirectUrl = window.location.origin + '/oidc/authenticate/?next=' + encodeURIComponent(window.location.origin + '/');
+                              var html = '<div tg-oidc-login-button style=\"margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; text-align: center;\">' +
+                                         '<a class=\"button button-primary button-auth oidc-login-button\" ' +
+                                         'onclick=\"window.location.assign(\'' + redirectUrl + '\'); return false;\" ' +
+                                         'href=\"' + redirectUrl + '\" title=\"Login with ' + buttonText + '\" style=\"background-color: #fd7e14; color: white !important; display: block; padding: 12px; border-radius: 4px; cursor: pointer; text-decoration: none; font-weight: bold;\">' +
+                                         '<span>Login with ' + buttonText + '</span></a></div>';
+                              
+                              var el = \$compile(html)(scope);
+                              window.angular.element(loginForm).append(el);
+                              console.log('OIDC: Button injected with inline onclick:', redirectUrl);
+                          }
+                      };
+
+                      var checkUrlLogin = function() {
+                          console.log('OIDC: checkUrlLogin triggered');
+                          var \$tgLocation = \$document.injector().get('\$tgLocation');
+                          var \$tgAuth = \$document.injector().get('\$tgAuth');
+                          
+                          // Retrieve params from sessionStorage (Early Capture from index.html)
+                          var combinedParams = {};
+                          try {
+                              var stored = window.sessionStorage.getItem('taiga_oidc_params');
+                              if (stored) {
+                                  combinedParams = JSON.parse(stored);
+                                  console.log('OIDC: Found parameters in sessionStorage');
+                              } else {
+                                  // Fallback to URL params
+                                  combinedParams = \$tgLocation.search();
+                              }
+                          } catch(e) { console.error('OIDC: SessionStorage retrieval failed', e); }
+
+                          if (combinedParams.type === 'oidc' && combinedParams.auth_token) {
+                              console.log('OIDC: Token detected. Processing login for user:', combinedParams.username);
+                              
+                              // Taiga specific login completion
+                              var data = JSON.parse(JSON.stringify(combinedParams));
+                              var user = \$tgAuth.model.make_model(\"users\", data);
+                              
+                              // 1. Set localStorage variables (Both 'token' and 'auth_token' for compatibility)
+                              localStorage.setItem(\"token\", user.auth_token);
+                              localStorage.setItem(\"auth_token\", user.auth_token);
+                              if (user.refresh) {
+                                  localStorage.setItem(\"refresh\", user.refresh);
+                                  console.log('OIDC: Refresh token saved.');
+                              }
+                              
+                              // 2. Normalize userInfo structure - include EVERYTHING from backend
+                              var userInfo = Object.assign({}, data, {
+                                  \"auth_token\": user.auth_token,
+                                  \"refresh\": user.refresh
+                              });
+                              localStorage.setItem(\"userInfo\", JSON.stringify(userInfo));
+                              console.log('OIDC: userInfo saved to localStorage with full metadata.');
+
+                              // 3. Set user in Angular service and broadcast
+                              \$tgAuth.setUser(user);
+                              \$rootScope.\$broadcast(\"auth:login\", user);
+                              
+                              // 4. Cleanup session parameters
+                              window.sessionStorage.removeItem('taiga_oidc_params');
+                              
+                              // 5. Redirect to next or discover - SANITIZE to path only
+                              var nextUrl = combinedParams.next || '/discover';
+                              if (nextUrl.indexOf('http') === 0) {
+                                  try {
+                                      var urlObj = new URL(nextUrl);
+                                      nextUrl = urlObj.pathname + urlObj.search + urlObj.hash;
+                                      if (!nextUrl || nextUrl === '') nextUrl = '/';
+                                  } catch(e) { nextUrl = '/discover'; }
+                              }
+                              
+                              console.log('OIDC: Session established, redirecting to path:', nextUrl);
+                               // Use url() instead of path() to clear search/hash params and prevent loop
+                               \$tgLocation.url(nextUrl);
+                          }
+                      };
+
+                      \$rootScope.\$on('\$routeChangeSuccess', function() { 
+                          \$timeout(doInject, 1000); 
+                          \$timeout(checkUrlLogin, 500);
+                      });
+                      \$timeout(doInject, 1000);
+                      \$timeout(checkUrlLogin, 500);
+                      console.log('OIDC: Ready.');
+                  };
+                  init();
+              };
+              start();" > /plugins/oidc-auth/oidc-auth.js
+              
+              cp /config/plugins.json /plugins/oidc-auth/plugins.json
+              echo "OIDC injection script ready."
+          volumeMounts:
+            - name: plugins
+              mountPath: /plugins
+            - name: config-volume
+              mountPath: /config
+      containers:
+        - name: frontend
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          ports:
+            - name: http
+              containerPort: 80
+          volumeMounts:
+            - name: config-volume
+              mountPath: /usr/share/nginx/html/conf.json
+              subPath: conf.json
+            - name: config-volume
+              mountPath: /docker-entrypoint.d/40-patch-oidc.sh
+              subPath: patch-oidc.sh
+            - name: plugins
+              mountPath: /usr/share/nginx/html/plugins
+            - name: media
+              mountPath: /usr/share/nginx/html/media
+            - name: static
+              mountPath: /usr/share/nginx/html/static
+        - name: nginx-sidecar
+          image: nginx:stable-alpine
+          ports:
+            - name: https-internal
+              containerPort: 443
+          volumeMounts:
+            - name: taiga-tls
+              mountPath: /etc/nginx/certs
+              readOnly: true
+            - name: taiga-nginx-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+              readOnly: true
+      volumes:
+        - name: taiga-tls
+          secret:
+            secretName: taiga-tls
+        - name: taiga-nginx-conf
+          configMap:
+            name: taiga-nginx-conf
+        - name: config-volume
+          configMap:
+            name: {{ include "taiga.fullname" . }}-config
+            defaultMode: 0755
+        - name: plugins
+          emptyDir: {}
+        - name: media
+          persistentVolumeClaim:
+            claimName: {{ include "taiga.fullname" . }}-media
+        - name: static
+          persistentVolumeClaim:
+            claimName: {{ include "taiga.fullname" . }}-static

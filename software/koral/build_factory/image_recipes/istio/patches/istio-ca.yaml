@@ -1,0 +1,41 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"cert-manager.io/v1","kind":"Certificate","metadata":{"annotations":{},"name":"istio-ca","namespace":"istio-system"},"spec":{"commonName":"istio-system.svc","duration":"720h","isCA":true,"issuerRef":{"group":"certmanager.step.sm","kind":"StepClusterIssuer","name":"step-issuer"},"renewBefore":"120h","secretName":"cacerts"}}
+  creationTimestamp: "2026-02-18T15:45:45Z"
+  generation: 1
+  name: istio-ca
+  namespace: istio-system
+  resourceVersion: "1216560"
+  uid: 30b44eca-9f87-4516-898e-f6cbe39be725
+spec:
+  commonName: istio-system.svc
+  duration: 720h
+  isCA: true
+  issuerRef:
+    group: certmanager.step.sm
+    kind: StepClusterIssuer
+    name: step-issuer
+  renewBefore: 120h
+  secretName: cacerts
+status:
+  conditions:
+  - lastTransitionTime: "2026-02-18T16:37:54Z"
+    message: Issuing certificate as Secret does not exist
+    observedGeneration: 1
+    reason: DoesNotExist
+    status: "False"
+    type: Ready
+  - lastTransitionTime: "2026-02-18T16:37:55Z"
+    message: 'The certificate request has failed to complete and will be retried:
+      Failed to sign certificate request: client POST https://step-certificates.step-certificates.svc.cluster.local/sign
+      failed: dial tcp 10.43.107.20:443: connect: connection refused'
+    observedGeneration: 1
+    reason: Failed
+    status: "False"
+    type: Issuing
+  failedIssuanceAttempts: 1
+  lastFailureTime: "2026-02-18T16:37:55Z"
+  revision: 1

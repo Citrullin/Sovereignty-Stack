@@ -1,0 +1,117 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "taiga.fullname" . }}-authentik-setup-v2
+  labels:
+    {{- include "taiga.labels" . | nindent 4 }}
+    app.kubernetes.io/component: setup
+  annotations:
+    {}
+spec:
+  ttlSecondsAfterFinished: 3600
+  backoffLimit: 1
+  template:
+    metadata:
+      labels:
+        {{- include "taiga.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: setup
+    spec:
+      restartPolicy: OnFailure
+      hostAliases:
+        - ip: "192.168.178.73"
+          hostnames:
+            - "authentik.homelab.local"
+            - "taiga.homelab.local"
+      containers:
+      - name: configure-authentik
+        image: curlimages/curl:latest
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "Waiting for Authentik to be ready..."
+          sleep 10
+          
+          AUTHENTIK_URL="https://authentik.homelab.local"
+          TAIGA_URL="{{ .Values.scheme }}://{{ .Values.domain }}"
+          AUTH_TOKEN="IGGN2qVViBeUAm1AoPYBkUf5SSekVIFfjlpbCcC6DRhfHkVp6Sf2Ib7ZAWA1"
+          
+          echo "Using API token authentication"
+          
+          # Check if provider exists
+          EXISTING_PK=$(curl -sk -m 30 "$AUTHENTIK_URL/api/v3/providers/oauth2/?name=Taiga" \
+            -H "Authorization: Bearer $AUTH_TOKEN" 2>/dev/null | grep -o '\"pk\":[0-9]*' | head -1 | cut -d':' -f2 || echo "")
+          
+          if [ -n "$EXISTING_PK" ]; then
+            echo "Provider exists: $EXISTING_PK"
+            PROVIDER_PK="$EXISTING_PK"
+          else
+            # Create provider
+            RESPONSE=$(curl -sk -m 30 -X POST "$AUTHENTIK_URL/api/v3/providers/oauth2/" \
+              -H "Authorization: Bearer $AUTH_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "name": "Taiga",
+                "client_type": "confidential",
+                "client_id": "{{ .Values.oidc.clientId }}",
+                "client_secret": "taiga-secret-token",
+                "authorization_flow": "default-provider-authorization-explicit-consent",
+                "redirect_uris": "'"$TAIGA_URL"'/oidc/callback/\n'"$TAIGA_URL"'/plugins/openid-auth/callback.html",
+                "sub_mode": "hashed_user_id",
+                "issuer_mode": "global",
+                "include_claims_in_id_token": true
+              }' 2>&1)
+            
+            PROVIDER_PK=$(echo "$RESPONSE" | grep -o '\"pk\":[0-9]*' | head -1 | cut -d':' -f2 || echo "")
+            if [ -n "$PROVIDER_PK" ]; then
+              echo "Created provider: $PROVIDER_PK"
+            fi
+          fi
+          
+          if [ -n "$PROVIDER_PK" ]; then
+            echo "Created provider: $PROVIDER_PK"
+          fi
+          
+          if [ -z "$PROVIDER_PK" ]; then
+            echo "Failed to create provider"
+            exit 1
+          fi
+          
+          # Check if application exists
+          APP_PK=$(curl -sk -m 30 "$AUTHENTIK_URL/api/v3/core/applications/?slug=taiga-oidc" \
+            -H "Authorization: Bearer $AUTH_TOKEN" 2>/dev/null | grep -o '\"pk\":\"[^\"]*\"' | head -1 | cut -d'\"' -f4 || echo "")
+          
+          if [ -n "$APP_PK" ]; then
+            echo "Updating application: $APP_PK"
+            curl -sk -m 30 -X PATCH "$AUTHENTIK_URL/api/v3/core/applications/$APP_PK/" \
+              -H "Authorization: Bearer $AUTH_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d '{"provider": '"$PROVIDER_PK"', "meta_launch_url": "'"$TAIGA_URL"'"}' >/dev/null
+          else
+            echo "Creating application..."
+            curl -sk -m 30 -X POST "$AUTHENTIK_URL/api/v3/core/applications/" \
+              -H "Authorization: Bearer $AUTH_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "name": "Taiga",
+                "slug": "taiga-oidc",
+                "provider": '"$PROVIDER_PK"',
+                "meta_launch_url": "'"$TAIGA_URL"'",
+                "policy_engine_mode": "any"
+              }' >/dev/null
+          fi
+          
+          # Verify
+          sleep 3
+          HTTP_CODE=$(curl -sk -m 30 -o /dev/null -w "%{http_code}" \
+            "$AUTHENTIK_URL/application/o/authorize/?response_type=code&client_id={{ .Values.oidc.clientId }}&redirect_uri=${TAIGA_URL}/oidc/callback/&state=test&nonce=test")
+          
+          if [ "$HTTP_CODE" != "404" ]; then
+            echo "✅ SUCCESS: Taiga OIDC provider configured (HTTP $HTTP_CODE)"
+            exit 0
+          else
+            echo "❌ ERROR: Provider created but returns 404"
+            sleep 600
+            exit 1
+          fi

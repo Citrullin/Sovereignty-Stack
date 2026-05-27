@@ -1,0 +1,70 @@
+coder:
+  tls:
+    secretNames:
+      - coder-tls
+  service:
+    type: ClusterIP
+    internalPort: 8443
+  resources:
+    requests:
+      cpu: 20m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+  env:
+    - name: CODER_PG_CONNECTION_URL
+      value: "postgres://coder:coder@coder-postgresql:5432/coder?sslmode=disable"
+    - name: CODER_ACCESS_URL
+      value: "https://coder.homelab.local"
+    - name: CODER_HTTP_ADDRESS
+      value: "0.0.0.0:8080"
+    - name: CODER_OIDC_ISSUER_URL
+      value: "https://authentik.homelab.local/application/o/coder/"
+    - name: CODER_OIDC_CLIENT_ID
+      value: "coder-app"
+    - name: CODER_OIDC_CLIENT_SECRET
+      value: "coder-secret-token"
+    - name: CODER_OIDC_ALLOW_SIGNUPS
+      value: "true"
+    - name: CODER_OIDC_USERNAME_FIELD
+      value: "preferred_username"
+    - name: CODER_OIDC_EMAIL_FIELD
+      value: "email"
+    - name: CODER_OIDC_SIGN_IN_TEXT
+      value: "Sign in with Authentik"
+    - name: CODER_TLS_CA_FILE
+      value: "/etc/ssl/certs/homelab-ca.crt"
+    - name: CODER_OIDC_CA_FILE
+      value: "/etc/ssl/certs/homelab-ca.crt"
+    - name: SSL_CERT_FILE
+      value: "/etc/ssl/certs/homelab-ca.crt"
+    - name: REQUESTS_CA_BUNDLE
+      value: "/etc/ssl/certs/homelab-ca.crt"
+    - name: CODER_TLS_CERT_FILE
+      value: "/etc/ssl/certs/coder/coder-tls/tls.crt"
+    - name: CODER_TLS_KEY_FILE
+      value: "/etc/ssl/certs/coder/coder-tls/tls.key"
+
+  volumes:
+    - name: homelab-ca
+      configMap:
+        name: homelab-ca
+
+  volumeMounts:
+    - name: homelab-ca
+      mountPath: /etc/ssl/certs/homelab-ca.crt
+      subPath: homelab-ca.crt
+      readOnly: true
+
+hostAliases:
+  - ip: "10.43.36.39"
+    hostnames:
+      - "authentik.homelab.local"
+      - "nextcloud.homelab.local"
+      - "coder.homelab.local"
+      - "taiga.homelab.local"
+      - "erpnext.homelab.local"
+      
+postgresql:
+  enabled: false

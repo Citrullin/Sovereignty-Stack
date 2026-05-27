@@ -1,0 +1,105 @@
+# Default values for taiga.
+
+domain: "taiga.homelab.local"
+scheme: "https"
+service:
+  port: 80
+
+backend:
+  image:
+    repository: taigaio/taiga-back
+    pullPolicy: IfNotPresent
+    # Overriding the tag/version is recommended for production
+    tag: "6.7.0"
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  secretKey: "changeme_in_production"
+
+frontend:
+  image:
+    repository: taigaio/taiga-front
+    pullPolicy: IfNotPresent
+    tag: "6.7.0"
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 20m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+events:
+  image:
+    repository: taigaio/taiga-events
+    pullPolicy: IfNotPresent
+    tag: "6.7.0"
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 20m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+async:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+rabbitmq:
+  image:
+    repository: rabbitmq
+    tag: "3.8-management-alpine"
+  auth:
+    username: taiga
+    password: "rabbitmq_password"
+    erlangCookie: "secret_cookie"
+
+postgresql:
+  image:
+    repository: postgres
+    tag: "14-alpine"
+  auth:
+    username: taiga
+    password: "db_password"
+    database: taiga
+  primary:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+  persistence:
+    enabled: true
+    size: 5Gi
+    storageClass: "local-path"
+
+ingress:
+  enabled: false
+  className: "istio"
+  annotations: {}
+  tls:
+    - secretName: taiga-tls
+      hosts:
+        - taiga.homelab.local
+
+oidc:
+  enabled: true
+  url: "https://authentik.homelab.local/application/o/"
+  clientId: "taiga-app"
+  clientSecret: "taiga-secret-token"

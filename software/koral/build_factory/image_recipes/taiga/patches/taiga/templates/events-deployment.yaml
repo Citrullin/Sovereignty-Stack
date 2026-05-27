@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "taiga.fullname" . }}-events
+  labels:
+    {{- include "taiga.labels" . | nindent 4 }}
+    app.kubernetes.io/component: events
+spec:
+  replicas: {{ .Values.events.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "taiga.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: events
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        {{- include "taiga.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: events
+    spec:
+      initContainers:
+        - name: config-init
+          image: busybox
+          command: ['sh', '-c', 'cp /config/events-config.json /taiga-events-config/config.json']
+          volumeMounts:
+            - name: config-source
+              mountPath: /config
+            - name: config-writable
+              mountPath: /taiga-events-config
+      containers:
+        - name: events
+          image: "{{ .Values.events.image.repository }}:{{ .Values.events.image.tag }}"
+          imagePullPolicy: {{ .Values.events.image.pullPolicy }}
+          ports:
+            - name: events
+              containerPort: 8888
+              protocol: TCP
+          volumeMounts:
+            - name: config-writable
+              mountPath: /taiga-events/config.json
+              subPath: config.json
+      volumes:
+        - name: config-source
+          configMap:
+            name: {{ include "taiga.fullname" . }}-config
+        - name: config-writable
+          emptyDir: {}

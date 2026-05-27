@@ -1,0 +1,192 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: chiefonboarding
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: chiefonboarding-secrets
+  namespace: chiefonboarding
+type: Opaque
+stringData:
+  postgres-password: "chiefonboardingpassword"
+  secret-key: "somethingsupersecret-{{ 99999999999999999 | random | to_uuid }}"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: chiefonboarding-postgres-pvc
+  namespace: chiefonboarding
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 8Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: chiefonboarding-media-pvc
+  namespace: chiefonboarding
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chiefonboarding-postgres
+  namespace: chiefonboarding
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chiefonboarding-postgres
+  template:
+    metadata:
+      labels:
+        app: chiefonboarding-postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15
+        env:
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: chiefonboarding-secrets
+              key: postgres-password
+        - name: POSTGRES_DB
+          value: "chiefonboarding"
+        ports:
+        - containerPort: 5432
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: chiefonboarding-postgres-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chiefonboarding-postgres
+  namespace: chiefonboarding
+spec:
+  selector:
+    app: chiefonboarding-postgres
+  ports:
+  - port: 5432
+    targetPort: 5432
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chiefonboarding
+  namespace: chiefonboarding
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chiefonboarding
+  template:
+    metadata:
+      labels:
+        app: chiefonboarding
+    spec:
+      hostAliases:
+        - ip: "192.168.178.73"
+          hostnames:
+            - authentik.{{ homelab_domain }}
+      initContainers:
+      - name: wait-for-db
+        image: postgres:15
+        command: ["sh", "-c", "until pg_isready -h chiefonboarding-postgres -U postgres; do sleep 2; done"]
+      containers:
+      - name: chiefonboarding
+        image: chiefonboarding/chiefonboarding:latest
+        env:
+        - name: DEBUG
+          value: "True"
+        - name: SSL_REDIRECT
+          value: "True"
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: chiefonboarding-secrets
+              key: secret-key
+        - name: BASE_URL
+          value: "https://chiefonboarding.{{ homelab_domain }}"
+        - name: ALLOWED_HOSTS
+          value: "chiefonboarding.{{ homelab_domain }}"
+        - name: CSRF_TRUSTED_ORIGINS
+          value: "https://chiefonboarding.{{ homelab_domain }}"
+        - name: DATABASE_URL
+          value: "postgres://postgres:chiefonboardingpassword@chiefonboarding-postgres:5432/chiefonboarding"
+        - name: DEFAULT_FROM_EMAIL
+          value: "no-reply@chiefonboarding.{{ homelab_domain }}"
+        - name: OIDC_ROLE_PATH_IN_RETURN
+          value: "groups"
+        - name: ALLAUTH_PROVIDERS
+          value: "openid_connect"
+        - name: OIDC_ROLE_ADMIN_PATTERN
+          value: ".*[a|A]dmin.*"
+        - name: OIDC_ROLE_MANAGER_PATTERN
+          value: ".*[m|M]anager.*"
+        - name: SSO_AUTO_CREATE_USER
+          value: "True"
+        - name: REQUESTS_CA_BUNDLE
+          value: "/etc/ssl/certs/homelab-ca.crt"
+        - name: SSL_CERT_FILE
+          value: "/etc/ssl/certs/homelab-ca.crt"
+        - name: SSO_PROVIDERS
+          value: "{'openid_connect': {'APPS': [{'provider_id': 'authentik', 'name': 'Authentik', 'client_id': '{{ chiefonboarding_client_id }}', 'secret': '{{ chiefonboarding_client_secret }}', 'settings': {'server_url': 'https://authentik.{{ homelab_domain }}/application/o/chiefonboarding/.well-known/openid-configuration'}}], 'VERIFIED_EMAIL': True}}"
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+        volumeMounts:
+        - name: homelab-ca
+          mountPath: /etc/ssl/certs/homelab-ca.crt
+          subPath: homelab-ca.crt
+        - name: media
+          mountPath: /app/media
+      volumes:
+      - name: homelab-ca
+        configMap:
+          name: homelab-ca
+      - name: media
+        persistentVolumeClaim:
+          claimName: chiefonboarding-media-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chiefonboarding
+  namespace: chiefonboarding
+spec:
+  selector:
+    app: chiefonboarding
+  ports:
+  - port: 8000
+    targetPort: 8000

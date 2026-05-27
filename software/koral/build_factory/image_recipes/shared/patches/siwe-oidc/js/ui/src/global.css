@@ -1,0 +1,143 @@
+* {
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+}
+
+:root {
+	--background: #dddddd;
+	--foreground: #000000;
+	--accent: #00eaf2;
+	--muted: #ffffff;
+	--border: #aaaaaa;
+}
+
+body {
+	color: var(--foreground);
+	background-color: var(--background);
+	box-sizing: border-box;
+	font-family: 'Inter', sans-serif;
+}
+
+.page-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
+
+.siwe-card {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	align-items: center;
+	justify-content: center;
+	max-width: 360px;
+	background-color: var(--muted);
+	border-radius: 12px;
+	padding: 32px;
+}
+
+.page-logo {
+	width: 72px;
+	height: 72px;
+	border-radius: 12px;
+	margin-bottom: 4px;
+}
+
+.welcome-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 8px;
+	margin: 8px 0;
+}
+
+.welcome-title {
+	font-size: 26px;
+	font-weight: 600;
+}
+
+.welcome-text-url-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	margin-top: 4px;
+}
+
+.client-page-logo {
+	width: 28px;
+	height: 28px;
+	margin-top: 4px;
+	border-radius: 4px;
+	margin-bottom: 4px;
+}
+
+.welcome-text {
+	font-size: 15px;
+	font-weight: 400;
+	text-align: center;
+	margin-top: 8px;
+}
+
+.welcome-text-url {
+	font-size: 16px;
+	font-weight: 600;
+	text-align: center;
+}
+
+.welcome-text-domain {
+	font-size: 14px;
+	font-weight: 500;
+	text-align: center;
+}
+
+.siwe-button {
+	border: 2px solid var(--border);
+	background-color: transparent;
+	border-radius: 4px;
+	padding: 14px 32px;
+	display: flex;
+	align-items: center;
+	outline: none;
+	gap: 10px;
+	cursor: pointer;
+	font-size: 16px;
+	font-weight: 600;
+	transition: all 0.2s ease;
+}
+
+.siwe-button:hover {
+	opacity: 0.8;
+	background-color: #eeeeee;
+}
+
+.siwe-button:active {
+	transform: scale(0.98);
+}
+
+.terms-of-use-text {
+	font-size: 12px;
+	font-weight: 400;
+	margin-top: 24px;
+	text-align: center;
+	color: #aaaaaa;
+}
+
+.request-linked-text {
+	font-size: 14px;
+	font-weight: 400;
+	margin-top: 16px;
+	text-align: center;
+}
+
+a {
+	color: var(--accent);
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}

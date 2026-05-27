@@ -1,0 +1,189 @@
+authentik:
+  log_level: debug
+  secret_key: "generate_me"
+
+global:
+  hostAliases:
+    - ip: "192.168.178.73"
+      hostnames:
+        - "siwe.homelab.local"
+  
+  postgresql:
+    password: "change_me"
+
+  redis:
+    host: "authentik-redis"
+    password: "change_me"
+
+# Mount blueprints from ConfigMap - chart handles mounting automatically
+blueprints:
+  configMaps:
+    - authentik-blueprints
+
+server:
+  # Additional volumes and mounts for the server pod
+  volumes:
+    - name: authentik-tls
+      secret:
+        secretName: authentik-tls
+    - name: homelab-ca
+      configMap:
+        name: homelab-ca
+    - name: homelab-ca-merged
+      configMap:
+        name: homelab-ca-merged
+  volumeMounts:
+    - name: authentik-tls
+      mountPath: /certs
+      readOnly: true
+    - name: homelab-ca
+      mountPath: /usr/local/share/ca-certificates/homelab-ca.crt
+      subPath: homelab-ca.crt
+      readOnly: true
+    - name: homelab-ca-merged
+      mountPath: /etc/ssl/certs/ca-certificates.crt
+      subPath: ca-certificates.crt
+      readOnly: true
+  resources:
+    requests:
+      cpu: 20m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 2Gi
+  env:
+    - name: AUTHENTIK_LISTEN__TRUSTED_PROXY_IPS
+      value: "10.42.0.0/16,10.43.0.0/16"
+    - name: AUTHENTIK_LISTEN__REMOTE_IP_HEADER
+      value: "X-Forwarded-For"
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      value: "change_me"
+    - name: AUTHENTIK_POSTGRESQL__HOST
+      value: "authentik-postgresql"
+    - name: AUTHENTIK_LISTEN__HTTP
+      value: "0.0.0.0:9000"
+    - name: REQUESTS_CA_BUNDLE
+      value: "/etc/ssl/certs/ca-certificates.crt"
+    - name: SSL_CERT_FILE
+      value: "/etc/ssl/certs/ca-certificates.crt"
+  
+  livenessProbe:
+    httpGet:
+      path: "/-/health/live/"
+      port: 9000
+      scheme: HTTP
+  readinessProbe:
+    httpGet:
+      path: "/-/health/ready/"
+      port: 9000
+      scheme: HTTP
+  startupProbe:
+    httpGet:
+      path: "/-/health/live/"
+      port: 9000
+      scheme: HTTP
+    failureThreshold: 120
+    periodSeconds: 20
+
+  ingress:
+    enabled: false
+    className: istio
+    hosts:
+      - authentik.homelab.local
+    paths:
+      - /
+    pathType: Prefix
+    tls:
+      - secretName: authentik-tls
+        hosts:
+          - authentik.homelab.local
+
+worker:
+  livenessProbe:
+    exec:
+      command: ["ak", "healthcheck"]
+    timeoutSeconds: 15
+    periodSeconds: 10
+    failureThreshold: 5
+  readinessProbe:
+    exec:
+      command: ["ak", "healthcheck"]
+    timeoutSeconds: 15
+    periodSeconds: 10
+    failureThreshold: 5
+  startupProbe:
+    exec:
+      command: ["ak", "healthcheck"]
+    timeoutSeconds: 15
+    periodSeconds: 10
+    failureThreshold: 120
+  resources:
+    requests:
+      cpu: 20m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 2Gi
+  env:
+    - name: AUTHENTIK_LISTEN__TRUSTED_PROXY_IPS
+      value: "10.42.0.0/16,10.43.0.0/16"
+    - name: AUTHENTIK_LISTEN__REMOTE_IP_HEADER
+      value: "X-Forwarded-For"
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      value: "change_me"
+    - name: AUTHENTIK_POSTGRESQL__HOST
+      value: "authentik-postgresql"
+    - name: REQUESTS_CA_BUNDLE
+      value: "/etc/ssl/certs/ca-certificates.crt"
+    - name: SSL_CERT_FILE
+      value: "/etc/ssl/certs/ca-certificates.crt"
+  volumes:
+    - name: authentik-tls
+      secret:
+        secretName: authentik-tls
+    - name: homelab-ca
+      configMap:
+        name: homelab-ca
+    - name: homelab-ca-merged
+      configMap:
+        name: homelab-ca-merged
+  volumeMounts:
+    - name: authentik-tls
+      mountPath: /certs
+      readOnly: true
+    - name: homelab-ca
+      mountPath: /usr/local/share/ca-certificates/homelab-ca.crt
+      subPath: homelab-ca.crt
+      readOnly: true
+    - name: homelab-ca-merged
+      mountPath: /etc/ssl/certs/ca-certificates.crt
+      subPath: ca-certificates.crt
+      readOnly: true
+
+postgresql:
+  enabled: true
+  auth:
+    password: "change_me"
+    postgresPassword: "change_me"
+  primary:
+    podLabels:
+      istio.io/dataplane-mode: disabled
+    podAnnotations:
+      ambient.istio.io/redirection: disabled
+    service:
+      ports:
+        postgresql: 5432
+      portName: postgresql
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        memory: 128Mi
+        cpu: 10m
+  persistence:
+    enabled: true
+    storageClass: "local-path"
+    size: 10Gi
+
+redis:
+  enabled: false

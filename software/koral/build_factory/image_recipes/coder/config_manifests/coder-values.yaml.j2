@@ -1,0 +1,67 @@
+coder:
+  service:
+    type: ClusterIP
+    internalPort: 8080
+  resources:
+    requests:
+      cpu: 20m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+  env:
+    - name: CODER_PG_CONNECTION_URL
+      value: "postgres://coder:coder@coder-postgresql:5432/coder?sslmode=disable"
+    - name: CODER_ACCESS_URL
+      value: "https://coder.{{ homelab_domain }}"
+    - name: CODER_WILDCARD_ACCESS_URL
+      value: "*.coder.{{ homelab_domain }}"
+    - name: CODER_OIDC_ISSUER_URL
+      value: "https://authentik.{{ homelab_domain }}/application/o/coder/"
+    - name: CODER_OIDC_CLIENT_ID
+      value: "coder-app"
+    - name: CODER_OIDC_CLIENT_SECRET
+      value: "coder-secret-token"
+    - name: CODER_OIDC_ALLOW_SIGNUPS
+      value: "true"
+    - name: CODER_OIDC_USERNAME_FIELD
+      value: "preferred_username"
+    - name: CODER_OIDC_EMAIL_FIELD
+      value: "email"
+    - name: CODER_OIDC_SIGN_IN_TEXT
+      value: "Sign in with Authentik"
+    - name: CODER_OIDC_ICON_URL
+      value: "https://raw.githubusercontent.com/goauthentik/authentik/main/website/static/img/icon.png"
+    - name: CODER_TLS_CA_FILE
+      value: "/etc/ssl/certs/homelab-ca.crt"
+    - name: CODER_OIDC_CA_FILE
+      value: "/etc/ssl/certs/homelab-ca.crt"
+    - name: SSL_CERT_FILE
+      value: "/etc/ssl/certs/homelab-ca.crt"
+    - name: REQUESTS_CA_BUNDLE
+      value: "/etc/ssl/certs/homelab-ca.crt"
+    - name: NODE_EXTRA_CA_CERTS
+      value: "/etc/ssl/certs/homelab-ca.crt"
+
+  volumes:
+    - name: homelab-ca
+      configMap:
+        name: homelab-ca
+
+  volumeMounts:
+    - name: homelab-ca
+      mountPath: /etc/ssl/certs/homelab-ca.crt
+      subPath: homelab-ca.crt
+      readOnly: true
+
+hostAliases:
+  - ip: "{{ istio_ingress_ip }}"
+    hostnames:
+      - "authentik.{{ homelab_domain }}"
+      - "nextcloud.{{ homelab_domain }}"
+      - "coder.{{ homelab_domain }}"
+      - "taiga.{{ homelab_domain }}"
+      - "erpnext.{{ homelab_domain }}"
+      
+postgresql:
+  enabled: false

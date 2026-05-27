@@ -1,0 +1,52 @@
+ingress:
+  enabled: false
+postgresql:
+  enabled: false
+postgresql-ha:
+  enabled: false
+memcached:
+  enabled: false
+valkey:
+  enabled: false
+valkey-cluster:
+  enabled: false
+
+gitea:
+  admin:
+    username: admin
+    password: "change_me"
+  config:
+    database:
+      DB_TYPE: postgres
+      HOST: gitea-postgresql.gitea.svc.cluster.local:5432
+      NAME: gitea
+      USER: gitea
+      PASSWD: giteapassword
+    oauth2_client:
+      ENABLE_AUTO_REGISTRATION: true
+      ACCOUNT_LINKING: auto
+      USERNAME: nickname
+    server:
+      DOMAIN: "gitea.{{ sovereign_domain }}"
+      ROOT_URL: "https://gitea.{{ sovereign_domain }}/"
+      SSH_DOMAIN: "gitea.{{ sovereign_domain }}"
+      SSH_LISTEN_PORT: 22
+
+strategy:
+  type: Recreate
+
+deployment:
+  env:
+    - name: SSL_CERT_FILE
+      value: /etc/ssl/certs/sovereign-ca.crt
+
+extraVolumes:
+  - name: ca-certs
+    configMap:
+      name: sovereign-ca
+
+extraContainerVolumeMounts:
+  - name: ca-certs
+    mountPath: /etc/ssl/certs/sovereign-ca.crt
+    subPath: sovereign-ca.crt
+    readOnly: true

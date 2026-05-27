@@ -1,0 +1,1 @@
+# We will use Helm to deploy but since there's no siwe-oidc chart, we can just use raw manifests in a Kustomize or generic Helm chart.

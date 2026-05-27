@@ -1,0 +1,151 @@
+ingress:
+  enabled: false
+  className: istio
+  annotations:
+    kubernetes.io/ingress.class: istio
+  hosts:
+    - host: bookstack.{{ homelab_domain }}
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: bookstack-tls
+      hosts:
+        - bookstack.{{ homelab_domain }}
+
+hostAliases:
+  - ip: "{{ istio_ingress_ip }}"
+    hostnames:
+      - "authentik.{{ homelab_domain }}"
+      - "nextcloud.{{ homelab_domain }}"
+      - "coder.{{ homelab_domain }}"
+      - "taiga.{{ homelab_domain }}"
+      - "erpnext.{{ homelab_domain }}"
+
+resources:
+  requests:
+    cpu: 20m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+# Chart: pacroy/bookstack
+# Required flat values corresponding to env vars
+
+appKey: "base64:VGhpc0lzQW5FeGFtcGxlQXBwS2V5Q2hhbmdlVGhpcyE="
+appHost: "bookstack.{{ homelab_domain }}"
+
+# Database configuration
+mariadb:
+  enabled: true
+  auth:
+    rootPassword: "change_me"
+    password: "change_me"
+  primary:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
+
+# OIDC Configuration for Authentik
+extraEnv:
+  - name: APP_URL
+    value: https://bookstack.{{ homelab_domain }}
+  - name: AUTH_METHOD
+    value: oidc
+  - name: OIDC_NAME
+    value: Authentik
+  - name: OIDC_DISPLAY_NAME_CLAIMS
+    value: name
+  - name: OIDC_EMAIL_CLAIM
+    value: email
+  - name: OIDC_ADDITIONAL_SCOPES
+    value: "email,profile,groups"
+  - name: OIDC_CLIENT_ID
+    value: bookstack-v2-app
+  - name: OIDC_CLIENT_SECRET
+    value: "bf27cd9f55be54583d0b6874756eaac6"
+  - name: OIDC_ISSUER
+    value: https://authentik.{{ homelab_domain }}/application/o/bookstack-v2/
+  - name: OIDC_AUTH_ENDPOINT
+    value: https://authentik.{{ homelab_domain }}/application/o/authorize/
+  - name: OIDC_TOKEN_ENDPOINT
+    value: https://authentik.{{ homelab_domain }}/application/o/token/
+  - name: OIDC_USERINFO_ENDPOINT
+    value: https://authentik.{{ homelab_domain }}/application/o/userinfo/
+  - name: OIDC_USER_TO_GROUPS
+    value: "true"
+  - name: OIDC_ISSUER_NOT_VERIFIED
+    value: "true"
+  - name: OIDC_ISSUER_DISCOVER
+    value: "false"
+  - name: OIDC_PUBLIC_KEY
+    value: "file:///config/oidc.crt"
+  - name: TRUSTED_PROXIES
+    value: "*"
+  - name: APP_DEBUG
+    value: "true"
+  - name: LOG_CHANNEL
+    value: errorlog
+  - name: SSL_CERT_FILE
+    value: /etc/ssl/certs/homelab-ca.crt
+  - name: CURL_CA_BUNDLE
+    value: /etc/ssl/certs/homelab-ca.crt
+dbHost: "bookstack-mysql"
+
+extraVolumes:
+  - name: homelab-ca
+    configMap:
+      name: homelab-ca
+  - name: bookstack-overrides
+    configMap:
+      name: bookstack-overrides
+  - name: oidc-cert
+    secret:
+      secretName: bookstack-oidc-cert
+  - name: bookstack-tls
+    secret:
+      secretName: bookstack-tls
+  - name: bookstack-nginx-conf
+    configMap:
+      name: bookstack-nginx-conf
+
+extraVolumeMounts:
+  - name: homelab-ca
+    mountPath: /etc/ssl/certs/homelab-ca.crt
+    subPath: homelab-ca.crt
+    readOnly: true
+  - name: bookstack-overrides
+    mountPath: /var/www/bookstack/app/Http/HttpRequestService.php
+    subPath: HttpRequestService.php
+    readOnly: true
+  - name: oidc-cert
+    mountPath: /config/oidc.crt
+    subPath: oidc.crt
+    readOnly: true
+
+extraContainers:
+  - name: nginx-sidecar
+    image: nginx:stable-alpine
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        cpu: 50m
+        memory: 64Mi
+    ports:
+      - name: https-internal
+        containerPort: 443
+    volumeMounts:
+      - name: bookstack-tls
+        mountPath: /etc/nginx/certs
+        readOnly: true
+      - name: bookstack-nginx-conf
+        mountPath: /etc/nginx/conf.d/default.conf
+        subPath: default.conf
+        readOnly: true

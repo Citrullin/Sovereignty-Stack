@@ -1,0 +1,31 @@
+configuration:
+  backupStorageLocation:
+    - name: default
+      provider: aws
+      bucket: velero-backups
+      config:
+        region: minio
+        s3ForcePathStyle: true
+        s3Url: http://{{ istio_ingress_ip }}:9000
+  volumeSnapshotLocation:
+    - name: default
+      provider: aws
+      config:
+        region: minio
+
+credentials:
+  useSecret: true
+  secretContents:
+    cloud: |
+      [default]
+      aws_access_key_id = minio
+      aws_secret_access_key = minio123
+
+# Override kubectl image to use Bitnami image from ECR Public
+# Docker Hub bitnami/kubectl is deprecated/gone.
+# registry.k8s.io/kubectl lacks sh/cp for the init container.
+kubectl:
+  image:
+    repository: public.ecr.aws/bitnami/kubectl
+    # MUST be quoted to avoid yaml parsing 1.30 as float 1.3
+    tag: "1.30"

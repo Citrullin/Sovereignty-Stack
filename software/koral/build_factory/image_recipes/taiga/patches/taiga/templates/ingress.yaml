@@ -1,0 +1,86 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "taiga.fullname" . }}
+  labels:
+    {{- include "taiga.labels" . | nindent 4 }}
+  annotations:
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.domain }}
+      http:
+        paths:
+          - path: /oidc/
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "taiga.fullname" . }}-backend
+                port:
+                  number: 8000
+          - path: /oidc
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "taiga.fullname" . }}-backend
+                port:
+                  number: 8000
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "taiga.fullname" . }}-backend
+                port:
+                  number: 8000
+          - path: /admin
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "taiga.fullname" . }}-backend
+                port:
+                  number: 8000
+          - path: /static
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "taiga.fullname" . }}-backend
+                port:
+                  number: 8000
+          - path: /media
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "taiga.fullname" . }}-backend
+                port:
+                  number: 8000
+          - path: /events
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "taiga.fullname" . }}-events
+                port:
+                  number: 8888
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "taiga.fullname" . }}-frontend
+                port:
+                  number: 80
+{{- end }}

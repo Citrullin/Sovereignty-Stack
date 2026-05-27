@@ -1,0 +1,157 @@
+
+ingress:
+  enabled: false
+  className: istio
+  hosts:
+    - host: erpnext.homelab.local
+      paths:
+        - path: /
+          pathType: Prefix
+          
+hostAliases:
+  - ip: "10.43.36.39"
+    hostnames:
+      - "authentik.homelab.local"
+      - "nextcloud.homelab.local"
+      - "coder.homelab.local"
+      - "taiga.homelab.local"
+      - "erpnext.homelab.local"
+
+# ERPNext specific minimal configuration
+mariadb:
+  enabled: false
+
+mariadb-sts:
+  enabled: true
+  auth:
+    rootPassword: "changeit"
+    password: "changeit"
+  primary:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
+
+dbHost: erpnext-mariadb-sts.erpnext.svc.cluster.local
+dbPort: 3306
+dbSecret: erpnext
+dbPasswordKey: mariadb-root-password
+dbUser: root
+dbRootUser: root
+
+persistence:
+  worker:
+    enabled: true
+    storageClass: "local-path"
+    accessModes: [ReadWriteOnce]
+    size: 2Gi
+  logs:
+    enabled: true
+    storageClass: "local-path"
+    accessModes: [ReadWriteOnce]
+    size: 1Gi
+
+jobs:
+  createSite:
+    siteName: erpnext.homelab.local
+
+  # Use the fully qualified domain name for reliable internal resolution
+  backend: erpnext-gunicorn.erpnext.svc.cluster.local:8000
+  socketio: erpnext-socketio.erpnext.svc.cluster.local:9000
+
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+  service:
+    https:
+      enabled: true
+      port: 443
+      targetPort: 443
+  extraContainers:
+    - name: nginx-sidecar
+      image: nginx:stable-alpine
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          cpu: 50m
+          memory: 64Mi
+      ports:
+        - name: https-internal
+          containerPort: 443
+      volumeMounts:
+        - name: erpnext-tls
+          mountPath: /etc/nginx/certs
+          readOnly: true
+        - name: erpnext-nginx-ssl-conf
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default.conf
+          readOnly: true
+  extraVolumes:
+    - name: erpnext-tls
+      secret:
+        secretName: erpnext-tls
+    - name: erpnext-nginx-ssl-conf
+      configMap:
+        name: erpnext-nginx-ssl-conf
+    - name: homelab-ca
+      configMap:
+        name: homelab-ca
+
+socketio:
+  envVars:
+    - name: REQUESTS_CA_BUNDLE
+      value: /home/frappe/frappe-bench/sites/homelab-ca.crt
+    - name: SSL_CERT_FILE
+      value: /home/frappe/frappe-bench/sites/homelab-ca.crt
+  volumeMounts:
+    - name: homelab-ca
+      mountPath: /home/frappe/frappe-bench/sites/homelab-ca.crt
+      subPath: homelab-ca.crt
+      readOnly: true
+
+worker:
+  resources:
+    requests:
+      cpu: 20m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+  volumeMounts:
+    - name: homelab-ca
+      mountPath: /home/frappe/frappe-bench/sites/homelab-ca.crt
+      subPath: homelab-ca.crt
+      readOnly: true
+  gunicorn:
+    envVars:
+      - name: REQUESTS_CA_BUNDLE
+        value: /home/frappe/frappe-bench/sites/homelab-ca.crt
+      - name: SSL_CERT_FILE
+        value: /home/frappe/frappe-bench/sites/homelab-ca.crt
+  default:
+    envVars:
+      - name: REQUESTS_CA_BUNDLE
+        value: /home/frappe/frappe-bench/sites/homelab-ca.crt
+      - name: SSL_CERT_FILE
+        value: /home/frappe/frappe-bench/sites/homelab-ca.crt
+  short:
+    envVars:
+      - name: REQUESTS_CA_BUNDLE
+        value: /home/frappe/frappe-bench/sites/homelab-ca.crt
+      - name: SSL_CERT_FILE
+        value: /home/frappe/frappe-bench/sites/homelab-ca.crt
+  long:
+    envVars:
+      - name: REQUESTS_CA_BUNDLE
+        value: /home/frappe/frappe-bench/sites/homelab-ca.crt
+      - name: SSL_CERT_FILE
+        value: /home/frappe/frappe-bench/sites/homelab-ca.crt

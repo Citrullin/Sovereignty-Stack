@@ -1,0 +1,142 @@
+ingress:
+  enabled: false
+  className: istio
+  annotations:
+    kubernetes.io/ingress.class: istio
+  hosts:
+    - host: nextcloud.homelab.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: nextcloud-tls
+      hosts:
+        - nextcloud.homelab.local
+
+hostAliases:
+  - ip: "10.43.36.39"
+    hostnames:
+      - "authentik.homelab.local"
+      - "nextcloud.homelab.local"
+      - "coder.homelab.local"
+      - "taiga.homelab.local"
+      - "erpnext.homelab.local"
+
+nextcloud:
+  host: nextcloud.homelab.local
+  password: "change_me"
+  resources:
+    requests:
+      cpu: 20m
+      memory: 512Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+  trustedDomains:
+    - nextcloud.homelab.local
+    - 10.42.0.1
+    - localhost
+
+  extraOptions:
+    trusted_proxies:
+      - 10.42.0.0/16
+      - 127.0.0.1
+      - 192.168.178.0/24
+    overwriteprotocol: https
+    overwritewebroot: /
+    allow_local_remote_servers: true
+
+  extraEnv:
+    - name: TRUSTED_PROXIES
+      value: "10.42.0.0/16 127.0.0.1"
+    - name: OVERWRITEPROTOCOL
+      value: "https"
+    - name: OVERWRITECLIURL
+      value: "https://nextcloud.homelab.local"
+    - name: SSL_CERT_FILE
+      value: "/local-ca/custom-bundle.crt"
+    - name: CURL_CA_BUNDLE
+      value: "/local-ca/custom-bundle.crt"
+
+  extraInitContainers:
+    - name: create-custom-bundle
+      image: docker.io/library/nextcloud:32.0.6-apache
+      command: ["/bin/sh", "-c", "cat /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/homelab-ca.crt > /local-ca/custom-bundle.crt"]
+      volumeMounts:
+        - name: homelab-ca
+          mountPath: /etc/ssl/certs/homelab-ca.crt
+          subPath: homelab-ca.crt
+        - name: local-ca-storage
+          mountPath: /local-ca
+
+  extraVolumes:
+    - name: nextcloud-tls
+      secret:
+        secretName: nextcloud-tls
+    - name: nextcloud-nginx-conf
+      configMap:
+        name: nextcloud-nginx-conf
+    - name: homelab-ca
+      configMap:
+        name: homelab-ca
+    - name: nextcloud-php-config
+      configMap:
+        name: nextcloud-php-config
+    - name: local-ca-storage
+      emptyDir: {}
+
+  extraVolumeMounts:
+    - name: homelab-ca
+      mountPath: /etc/ssl/certs/homelab-ca.crt
+      subPath: homelab-ca.crt
+      readOnly: true
+    - name: nextcloud-php-config
+      mountPath: /usr/local/etc/php/conf.d/homelab-tls.ini
+      subPath: homelab-tls.ini
+    - name: local-ca-storage
+      mountPath: /local-ca
+
+  extraContainers:
+    - name: nginx-sidecar
+      image: nginx:stable-alpine
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          cpu: 50m
+          memory: 64Mi
+      ports:
+        - name: https-internal
+          containerPort: 443
+      volumeMounts:
+        - name: nextcloud-tls
+          mountPath: /etc/nginx/certs
+          readOnly: true
+        - name: nextcloud-nginx-conf
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default.conf
+          readOnly: true
+
+externalDatabase:
+  enabled: true
+  type: mysql
+  host: nextcloud-mariadb
+  database: nextcloud
+  user: nextcloud
+  password: "change_me"
+
+# Disable bitnami subchart — standalone MariaDB deployed separately (nextcloud-mariadb.yaml)
+mariadb:
+  enabled: false
+
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 30
+  failureThreshold: 10
+
+persistence:
+  enabled: true
+  storageClass: "local-path"
+  accessMode: ReadWriteOnce
+  size: 8Gi

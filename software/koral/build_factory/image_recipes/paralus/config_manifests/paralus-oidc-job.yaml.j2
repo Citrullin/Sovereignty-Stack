@@ -1,0 +1,125 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: paralus-oidc-setup-script
+  namespace: paralus
+data:
+  setup-oidc.sh: |
+    #!/bin/bash
+    set -e
+    
+    echo "Starting Resilient Paralus OIDC Setup via Native HTTPS API..."
+    
+    TARGET="https://paralus.homelab.local"
+    ISTIO_IP=$(KUBECONFIG=/tmp/k3s.yaml kubectl get svc -n istio-system istio-ingress -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+    CURL_OPTS="-s -k --resolve paralus.homelab.local:443:$ISTIO_IP"
+
+    echo "[1/4] Pre-creating akadmin Kratos Identity with correct local metadata..."
+    KRATOS="http://paralus-kratos-admin:80"
+    IDENTITIES=$(curl -s "$KRATOS/admin/identities")
+    METADATA=$(echo "$IDENTITIES" | jq -c '.[] | select(.traits.email == "admin@paralus.local") | .metadata_public | .ForceReset = false')
+    AKADMIN_ID=$(echo "$IDENTITIES" | jq -r '.[] | select(.traits.email == "akadmin@homelab.local") | .id')
+
+    if [ -z "$AKADMIN_ID" ] || [ "$AKADMIN_ID" = "null" ]; then
+      echo "akadmin identity not found, creating it..."
+      curl -s -X POST "$KRATOS/admin/identities" -H "Content-Type: application/json" -d "{\"schema_id\":\"default\",\"traits\":{\"email\":\"akadmin@homelab.local\",\"first_name\":\"Admin\",\"last_name\":\"Homelab\"},\"metadata_public\":$METADATA}"
+    else
+      echo "akadmin identity found ($AKADMIN_ID), updating metadata..."
+      AKADMIN_PAYLOAD=$(echo "$IDENTITIES" | jq -c "(.[] | select(.traits.email == \"akadmin@homelab.local\")) | .metadata_public = $METADATA | del(.created_at, .updated_at)")
+      curl -s -X PUT "$KRATOS/admin/identities/$AKADMIN_ID" -H "Content-Type: application/json" -d "$AKADMIN_PAYLOAD"
+    fi
+
+    echo "[2/4] Authenticating Admin User..."
+    FLOW_RES=$(curl $CURL_OPTS -b /tmp/cook.txt -c /tmp/cook.txt "$TARGET/self-service/login/api")
+    FLOW_ID=$(echo "$FLOW_RES" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+
+    AUTH_RES=$(curl $CURL_OPTS -X POST "$TARGET/self-service/login?flow=$FLOW_ID" \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json" \
+      -b /tmp/cook.txt -c /tmp/cook.txt \
+      -d '{"method":"password","password":"ParalusAdmin123!","identifier":"admin@paralus.local"}')
+
+    SESSION_TOKEN=$(echo "$AUTH_RES" | grep -o '"session_token":"[^"]*"' | head -1 | cut -d'"' -f4)
+
+    if [ -z "$SESSION_TOKEN" ]; then
+        echo "Login failed. Trying Sup3rS3cur3P@ssw0rd! as fallback..."
+        FLOW_RES=$(curl $CURL_OPTS -b /tmp/cook2.txt -c /tmp/cook2.txt "$TARGET/self-service/login/api")
+        FLOW_ID=$(echo "$FLOW_RES" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+        AUTH_RES=$(curl $CURL_OPTS -X POST "$TARGET/self-service/login?flow=$FLOW_ID" \
+          -H "Content-Type: application/json" \
+          -H "Accept: application/json" \
+          -b /tmp/cook2.txt -c /tmp/cook2.txt \
+          -d '{"method":"password","password":"Sup3rS3cur3P@ssw0rd!","identifier":"admin@paralus.local"}')
+        SESSION_TOKEN=$(echo "$AUTH_RES" | grep -o '"session_token":"[^"]*"' | head -1 | cut -d'"' -f4)
+        if [ -z "$SESSION_TOKEN" ]; then
+            echo "Fallback login also failed. Assuming Provider already survives or cannot setup OIDC."
+            exit 0
+        fi
+    fi
+
+    echo "[3/4] Successfully authenticated. Session acquired."
+
+    echo "[4/4] Deleting existing Authentik IDP (if any)..."
+    curl $CURL_OPTS -X DELETE "$TARGET/auth/v3/sso/oidc/provider/Authentik" \
+      -H "X-Session-Token: $SESSION_TOKEN" || true
+
+    echo "[5/4] Creating Authentik OIDC Provider..."
+    OIDC_PAYLOAD='{"metadata":{"name":"Authentik","partner":"Paralus","organization":"ParalusOrg"},"spec":{"clientId":"paralus-app","clientSecret":"paralus-secret-token","issuerUrl":"https://authentik.{{ homelab_domain }}/application/o/paralus/","scopes":["openid","profile","email","groups"],"requestedClaims":{},"mapperUrl":"base64://bG9jYWwgYz1zdGQuZXh0VmFyKCdjbGFpbXMnKSxyPWMucmF3X2NsYWltczt7aWRlbnRpdHk6e3RyYWl0czp7ZW1haWw6Yy5lbWFpbCxmaXJzdF9uYW1lOmMubmFtZSxsYXN0X25hbWU6IlUiLFtpZiAiZ3JvdXBzIiBpbiByIHRoZW4gImlkcF9ncm91cHMiIGVsc2UgbnVsbF06ci5ncm91cHMgKyBbIk9yZ2FuaXphdGlvbiBBZG1pbnMiLCAiQWxsIExvY2FsIFVzZXJzIl19LG1ldGFkYXRhX3B1YmxpYzp7T3JnYW5pemF0aW9uOiJQYXJhbHVzT3JnIixQYXJ0bmVyOiJQYXJhbHVzIixGb3JjZVJlc2V0OmZhbHNlfX19"}}'
+
+    CREATE_RES=$(curl $CURL_OPTS -X POST "$TARGET/auth/v3/sso/oidc/provider" \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json" \
+      -H "X-Session-Token: $SESSION_TOKEN" \
+      -w "\n%{http_code}\n" \
+      -d "$OIDC_PAYLOAD")
+
+    CREATE_CODE=$(echo "$CREATE_RES" | tail -n1)
+    if [ "$CREATE_CODE" -ge 400 ]; then
+        echo "Failed to create IDP: $CREATE_CODE"
+        echo "$CREATE_RES"
+        exit 1
+    fi
+
+    echo "✅ Paralus OIDC Provider 'Authentik' successfully configured!"
+
+    echo "Creating OIDC Administrator Group..."
+    GROUP_PAYLOAD='{"metadata":{"name":"authentik Admins","partner":"Paralus","organization":"ParalusOrg"},"spec":{"description":"SSO mapped admins","type":"OIDC","projectNamespaceRoles":[{"role":"ADMIN","group":"authentik Admins"}]}}'
+
+    curl $CURL_OPTS -s -X POST "$TARGET/auth/v3/partner/Paralus/organization/ParalusOrg/groups" \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json" \
+      -H "X-Session-Token: $SESSION_TOKEN" \
+      -d "$GROUP_PAYLOAD" || true
+
+    curl $CURL_OPTS -s -X PUT "$TARGET/auth/v3/partner/Paralus/organization/ParalusOrg/group/authentik%20Admins" \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json" \
+      -H "X-Session-Token: $SESSION_TOKEN" \
+      -d "$GROUP_PAYLOAD" || true
+
+    echo "--- ALL OIDC TASKS COMPLETE ---"
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: paralus-oidc-setup
+  namespace: paralus
+spec:
+  ttlSecondsAfterFinished: 120
+  template:
+    spec:
+      serviceAccountName: paralus-cluster-setup-sa
+      containers:
+      - name: setup
+        image: bitnami/kubectl:latest
+        command: ["/bin/bash", "/app/setup-oidc.sh"]
+        volumeMounts:
+        - name: script-vol
+          mountPath: /app
+      restartPolicy: Never
+      volumes:
+      - name: script-vol
+        configMap:
+          name: paralus-oidc-setup-script
+

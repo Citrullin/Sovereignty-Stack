@@ -1,0 +1,537 @@
+version: 1
+metadata:
+  name: homelab-apps-v7
+  labels:
+    type: homelab
+
+  # -------------------------------------------------------------------------
+  # Custom Property Mappings
+  # -------------------------------------------------------------------------
+entries:
+  # -------------------------------------------------------------------------
+  # Custom Property Mappings
+  # -------------------------------------------------------------------------
+  - model: authentik_providers_oauth2.scopemapping
+    id: scope-email-verified
+    identifiers:
+      name: "Scope Mapping email_verified"
+    attrs:
+      name: "Scope Mapping email_verified"
+      scope_name: email
+      expression: |
+        return {
+            "email": request.user.email,
+            "email_verified": True
+        }
+
+  - model: authentik_providers_oauth2.scopemapping
+    id: scope-groups
+    identifiers:
+      name: "Scope Mapping groups"
+    attrs:
+      name: "Scope Mapping groups"
+      scope_name: groups
+      expression: |
+        groups = [group.name for group in request.user.ak_groups.all()]
+        if request.user.is_superuser or request.user.username == "akadmin":
+            if "authentik Admins" not in groups:
+                groups.append("authentik Admins")
+            if "admin" not in groups:
+                groups.append("admin")
+            if "Admin" not in groups:
+                groups.append("Admin")
+        return {
+            "groups": groups
+        }
+
+  # -------------------------------------------------------------------------
+  # Bookstack
+  # -------------------------------------------------------------------------
+  - model: authentik_providers_oauth2.scopemapping
+    id: scope-bookstack-groups
+    identifiers:
+      name: scope-bookstack-groups
+    attrs:
+      scope_name: groups
+      description: Bookstack Groups
+      expression: |
+        groups = [group.name for group in request.user.ak_groups.all()]
+        if request.user.is_superuser or request.user.username == "akadmin":
+            groups.append("Admin")
+            groups.append("authentik Admins")
+        return {
+            "groups": groups
+        }
+
+  - model: authentik_providers_oauth2.scopemapping
+    id: scope-chiefonboarding-admin
+    identifiers:
+      name: scope-chiefonboarding-admin
+    attrs:
+      scope_name: profile
+      description: ChiefOnboarding Admin Flags
+      expression: |
+        groups = []
+        is_admin = request.user.is_superuser or request.user.username == "akadmin"
+        if is_admin:
+            groups.append("Admin")
+        return {
+            "groups": groups
+        }
+
+  - model: authentik_providers_oauth2.oauth2provider
+    id: provider-bookstack
+    identifiers:
+      name: Bookstack V2
+    attrs:
+      name: Bookstack V2
+      client_id: bookstack-v2-app
+      client_secret: bf27cd9f55be54583d0b6874756eaac6
+      authorization_flow: !Find [authentik_flows.Flow, [slug, default-provider-authorization-explicit-consent]]
+      authentication_flow: !Find [authentik_flows.Flow, [slug, default-authentication-flow]]
+      invalidation_flow: !Find [authentik_flows.Flow, [slug, default-provider-invalidation-flow]]
+      signing_key: !Find [authentik_crypto.CertificateKeyPair, [name, "authentik Self-signed Certificate"]]
+      redirect_uris:
+        - url: https://bookstack.homelab.local/oidc/callback
+          matching_mode: strict
+      property_mappings:
+        - !KeyOf scope-email-verified
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+        - !KeyOf scope-bookstack-groups
+      sub_mode: hashed_user_id
+      issuer_mode: per_provider
+
+  - model: authentik_core.application
+    identifiers:
+      slug: bookstack-v2
+    attrs:
+      name: Bookstack V2
+      slug: bookstack-v2
+      provider: !KeyOf provider-bookstack
+      meta_launch_url: https://bookstack.homelab.local
+      meta_icon: https://bookstack.homelab.local/icon.png
+      policy_engine_mode: any
+
+  # -------------------------------------------------------------------------
+  # NextCloud
+  # -------------------------------------------------------------------------
+  - model: authentik_providers_oauth2.oauth2provider
+    id: provider-nextcloud
+    identifiers:
+      name: NextCloud
+    attrs:
+      name: NextCloud
+      client_id: nextcloud-app
+      client_secret: 3b3902e3a73ebdc01233c530733f0c17
+      authorization_flow: !Find [authentik_flows.Flow, [slug, default-provider-authorization-explicit-consent]]
+      authentication_flow: !Find [authentik_flows.Flow, [slug, default-authentication-flow]]
+      invalidation_flow: !Find [authentik_flows.Flow, [slug, default-provider-invalidation-flow]]
+      signing_key: !Find [authentik_crypto.CertificateKeyPair, [name, "authentik Self-signed Certificate"]]
+      redirect_uris:
+        - url: https://nextcloud.homelab.local/apps/user_oidc/code
+          matching_mode: strict
+      property_mappings:
+        - !KeyOf scope-email-verified
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+        - !KeyOf scope-groups
+      sub_mode: hashed_user_id
+      issuer_mode: per_provider
+
+  - model: authentik_core.application
+    identifiers:
+      slug: nextcloud
+    attrs:
+      name: NextCloud
+      slug: nextcloud
+      provider: !KeyOf provider-nextcloud
+      meta_launch_url: https://nextcloud.homelab.local
+      meta_icon: https://nextcloud.homelab.local/core/img/logo/logo.svg
+      policy_engine_mode: any
+
+  # -------------------------------------------------------------------------
+  # ERPNext
+  # -------------------------------------------------------------------------
+  - model: authentik_providers_oauth2.oauth2provider
+    id: provider-erpnext
+    identifiers:
+      name: ERPNext
+    attrs:
+      name: ERPNext
+      client_id: erpnext-app
+      client_secret: 70d356d5984ab941373b45a77a9f563c
+      authorization_flow: !Find [authentik_flows.Flow, [slug, default-provider-authorization-explicit-consent]]
+      authentication_flow: !Find [authentik_flows.Flow, [slug, default-authentication-flow]]
+      invalidation_flow: !Find [authentik_flows.Flow, [slug, default-provider-invalidation-flow]]
+      signing_key: !Find [authentik_crypto.CertificateKeyPair, [name, "authentik Self-signed Certificate"]]
+      redirect_uris:
+        - url: https://erpnext.homelab.local/api/method/frappe.integrations.oauth2_logins.custom/authentik
+          matching_mode: strict
+      property_mappings:
+        - !KeyOf scope-email-verified
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+        - !KeyOf scope-groups
+      sub_mode: hashed_user_id
+      issuer_mode: per_provider
+
+  - model: authentik_core.application
+    identifiers:
+      slug: erpnext
+    attrs:
+      name: ERPNext
+      slug: erpnext
+      provider: !KeyOf provider-erpnext
+      meta_launch_url: https://erpnext.homelab.local
+      policy_engine_mode: any
+
+  # -------------------------------------------------------------------------
+  # Metabase (LDAP)
+  # -------------------------------------------------------------------------
+  - model: authentik_core.user
+    identifiers:
+      username: metabase-service
+    attrs:
+      name: Metabase Service Account
+      type: service_account
+      password: metabase-service-token
+
+  - model: authentik_providers_ldap.ldapprovider
+    id: provider-metabase
+    identifiers:
+      name: Metabase LDAP
+    attrs:
+      name: Metabase LDAP
+      base_dn: dc=ldap,dc=goauthentik,dc=io
+      bind_flow: !Find [authentik_flows.Flow, [slug, default-authentication-flow]]
+      authorization_flow: !Find [authentik_flows.Flow, [slug, default-provider-authorization-implicit-consent]]
+      invalidation_flow: !Find [authentik_flows.Flow, [slug, default-provider-invalidation-flow]]
+      search_group: !Find [authentik_core.Group, [name, "authentik Admins"]] # Or a dedicated group
+      search_mode: direct
+      certificate: !Find [authentik_crypto.CertificateKeyPair, [name, "authentik Self-signed Certificate"]]
+
+  - model: authentik_core.application
+    identifiers:
+      slug: metabase
+    attrs:
+      name: Metabase
+      slug: metabase
+      provider: !KeyOf provider-metabase
+      meta_launch_url: https://metabase.homelab.local
+      policy_engine_mode: any
+
+  # -------------------------------------------------------------------------
+  # Test User
+  # -------------------------------------------------------------------------
+  - model: authentik_core.user
+    identifiers:
+      username: test-user
+    attrs:
+      name: Test User
+      email: test@homelab.local
+      is_active: true
+      password: test-password
+      path: users
+
+  # -------------------------------------------------------------------------
+  # LDAP Outpost
+  # -------------------------------------------------------------------------
+  - model: authentik_outposts.outpost
+    identifiers:
+      name: ldap-outpost
+    attrs:
+      name: LDAP Outpost
+      type: ldap
+      providers:
+        - !KeyOf provider-metabase
+      service_connection: !Find [authentik_outposts.KubernetesServiceConnection, [name, "Local Kubernetes Cluster"]]
+      config:
+        log_level: debug
+        authentik_host: https://authentik.homelab.local
+        authentik_host_insecure: true
+
+  # -------------------------------------------------------------------------
+  # Taiga
+  # -------------------------------------------------------------------------
+  - model: authentik_providers_oauth2.oauth2provider
+    id: provider-taiga
+    identifiers:
+      name: Taiga
+    attrs:
+      name: Taiga
+      client_id: taiga-app
+      client_secret: taiga-secret-token
+      authorization_flow: !Find [authentik_flows.Flow, [slug, default-provider-authorization-explicit-consent]]
+      authentication_flow: !Find [authentik_flows.Flow, [slug, default-authentication-flow]]
+      invalidation_flow: !Find [authentik_flows.Flow, [slug, default-provider-invalidation-flow]]
+      signing_key: !Find [authentik_crypto.CertificateKeyPair, [name, "authentik Self-signed Certificate"]]
+      redirect_uris:
+        - url: https://taiga.homelab.local/plugins/openid-auth/callback.html
+          matching_mode: strict
+        - url: https://taiga.homelab.local/oidc/callback/
+          matching_mode: strict
+      property_mappings:
+        - !KeyOf scope-email-verified
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+        - !KeyOf scope-groups
+      sub_mode: hashed_user_id
+      issuer_mode: per_provider
+
+  - model: authentik_core.application
+    identifiers:
+      slug: taiga-oidc
+    attrs:
+      name: Taiga
+      slug: taiga-oidc
+      provider: !KeyOf provider-taiga
+      meta_launch_url: https://taiga.homelab.local
+      policy_engine_mode: any
+
+  # -------------------------------------------------------------------------
+  # Gitea
+  # -------------------------------------------------------------------------
+  - model: authentik_providers_oauth2.oauth2provider
+    id: provider-gitea
+    identifiers:
+      name: Gitea
+    attrs:
+      name: Gitea
+      client_id: gitea-app
+      client_secret: gitea-secret-token
+      authorization_flow: !Find [authentik_flows.Flow, [slug, default-provider-authorization-explicit-consent]]
+      authentication_flow: !Find [authentik_flows.Flow, [slug, default-authentication-flow]]
+      invalidation_flow: !Find [authentik_flows.Flow, [slug, default-provider-invalidation-flow]]
+      signing_key: !Find [authentik_crypto.CertificateKeyPair, [name, "authentik Self-signed Certificate"]]
+      redirect_uris:
+        - url: https://gitea.homelab.local/user/oauth2/authentik/callback
+          matching_mode: strict
+      property_mappings:
+        - !KeyOf scope-email-verified
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+        - !KeyOf scope-groups
+      sub_mode: hashed_user_id
+      issuer_mode: per_provider
+
+  - model: authentik_core.application
+    identifiers:
+      slug: gitea
+    attrs:
+      name: Gitea
+      slug: gitea
+      provider: !KeyOf provider-gitea
+      meta_launch_url: https://gitea.homelab.local
+      meta_icon: https://gitea.homelab.local/assets/img/logo.svg
+      policy_engine_mode: any
+
+  # -------------------------------------------------------------------------
+  # Superset
+  # -------------------------------------------------------------------------
+  - model: authentik_providers_oauth2.oauth2provider
+    id: provider-superset
+    identifiers:
+      name: Superset
+    attrs:
+      name: Superset
+      client_id: superset-app
+      client_secret: superset-secret-token
+      authorization_flow: !Find [authentik_flows.Flow, [slug, default-provider-authorization-explicit-consent]]
+      authentication_flow: !Find [authentik_flows.Flow, [slug, default-authentication-flow]]
+      invalidation_flow: !Find [authentik_flows.Flow, [slug, default-provider-invalidation-flow]]
+      signing_key: !Find [authentik_crypto.CertificateKeyPair, [name, "authentik Self-signed Certificate"]]
+      redirect_uris:
+        - url: https://superset.homelab.local/oauth-authorized/authentik
+          matching_mode: strict
+      property_mappings:
+        - !KeyOf scope-email-verified
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+        - !KeyOf scope-groups
+      sub_mode: hashed_user_id
+      issuer_mode: per_provider
+
+  - model: authentik_core.application
+    id: superset-app
+    state: present
+    identifiers:
+      slug: superset
+    attrs:
+      name: Superset
+      slug: superset
+      provider: !KeyOf provider-superset
+      meta_icon: https://raw.githubusercontent.com/apache/superset/master/superset-frontend/src/assets/images/superset-logo-horiz.png
+      policy_engine_mode: any
+
+  # -------------------------------------------------------------------------
+  # Coder
+  # -------------------------------------------------------------------------
+  - model: authentik_providers_oauth2.oauth2provider
+    id: provider-coder
+    identifiers:
+      name: Coder
+    attrs:
+      name: Coder
+      client_id: coder-app
+      client_secret: coder-secret-token
+      authorization_flow: !Find [authentik_flows.Flow, [slug, default-provider-authorization-explicit-consent]]
+      authentication_flow: !Find [authentik_flows.Flow, [slug, default-authentication-flow]]
+      invalidation_flow: !Find [authentik_flows.Flow, [slug, default-provider-invalidation-flow]]
+      signing_key: !Find [authentik_crypto.CertificateKeyPair, [name, "authentik Self-signed Certificate"]]
+      redirect_uris:
+        - url: https://coder.homelab.local/api/v2/users/oidc/callback
+          matching_mode: strict
+      property_mappings:
+        - !KeyOf scope-email-verified
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+        - !KeyOf scope-groups
+      sub_mode: hashed_user_id
+      issuer_mode: per_provider
+
+  - model: authentik_core.application
+    identifiers:
+      slug: coder
+    attrs:
+      name: Coder
+      slug: coder
+      provider: !KeyOf provider-coder
+      meta_launch_url: https://coder.homelab.local
+      meta_icon: https://raw.githubusercontent.com/coder/coder/main/site/static/icon.png
+      policy_engine_mode: any
+
+  # -------------------------------------------------------------------------
+  # Paralus
+  # -------------------------------------------------------------------------
+  - model: authentik_providers_oauth2.oauth2provider
+    id: provider-paralus
+    identifiers:
+      name: Paralus
+    attrs:
+      name: Paralus
+      client_id: paralus-app
+      client_secret: paralus-secret-token
+      authorization_flow: !Find [authentik_flows.Flow, [slug, default-provider-authorization-explicit-consent]]
+      authentication_flow: !Find [authentik_flows.Flow, [slug, default-authentication-flow]]
+      invalidation_flow: !Find [authentik_flows.Flow, [slug, default-provider-invalidation-flow]]
+      signing_key: !Find [authentik_crypto.CertificateKeyPair, [name, "authentik Self-signed Certificate"]]
+      redirect_uris:
+        - url: https://paralus\.homelab\.local/.*
+          matching_mode: regex
+      property_mappings:
+        - !KeyOf scope-email-verified
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
+        - !KeyOf scope-groups
+      sub_mode: hashed_user_id
+      issuer_mode: per_provider
+
+  - model: authentik_core.application
+    identifiers:
+      slug: paralus
+    attrs:
+      name: Paralus
+      slug: paralus
+      provider: !KeyOf provider-paralus
+      meta_launch_url: https://paralus.homelab.local
+      meta_icon: https://raw.githubusercontent.com/paralus/paralus/main/docs/static/img/Paralus_Icon_Primary.png
+      policy_engine_mode: any
+  # -------------------------------------------------------------------------
+  # Listmonk
+  # -------------------------------------------------------------------------
+  - model: authentik_providers_oauth2.oauth2provider
+    id: provider-listmonk
+    identifiers:
+      name: Listmonk
+    attrs:
+      name: Listmonk
+      client_id: listmonk-app
+      client_secret: listmonk-secret-token
+      authorization_flow: !Find [authentik_flows.Flow, [slug, default-provider-authorization-explicit-consent]]
+      authentication_flow: !Find [authentik_flows.Flow, [slug, default-authentication-flow]]
+      invalidation_flow: !Find [authentik_flows.Flow, [slug, default-provider-invalidation-flow]]
+      signing_key: !Find [authentik_crypto.CertificateKeyPair, [name, "authentik Self-signed Certificate"]]
+      redirect_uris:
+        - url: https://listmonk.homelab.local/auth/oidc
+          matching_mode: strict
+      property_mappings:
+        - !KeyOf scope-email-verified
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
+      sub_mode: hashed_user_id
+      issuer_mode: per_provider
+
+  - model: authentik_core.application
+    identifiers:
+      slug: listmonk
+    attrs:
+      name: Listmonk
+      slug: listmonk
+      provider: !KeyOf provider-listmonk
+      meta_launch_url: https://listmonk.homelab.local
+      meta_icon: https://listmonk.homelab.local/favicon.ico
+      policy_engine_mode: any
+
+  # -------------------------------------------------------------------------
+  # ChiefOnboarding
+  # -------------------------------------------------------------------------
+  - model: authentik_providers_oauth2.oauth2provider
+    id: provider-chiefonboarding
+    identifiers:
+      name: ChiefOnboarding
+    attrs:
+      name: ChiefOnboarding
+      client_id: chiefonboarding-app
+      client_secret: chiefonboarding-secret-token
+      authorization_flow: !Find [authentik_flows.Flow, [slug, default-provider-authorization-explicit-consent]]
+      authentication_flow: !Find [authentik_flows.Flow, [slug, default-authentication-flow]]
+      invalidation_flow: !Find [authentik_flows.Flow, [slug, default-provider-invalidation-flow]]
+      signing_key: !Find [authentik_crypto.CertificateKeyPair, [name, "authentik Self-signed Certificate"]]
+      redirect_uris:
+        - url: https://chiefonboarding.homelab.local/accounts/oidc/authentik/login/callback/
+          matching_mode: strict
+      property_mappings:
+        - !KeyOf scope-email-verified
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+        - !Find [authentik_providers_oauth2.ScopeMapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
+        - !KeyOf scope-chiefonboarding-admin
+      sub_mode: hashed_user_id
+      issuer_mode: per_provider
+
+  - model: authentik_core.application
+    identifiers:
+      slug: chiefonboarding
+    attrs:
+      name: ChiefOnboarding
+      slug: chiefonboarding
+      provider: !KeyOf provider-chiefonboarding
+      meta_launch_url: https://chiefonboarding.homelab.local
+      meta_icon: https://chiefonboarding.homelab.local/static/images/favicon.png
+      policy_engine_mode: any
+
+  # -------------------------------------------------------------------------
+  # SIWE OIDC Source
+  # -------------------------------------------------------------------------
+  - model: authentik_sources_oauth.oauthsource
+    id: source-siwe
+    identifiers:
+      slug: siwe
+    attrs:
+      name: Sign-In with Ethereum
+      slug: siwe
+      enabled: true
+      icon: https://authentik.homelab.local/static/dist/assets/icons/icon_left_brand.svg
+      authentication_flow: !Find [authentik_flows.Flow, [slug, default-source-authentication]]
+      enrollment_flow: !Find [authentik_flows.Flow, [slug, default-source-enrollment]]
+      provider_type: openidconnect
+      authorization_url: https://siwe.homelab.local/authorize
+      access_token_url: https://siwe.homelab.local/token
+      profile_url: https://siwe.homelab.local/userinfo
+      oidc_well_known_url: https://siwe.homelab.local/.well-known/openid-configuration
+      consumer_key: siwe-client
+      consumer_secret: siwe-secret
+      user_matching_mode: identifier

@@ -1,0 +1,30 @@
+admin:
+  username: admin
+  password: "listmonkpassword"
+
+ingress:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+init:
+  enabled: true
+  runAsHook: false
+  activeDeadlineSeconds: 1800
+
+postgres:
+  enabled: true
+  waitForDatabase: true
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi

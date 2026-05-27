@@ -29,11 +29,18 @@ or hardware wallet — no seed phrases in the UX, no crypto exchange required.
 
 ## Service Stack
 
-## Service Stack
-
 All services run in a **Kubernetes cluster** fortified by two primary security layers:
 1. **Network Zero-Trust:** **Istio service mesh** enforces mTLS between all services. All services authenticate via a single **Authentik** OIDC provider.
-2. **Supply Chain Zero-Trust:** A **Kyverno admission controller** enforces Decentralized Verification ([§50](../../docs/architecture/verification/50_ai_auditor_and_decentralized_verification.md)). The cluster will only pull and execute OCI images if the local AI Agent confirms the image CID has a valid DAO signature on the public transparency log.
+2. **Supply Chain Zero-Trust:** A **Kyverno admission controller** enforces Decentralized Verification ([§50](../../docs/architecture/verification/50_ai_auditor_and_decentralized_verification.md)). The cluster will only pull and execute **Koral Images** if they are signed and validated.
+
+### Koral Image & Patches Pipeline
+
+We transition Koral deployment from legacy Ansible models to the **Koral Image** paradigm:
+- **Base Koral Image:** Read-only core OS/binary layer.
+- **Koral Patches:** Light, region-specific configuration overlays, stitched daemonlessly inside a TEE (using `umoci`/`buildah`/`skopeo` surgery).
+- **Zot Local Registry:** Each federated Koral Hub hosts its images locally using a fast, simple Zot registry server.
+- **SUSE Fleet Recovery:** Encrypted Koral Images are pushed to an upstream SUSE Fleet management cluster. If a local hub suffers hardware or cryptographic failure, it can be instantly bootstrapped and recovered from the Fleet.
+- **Intel SGXv2 Security Fallback:** If local hosts lack full confidential hypervisors (Intel TDX / SEV-SNP), the build scripts fallback to non-secure signing in clear RAM. **Every build triggers strict warning prompts** indicating that it is unsecure and must only be used for testing.
 
 | Service | Role | Sovereignty Notes |
 |---|---|---|

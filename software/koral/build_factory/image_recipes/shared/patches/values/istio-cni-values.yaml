@@ -1,0 +1,6 @@
+cni:
+  cniBinDir: /var/lib/rancher/k3s/data/cni
+  cniConfDir: /var/lib/rancher/k3s/agent/etc/cni/net.d
+ambient:
+  enabled: true
+  socketDir: /var/run/ztunnel

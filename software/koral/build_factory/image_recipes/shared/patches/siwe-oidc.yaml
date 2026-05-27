@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: siwe-oidc
+  namespace: default
+  labels:
+    app: siwe-oidc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: siwe-oidc
+  template:
+    metadata:
+      labels:
+        app: siwe-oidc
+    spec:
+      containers:
+      - name: siwe-oidc
+        image: localhost/siwe-oidc:local
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        env:
+        - name: PROJECT_ID
+          value: "c4dac2ba7d16a4aa48ce53eebc375d57"
+        - name: SIWEOIDC_ADDRESS
+          value: "0.0.0.0"
+        - name: SIWEOIDC_BASE_URL
+          value: "https://siwe.homelab.local"
+        - name: SIWEOIDC_REDIS_URL
+          value: "redis://authentik-redis.authentik.svc.cluster.local:6379/15"
+        - name: SIWEOIDC_DEFAULT_CLIENTS__siwe-client
+          value: '{"secret": "siwe-secret", "metadata": {"redirect_uris": ["https://authentik.homelab.local/source/oauth/callback/siwe/"]}, "access_token": null}'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: siwe-oidc
+  namespace: default
+spec:
+  selector:
+    app: siwe-oidc
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: siwe-oidc
+  namespace: default
+spec:
+  hosts:
+  - "siwe.homelab.local"
+  gateways:
+  - istio-system/homelab-gateway
+  http:
+  - route:
+    - destination:
+        host: siwe-oidc.default.svc.cluster.local
+        port:
+          number: 80
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https

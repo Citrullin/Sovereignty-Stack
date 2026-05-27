@@ -1,0 +1,17 @@
+{
+  "distSpecVersion": "1.1.0",
+  "storage": {
+    "rootDirectory": "/var/lib/zot",
+    "dedupe": true,
+    "gc": true,
+    "commit": true
+  },
+  "http": {
+    "address": "0.0.0.0",
+    "port": "5000",
+    "realm": "koral-realm"
+  },
+  "log": {
+    "level": "info"
+  }
+}

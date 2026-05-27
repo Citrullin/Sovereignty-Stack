@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coder-postgresql
+  namespace: coder
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: coder-postgresql
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: coder-postgresql
+    spec:
+      containers:
+      - name: postgresql
+        image: postgres:14-alpine
+        env:
+        - name: POSTGRES_USER
+          value: coder
+        - name: POSTGRES_PASSWORD
+          value: coder
+        - name: POSTGRES_DB
+          value: coder
+        ports:
+        - name: postgresql
+          containerPort: 5432
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: coder-postgresql
+  namespace: coder
+spec:
+  ports:
+  - name: postgresql
+    port: 5432
+    targetPort: postgresql
+  selector:
+    app.kubernetes.io/name: coder-postgresql

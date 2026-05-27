@@ -1,0 +1,36 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: homelab-gateway
+  namespace: istio-system
+spec:
+  selector:
+    app: istio-ingress
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    tls:
+      httpsRedirect: true
+    hosts:
+    - "*.homelab.local"
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: homelab-tls
+    hosts:
+    - "*.homelab.local"
+    - "*.coder.homelab.local"
+  - port:
+      number: 443
+      name: tls-paralus-connectors
+      protocol: TLS
+    tls:
+      mode: PASSTHROUGH
+    hosts:
+    - "*.user.paralus.homelab.local"
+    - "*.core-connector.paralus.homelab.local"

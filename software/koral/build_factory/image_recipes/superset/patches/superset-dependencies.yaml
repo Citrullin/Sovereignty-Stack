@@ -1,0 +1,113 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: superset-postgresql
+  namespace: superset
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+  selector:
+    app: superset-postgresql
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: superset-postgresql
+  namespace: superset
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: superset-postgresql
+  template:
+    metadata:
+      labels:
+        app: superset-postgresql
+    spec:
+      containers:
+        - name: postgresql
+          image: postgres:14-alpine
+          env:
+            - name: POSTGRES_USER
+              value: superset
+            - name: POSTGRES_PASSWORD
+              value: supersetpassword
+            - name: POSTGRES_DB
+              value: superset
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: superset-postgresql-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: superset-postgresql-pvc
+  namespace: superset
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: local-path
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: superset-redis
+  namespace: superset
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6379
+  selector:
+    app: superset-redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: superset-redis
+  namespace: superset
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: superset-redis
+  template:
+    metadata:
+      labels:
+        app: superset-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: superset-redis-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: superset-redis-pvc
+  namespace: superset
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: local-path

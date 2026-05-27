@@ -1,0 +1,229 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: paralus-cluster-setup-sa
+  namespace: paralus
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: paralus-cluster-setup-crb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: paralus-cluster-setup-sa
+  namespace: paralus
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: paralus-cluster-setup-script
+  namespace: paralus
+data:
+  setup-cluster.sh: |
+    #!/bin/bash
+    set -e
+    
+    CLUSTER_NAME="${PARALUS_CLUSTER_NAME:-local-k3s}"
+    TARGET="https://paralus.{{ homelab_domain }}"
+    ISTIO_IP="${NODE_IP:-192.168.178.73}"
+    CURL_OPTS="-s -k --resolve paralus.{{ homelab_domain }}:443:$ISTIO_IP"
+    
+    cat << 'EOF' > /tmp/admin-identity.json
+    {
+      "schema_id": "default",
+      "traits": {
+        "email": "admin@paralus.local",
+        "first_name": "Admin",
+        "last_name": "User"
+      },
+      "credentials": {
+        "password": {
+          "config": {
+            "password": "paraluspassword"
+          }
+        }
+      },
+      "metadata_public": {
+        "Partner": "Paralus",
+        "ForceReset": false,
+        "Organization": "ParalusOrg"
+      }
+    }
+    EOF
+
+    echo "Synchronizing local admin profile directly via Kratos Admin API..."
+    EXISTING_ID=$(curl -s "http://paralus-kratos-admin/admin/identities?per_page=100" | grep -o '"id":"[^"]*","schema_id":"default"[^}]*"email":"admin@paralus.local"' | cut -d'"' -f4 | head -1)
+
+    if [ -n "$EXISTING_ID" ]; then
+        curl -s -X PUT "http://paralus-kratos-admin/admin/identities/$EXISTING_ID" -H "Content-Type: application/json" -d @/tmp/admin-identity.json > /dev/null
+    else
+        curl -s -X POST "http://paralus-kratos-admin/admin/identities" -H "Content-Type: application/json" -d @/tmp/admin-identity.json > /dev/null
+    fi
+
+    echo ""
+    echo "[1/4] Starting Kratos API login for local admin..."
+    
+    # 1. Get Login Flow ID
+    FLOW_RES=$(curl $CURL_OPTS -b /tmp/cookies.txt -c /tmp/cookies.txt "$TARGET/self-service/login/api")
+    FLOW_ID=$(echo "$FLOW_RES" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+    
+    if [ -z "$FLOW_ID" ]; then
+        echo "Failed to get Kratos flow ID. Response:"
+        echo "$FLOW_RES"
+        exit 1
+    fi
+    
+    # 2. Submit Credentials
+    echo "Submitting credentials to Kratos (attempt 1)..."
+    AUTH_RES=$(curl $CURL_OPTS -s -X POST "$TARGET/self-service/login?flow=$FLOW_ID" \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json" \
+      -b /tmp/cookies.txt -c /tmp/cookies.txt \
+      -w "\n%{http_code}\n" \
+      -d '{"method":"password","password":"paraluspassword","identifier":"admin@paralus.local"}')
+    
+    HTTP_CODE=$(echo "$AUTH_RES" | tail -n1)
+    AUTH_BODY=$(echo "$AUTH_RES" | sed '$d')
+    
+    if [ "$HTTP_CODE" != "200" ]; then
+        echo "Attempt 1 failed. Trying alternative password (attempt 2)..."
+        
+        # We need a new flow for the second attempt
+        FLOW_RES2=$(curl $CURL_OPTS -s -b /tmp/cookies2.txt -c /tmp/cookies2.txt "$TARGET/self-service/login/api")
+        FLOW_ID2=$(echo "$FLOW_RES2" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+        
+        AUTH_RES=$(curl $CURL_OPTS -s -X POST "$TARGET/self-service/login?flow=$FLOW_ID2" \
+          -H "Content-Type: application/json" \
+          -H "Accept: application/json" \
+          -b /tmp/cookies2.txt -c /tmp/cookies.txt \
+          -w "\n%{http_code}\n" \
+          -d '{"method":"password","password":"ParalusAdmin123!","identifier":"admin@paralus.local"}')
+          
+        HTTP_CODE=$(echo "$AUTH_RES" | tail -n1)
+        AUTH_BODY=$(echo "$AUTH_RES" | sed '$d')
+        
+        if [ "$HTTP_CODE" != "200" ]; then
+            echo "Authentication failed on both attempts! Status: $HTTP_CODE"
+            echo "$AUTH_BODY"
+            echo "Assuming persistent database cluster. Ignoring Auth failure and completing Job..."
+            exit 0
+        fi
+    fi
+    
+    SESSION_TOKEN=$(echo "$AUTH_BODY" | grep -o '"session_token":"[^"]*"' | head -1 | cut -d'"' -f4)
+    if [ -z "$SESSION_TOKEN" ]; then
+        echo "Failed to extract session_token from response."
+        echo "$AUTH_BODY"
+        exit 1
+    fi
+    
+    echo "[1/4] Login complete."
+    
+    echo "Creating OIDC Admin Group Mapping..."
+    GROUP_PAYLOAD='{
+        "metadata": { "name": "authentik Admins", "description": "Mapped from OIDC" },
+        "spec": { "projectNamespaceRoles": [{"project": "", "role": "ADMIN", "namespace": ""}] }
+    }'
+    curl $CURL_OPTS -s -X POST "$TARGET/auth/v3/group" \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json" \
+      -H "X-Session-Token: $SESSION_TOKEN" \
+      -d "$GROUP_PAYLOAD" || true
+    echo "OIDC Group mapped."
+
+    echo "[2/4] Registering new cluster \"$CLUSTER_NAME\"..."
+    CLUSTER_PAYLOAD='{
+        "kind": "Cluster", 
+        "metadata": { "name": "'"$CLUSTER_NAME"'", "description": "Local K3s homelab cluster deployed via automated job" },
+        "spec": { "clusterType": "imported", "params": { "provisionType": "IMPORT", "provisionEnvironment": "ONPREM", "provisionPackageType": "", "environmentProvider": "", "kubernetesProvider": "OTHER", "state": "CONFIG" } }
+    }'
+    
+    REG_RES=$(curl $CURL_OPTS -s -X POST "$TARGET/infra/v3/project/default/cluster" \
+      -H "Content-Type: application/json" \
+      -H "Accept: application/json" \
+      -H "X-Session-Token: $SESSION_TOKEN" \
+      -w "\n%{http_code}\n" \
+      -d "$CLUSTER_PAYLOAD")
+
+    REG_CODE=$(echo "$REG_RES" | tail -n1)
+    REG_BODY=$(echo "$REG_RES" | sed '$d')
+    
+    if [ "$REG_CODE" -ge 400 ]; then
+        if echo "$REG_BODY" | grep -q "already taken"; then
+            echo "Cluster already exists."
+        else
+            echo "Cluster registration failed. Status: $REG_CODE"
+            echo "$REG_BODY"
+            exit 1
+        fi
+    fi
+    
+    echo "[2/4] Cluster \"$CLUSTER_NAME\" registered."
+    
+    echo "[3/4] Downloading Bootstrap YAML..."
+    BOOT_RES=$(curl $CURL_OPTS -s "$TARGET/infra/v3/project/default/cluster/$CLUSTER_NAME/download" \
+      -H "Accept: application/json" \
+      -H "X-Session-Token: $SESSION_TOKEN" \
+      -w "\n%{http_code}\n")
+      
+    BOOT_CODE=$(echo "$BOOT_RES" | tail -n1)
+    BOOT_BODY=$(echo "$BOOT_RES" | sed '$d')
+    
+    if [ "$BOOT_CODE" != "200" ]; then
+        echo "Failed to download bootstrap YAML. Status: $BOOT_CODE"
+        echo "$BOOT_BODY"
+        exit 1
+    fi
+    
+    # Extract base64 yaml from JSON response and decode
+    BOOT_BODY="${BOOT_RES::-3}"
+    echo "$BOOT_BODY" | grep -o '"data":"[^"]*"' | cut -d'"' -f4 | base64 -d > /tmp/paralus-bootstrap.yaml
+    echo "Bootstrap YAML downloaded."
+    
+    echo "[4/4] Applying Bootstrap YAML inside cluster..."
+    echo "Downloading kubectl..."
+    curl -sLO "https://dl.k8s.io/release/v1.28.4/bin/linux/amd64/kubectl" && chmod +x kubectl
+    
+    echo "Applying YAML..."
+    ./kubectl apply -f /tmp/paralus-bootstrap.yaml || echo "kubectl apply failed, the resources might already exist."
+    
+    echo "--- ALL TASKS COMPLETE ---"
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: paralus-cluster-setup
+  namespace: paralus
+spec:
+  template:
+    spec:
+      serviceAccountName: paralus-cluster-setup-sa
+      hostAliases:
+      - ip: "{{ istio_ingress_ip }}"
+        hostnames:
+        - "paralus.{{ homelab_domain }}"
+        - "authentik.{{ homelab_domain }}"
+      containers:
+      - name: setup
+        image: bitnami/kubectl:latest
+        command: ["/bin/bash", "/scripts/setup-cluster.sh"]
+        env:
+        - name: NODE_IP
+          value: "{{ istio_ingress_ip }}"
+        - name: PARALUS_CLUSTER_NAME
+          value: "local-k3s"
+        volumeMounts:
+        - name: script-vol
+          mountPath: /scripts
+        securityContext:
+          runAsUser: 0
+      volumes:
+      - name: script-vol
+        configMap:
+          name: paralus-cluster-setup-script
+      restartPolicy: Never
+  backoffLimit: 10

@@ -1,0 +1,463 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: nextcloud
+  namespace: nextcloud
+spec:
+  hosts:
+  - "nextcloud.homelab.local"
+  gateways:
+  - istio-system/homelab-gateway
+  http:
+  - route:
+    - destination:
+        host: nextcloud.nextcloud.svc.cluster.local
+        port:
+          number: 8080
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: collabora
+  namespace: nextcloud
+spec:
+  hosts:
+  - "collabora.homelab.local"
+  gateways:
+  - istio-system/homelab-gateway
+  http:
+  - match:
+    - uri:
+        regex: ".*/logo/logo.svg"
+    redirect:
+       authority: "nextcloud.homelab.local"
+       uri: "/core/img/logo/logo.svg"
+       redirectCode: 302
+  - match:
+    - uri:
+        regex: "/browser/.*/images/dark/lc_settings.svg"
+    rewrite:
+      uri: "/browser/dist/images/lc_settings.svg"
+    route:
+    - destination:
+        host: collabora.nextcloud.svc.cluster.local
+        port:
+          number: 9980
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+  - match:
+    - uri:
+        regex: "/browser/.*/images/dark/lc_overflow-morebutton.svg"
+    rewrite:
+      uri: "/browser/dist/images/lc_overflow-morebutton.svg"
+    route:
+    - destination:
+        host: collabora.nextcloud.svc.cluster.local
+        port:
+          number: 9980
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+  - route:
+    - destination:
+        host: collabora.nextcloud.svc.cluster.local
+        port:
+          number: 9980
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: authentik
+  namespace: authentik
+spec:
+  hosts:
+  - "authentik.homelab.local"
+  gateways:
+  - istio-system/homelab-gateway
+  http:
+  - route:
+    - destination:
+        host: authentik-server.authentik.svc.cluster.local
+        port:
+          number: 80
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: bookstack
+  namespace: bookstack
+spec:
+  hosts:
+  - "bookstack.homelab.local"
+  gateways:
+  - istio-system/homelab-gateway
+  http:
+  - route:
+    - destination:
+        host: bookstack-bookstack.bookstack.svc.cluster.local
+        port:
+          number: 8080
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: erpnext
+  namespace: erpnext
+spec:
+  hosts:
+  - "erpnext.homelab.local"
+  gateways:
+  - istio-system/homelab-gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/socket.io"
+    route:
+    - destination:
+        host: erpnext-socketio.erpnext.svc.cluster.local
+        port:
+          number: 9000
+      headers:
+        request:
+          set:
+            Host: erpnext.homelab.local
+            x-frappe-site-name: erpnext.homelab.local
+            x-forwarded-proto: https
+  - route:
+    - destination:
+        host: erpnext.erpnext.svc.cluster.local
+        port:
+          number: 8080
+      headers:
+        request:
+          set:
+            x-frappe-site-name: erpnext.homelab.local
+            x-forwarded-proto: https
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: taiga
+  namespace: taiga
+spec:
+  hosts:
+  - "taiga.homelab.local"
+  gateways:
+  - istio-system/homelab-gateway
+  http:
+  - match:
+    - uri:
+        prefix: "/api"
+    - uri:
+        prefix: "/admin"
+    - uri:
+        prefix: "/static"
+    - uri:
+        prefix: "/media"
+    - uri:
+        prefix: "/oidc"
+    route:
+    - destination:
+        host: taiga-backend.taiga.svc.cluster.local
+        port:
+          number: 8000
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+  - match:
+    - uri:
+        prefix: "/events"
+    route:
+    - destination:
+        host: taiga-events.taiga.svc.cluster.local
+        port:
+          number: 8888
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+  - route:
+    - destination:
+        host: taiga-frontend.taiga.svc.cluster.local
+        port:
+          number: 80
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: whiteboard
+  namespace: nextcloud
+spec:
+  hosts:
+  - "whiteboard.homelab.local"
+  gateways:
+  - istio-system/homelab-gateway
+  http:
+  - route:
+    - destination:
+        host: whiteboard.nextcloud.svc.cluster.local
+        port:
+          number: 3002
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: superset
+  namespace: superset
+spec:
+  hosts:
+  - "superset.homelab.local"
+  gateways:
+  - istio-system/homelab-gateway
+  http:
+  - route:
+    - destination:
+        host: superset.superset.svc.cluster.local
+        port:
+          number: 8088
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: coder
+  namespace: coder
+spec:
+  hosts:
+  - "coder.homelab.local"
+  - "*.coder.homelab.local"
+  gateways:
+  - istio-system/homelab-gateway
+  - mesh
+  http:
+  - route:
+    - destination:
+        host: coder.coder.svc.cluster.local
+        port:
+          number: 80
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: paralus
+  namespace: paralus
+spec:
+  hosts:
+  - "paralus.homelab.local"
+  gateways:
+  - istio-system/homelab-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /auth
+    - uri:
+        prefix: /event
+    - uri:
+        prefix: /infra
+    - uri:
+        prefix: /v2/sentry
+    route:
+    - destination:
+        host: paralus.paralus.svc.cluster.local
+        port:
+          number: 11000
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+  - match:
+    - uri:
+        prefix: /v2/debug/prompt
+    route:
+    - destination:
+        host: prompt.paralus.svc.cluster.local
+        port:
+          number: 7009
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+  - match:
+    - uri:
+        prefix: /self-service
+    route:
+    - destination:
+        host: paralus-kratos-public.paralus.svc.cluster.local
+        port:
+          number: 80
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+  - route:
+    - destination:
+        host: dashboard.paralus.svc.cluster.local
+        port:
+          number: 80
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: paralus-connectors
+  namespace: paralus
+spec:
+  hosts:
+  - "*.core-connector.paralus.homelab.local"
+  - "*.user.paralus.homelab.local"
+  gateways:
+  - istio-system/homelab-gateway
+  tls:
+  - match:
+    - port: 443
+      sniHosts:
+      - "*.core-connector.paralus.homelab.local"
+      - "*.user.paralus.homelab.local"
+    route:
+    - destination:
+        host: relay-server.paralus.svc.cluster.local
+        port:
+          number: 443
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: gitea
+  namespace: gitea
+spec:
+  hosts:
+  - "gitea.homelab.local"
+  gateways:
+  - istio-system/homelab-gateway
+  http:
+  - route:
+    - destination:
+        host: gitea-http.gitea.svc.cluster.local
+        port:
+          number: 3000
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: n8n
+  namespace: n8n
+spec:
+  hosts:
+  - "n8n.homelab.local"
+  gateways:
+  - istio-system/homelab-gateway
+  http:
+  - route:
+    - destination:
+        host: n8n.n8n.svc.cluster.local
+        port:
+          number: 80
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: tooljet
+  namespace: tooljet
+spec:
+  hosts:
+  - "tooljet.homelab.local"
+  gateways:
+  - istio-system/homelab-gateway
+  http:
+  - route:
+    - destination:
+        host: tooljet.tooljet.svc.cluster.local
+        port:
+          number: 80
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: listmonk
+  namespace: listmonk
+spec:
+  hosts:
+  - "listmonk.homelab.local"
+  gateways:
+  - istio-system/homelab-gateway
+  http:
+  - route:
+    - destination:
+        host: listmonk.listmonk.svc.cluster.local
+        port:
+          number: 9000
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: chiefonboarding
+  namespace: chiefonboarding
+spec:
+  hosts:
+  - "chiefonboarding.homelab.local"
+  gateways:
+  - istio-system/homelab-gateway
+  http:
+  - route:
+    - destination:
+        host: chiefonboarding.chiefonboarding.svc.cluster.local
+        port:
+          number: 8000
+      headers:
+        request:
+          set:
+            x-forwarded-proto: https

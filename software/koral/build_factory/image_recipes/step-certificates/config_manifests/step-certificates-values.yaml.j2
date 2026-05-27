@@ -1,0 +1,73 @@
+ca:
+  db:
+    accessModes: ["ReadWriteOnce"]
+    storageClass: "local-path"
+    size: "1Gi"
+inject:
+  enabled: true
+  config:
+    files:
+      ca.json:
+        root: "/home/step/certs/root_ca.crt"
+        crt: "/home/step/certs/intermediate_ca.crt"
+        key: "/home/step/secrets/intermediate_ca_key"
+        address: ":9000"
+        dnsNames:
+          - "step-certificates.{{ pki.smallstep.namespace }}.svc.cluster.local"
+          - "localhost"
+        logger:
+          format: "json"
+        db:
+          type: "badger"
+          dataSource: "/home/step/db"
+        authority:
+          provisioners:
+            - type: "JWK"
+              name: "default"
+              key:
+                use: "sig"
+                kty: "EC"
+                kid: "woOJg0vW895ayHiAOhXL3erGUD4WrK6PlpjvsWXQcjc"
+                crv: "P-256"
+                alg: "ES256"
+                x: "M8LKmqyrYf7BVeeKWCjsjX_ukay2Sd0jzDBA0M_E8Kg"
+                "y": "KCq8hng_xe8g7kA89xIAor1n0XK96aIoDAP9i0w7IYQ"
+              encryptedKey: "eyJhbGciOiJQQkVTMi1IUzI1NitBMTI4S1ciLCJjdHkiOiJqd2sranNvbiIsImVuYyI6IkEyNTZHQ00iLCJwMmMiOjYwMDAwMCwicDJzIjoiYlNOd3FOMGV2Y0pYbXRfYUtXY2R3dyJ9.xOITgwXtACNFrMNqOjE7Ov2m8quV1XsM3oGJfkfRwIWp3jH4wUs2Zg.Aeihkqk-4XMwoNE9.RMTxIz1Mri2fPvVhs6Kc3AmwlIgTK-TJrtvcyc3e_wm0bCBBEJ3BAaG9ZBBoWyA6OmsAPK0cgRTVz0vczjWQSLUXbgX6TVEjTPHujAi7v880HH4SDkoxZS1vfl1kihNXG1ZuDTS39uzmgGsH9a_ZV5CzpZJiFPxt-wv3zOmG6OLgzz3fTmEiuVosqH3xVN4y8ENGOXTE3CG-VLnSKhDq9CxwAIpMR816HWRq6UlvxGTYsmkkc6nabUtYhSh3xqMaoioRPduogIzcdYTSXujqD5X7q_hXFtdF74c9eT7US-vvSdyySL-bvgyULiEM_vL6ZR3PFfBkum0fb9bihrM.fhPSuynUiTJ3T-gTyvPARQ"
+              options:
+                x509:
+                  template: |
+                    {
+                      "subject": {% raw %}{{ toJson .Subject }}{% endraw %},
+                      "sans": {% raw %}{{ toJson .SANs }}{% endraw %},
+                    {% raw %}{{- if eq .Subject.CommonName "istio-system.svc" -}}{% endraw %}
+                      "basicConstraints": {
+                        "isCA": true,
+                        "maxPathLen": 0
+                      },
+                      "keyUsage": ["digitalSignature", "keyEncipherment", "certSign", "crlSign"]
+                    {% raw %}{{- else -}}{% endraw %}
+                      "keyUsage": ["digitalSignature", "keyEncipherment"],
+                      "extKeyUsage": ["serverAuth", "clientAuth"]
+                    {% raw %}{{- end -}}{% endraw %}
+                    }
+            - type: "ACME"
+              name: "acme"
+          claims:
+            maxTLSCertDuration: "8760h"
+            defaultTLSCertDuration: "2160h"
+      defaults.json:
+        ca-url: "https://step-certificates.{{ pki.smallstep.namespace }}.svc.cluster.local"
+        ca-config: "/home/step/config/ca.json"
+        fingerprint: "{{ root_ca_fingerprint_value }}"
+        root: "/home/step/certs/root_ca.crt"
+  secrets:
+    ca_password: "{{ pki.smallstep.provisioner_password | b64encode }}"
+    provisioner_password: "{{ pki.smallstep.provisioner_password | b64encode }}"
+    x509:
+      intermediate_ca_key: |
+{{ intermediate_ca_key_content | indent(8, true) }}
+  certificates:
+    intermediate_ca: |
+{{ intermediate_ca_content | indent(6, true) }}
+    root_ca: |
+{{ root_ca_content | indent(6, true) }}

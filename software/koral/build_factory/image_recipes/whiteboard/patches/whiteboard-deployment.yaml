@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whiteboard
+  namespace: nextcloud
+  labels:
+    app: whiteboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: whiteboard
+  template:
+    metadata:
+      labels:
+        app: whiteboard
+    spec:
+      containers:
+      - name: whiteboard
+        image: ghcr.io/nextcloud-releases/whiteboard:stable
+        ports:
+        - containerPort: 3002
+          name: http
+        env:
+        - name: PORT
+          value: "3002"
+        - name: HOST
+          value: "0.0.0.0"
+        - name: NEXTCLOUD_URL
+          value: "https://nextcloud.homelab.local"
+        - name: SSL_CERT_FILE
+          value: /etc/ssl/certs/homelab-ca.crt
+        - name: REQUESTS_CA_BUNDLE
+          value: /etc/ssl/certs/homelab-ca.crt
+        - name: JWT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: whiteboard-secrets
+              key: jwt-secret
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        volumeMounts:
+        - name: homelab-ca
+          mountPath: /etc/ssl/certs/homelab-ca.crt
+          subPath: homelab-ca.crt
+          readOnly: true
+      volumes:
+      - name: homelab-ca
+        configMap:
+          name: homelab-ca
+      hostAliases:
+      - ip: "192.168.178.73"
+        hostnames:
+        - "nextcloud.homelab.local"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: whiteboard
+  namespace: nextcloud
+spec:
+  selector:
+    app: whiteboard
+  ports:
+    - protocol: TCP
+      port: 3002
+      targetPort: 3002
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: whiteboard
+  namespace: nextcloud
+  annotations:
+    kubernetes.io/ingress.class: istio
+spec:
+  rules:
+  - host: whiteboard.homelab.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: whiteboard
+            port:
+              number: 3002
+  tls:
+  - hosts:
+    - whiteboard.homelab.local
+    secretName: nextcloud-tls

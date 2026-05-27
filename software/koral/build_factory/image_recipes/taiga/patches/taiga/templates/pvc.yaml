@@ -1,0 +1,41 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "taiga.fullname" . }}-media
+  labels:
+    {{- include "taiga.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.postgresql.persistence.accessMode | default "ReadWriteOnce" }}
+  resources:
+    requests:
+      storage: {{ .Values.postgresql.persistence.size }}
+  storageClassName: {{ .Values.postgresql.persistence.storageClass }}
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "taiga.fullname" . }}-static
+  labels:
+    {{- include "taiga.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.postgresql.persistence.accessMode | default "ReadWriteOnce" }}
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: {{ .Values.postgresql.persistence.storageClass }}
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "taiga.fullname" . }}-rabbitmq
+  labels:
+    {{- include "taiga.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.postgresql.persistence.accessMode | default "ReadWriteOnce" }}
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: {{ .Values.postgresql.persistence.storageClass }}

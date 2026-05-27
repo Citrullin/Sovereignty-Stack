@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: collabora
+  namespace: nextcloud
+  labels:
+    app: collabora
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: collabora
+  template:
+    metadata:
+      labels:
+        app: collabora
+    spec:
+      containers:
+      - name: collabora
+        image: collabora/code:latest
+        env:
+        - name: domain
+          value: ".*"
+        - name: extra_params
+          value: "--o:ssl.enable=false --o:ssl.termination=true --o:storage.ssl.enable=false --o:server_name=collabora.homelab.local --o:content_security_policy=\"frame-ancestors https://nextcloud.homelab.local\""
+        - name: username
+          value: "admin"
+        - name: password
+          value: "admin"
+        - name: SSL_CERT_FILE
+          value: /etc/ssl/certs/homelab-ca.crt
+        - name: REQUESTS_CA_BUNDLE
+          value: /etc/ssl/certs/homelab-ca.crt
+        ports:
+        - containerPort: 9980
+          name: http
+        volumeMounts:
+        - name: homelab-ca
+          mountPath: /etc/ssl/certs/homelab-ca.crt
+          subPath: homelab-ca.crt
+      volumes:
+      - name: homelab-ca
+        configMap:
+          name: homelab-ca
+      hostAliases:
+      - ip: "192.168.178.73"
+        hostnames:
+        - "nextcloud.homelab.local"
+        - "collabora.homelab.local"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: collabora
+  namespace: nextcloud
+spec:
+  selector:
+    app: collabora
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9980
+      targetPort: 9980
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: collabora
+  namespace: nextcloud
+  annotations:
+    kubernetes.io/ingress.class: istio
+spec:
+  rules:
+  - host: collabora.homelab.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: collabora
+            port:
+              number: 9980
+  tls:
+  - hosts:
+    - collabora.homelab.local
+    secretName: nextcloud-tls
+

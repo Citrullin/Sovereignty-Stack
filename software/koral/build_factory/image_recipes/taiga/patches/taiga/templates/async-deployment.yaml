@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "taiga.fullname" . }}-async
+  labels:
+    {{- include "taiga.labels" . | nindent 4 }}
+    app.kubernetes.io/component: async
+spec:
+  replicas: {{ .Values.async.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "taiga.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: async
+  template:
+    metadata:
+      labels:
+        {{- include "taiga.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: async
+    spec:
+      hostAliases:
+        - ip: "192.168.178.73"
+          hostnames:
+            - "authentik.homelab.local"
+            - "taiga.homelab.local"
+      containers:
+        - name: async
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          # Runtime Plugin Injection needed here too!
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Installing OIDC Plugin & Patching..."
+              apt-get update && apt-get install -y git
+              pip install "git+https://github.com/taigaio/taiga-contrib-oidc-auth.git#egg=taiga-contrib-oidc-auth&subdirectory=back"
+              
+              # Execute consolidated patcher
+              python3 /taiga-back/settings/patch-taiga.py
+              
+              echo "Waiting for DB..."
+              sleep 10
+              
+              echo "Starting Celery..."
+              celery -A taiga.celery worker -B --concurrency 4 -l INFO
+          env:
+            - name: POSTGRES_DB
+              value: {{ .Values.postgresql.auth.database }}
+            - name: POSTGRES_USER
+              value: {{ .Values.postgresql.auth.username }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.postgresql.auth.password }}
+            - name: POSTGRES_HOST
+              value: {{ include "taiga.fullname" . }}-postgres
+            - name: DJANGO_SETTINGS_MODULE
+              value: settings.local
+            - name: TAIGA_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "taiga.fullname" . }}-secret
+                  key: secretKey
+            - name: C_FORCE_ROOT
+              value: "true"
+          volumeMounts:
+            - name: config
+              mountPath: /taiga-back/settings/local.py
+              subPath: local.py
+            - mountPath: /taiga-back/settings/patch-taiga.py
+              name: config
+              subPath: patch-taiga.py
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "taiga.fullname" . }}-config

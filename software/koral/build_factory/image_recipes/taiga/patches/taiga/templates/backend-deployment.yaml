@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "taiga.fullname" . }}-backend
+  labels:
+    {{- include "taiga.labels" . | nindent 4 }}
+    app.kubernetes.io/component: backend
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "taiga.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: backend
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        {{- include "taiga.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: backend
+    spec:
+      # hostAliases is managed by Ansible patching
+      containers:
+        - name: backend
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+          # Runtime Plugin Injection
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Installing OIDC Plugin & Patching..."
+              apt-get update && apt-get install -y git
+              pip install "git+https://github.com/taigaio/taiga-contrib-oidc-auth.git#egg=taiga-contrib-oidc-auth&subdirectory=back"
+              
+              # Execute consolidated patcher
+              python3 /taiga-back/settings/patch-taiga.py
+
+              echo "Waiting for DB..."
+              sleep 10
+              echo "Running Migrations..."
+              python manage.py migrate --noinput
+              python manage.py loaddata initial_project_templates
+              python manage.py compilemessages
+              python manage.py collectstatic --noinput
+              echo "Starting Gunicorn..."
+              exec gunicorn --workers 4 --timeout 60 --log-level=info --access-logfile - --bind 0.0.0.0:8000 taiga.wsgi
+          env:
+            - name: POSTGRES_DB
+              value: {{ .Values.postgresql.auth.database }}
+            - name: POSTGRES_USER
+              value: {{ .Values.postgresql.auth.username }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.postgresql.auth.password }}
+            - name: POSTGRES_HOST
+              value: {{ include "taiga.fullname" . }}-postgres
+            - name: DJANGO_SETTINGS_MODULE
+              value: settings.local
+            - name: TAIGA_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "taiga.fullname" . }}-secret
+                  key: secretKey
+          ports:
+            - name: http
+              containerPort: 8000
+          volumeMounts:
+            - name: static
+              mountPath: /taiga-back/static
+            - name: media
+              mountPath: /taiga-back/media
+            - name: config
+              mountPath: /taiga-back/settings/local.py
+              subPath: local.py
+            - mountPath: /taiga-back/settings/patch-taiga.py
+              name: config
+              subPath: patch-taiga.py
+      volumes:
+        - name: static
+          persistentVolumeClaim:
+            claimName: {{ include "taiga.fullname" . }}-static
+        - name: media
+          persistentVolumeClaim:
+            claimName: {{ include "taiga.fullname" . }}-media
+        - name: config
+          configMap:
+            name: {{ include "taiga.fullname" . }}-config
+            defaultMode: 0755

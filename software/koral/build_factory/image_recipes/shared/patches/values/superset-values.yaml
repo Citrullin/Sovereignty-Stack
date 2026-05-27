@@ -1,0 +1,227 @@
+postgresql:
+  enabled: false
+
+redis:
+  enabled: false
+
+hostAliases:
+  - ip: "10.43.36.39"
+    hostnames:
+      - "authentik.homelab.local"
+      - "nextcloud.homelab.local"
+      - "coder.homelab.local"
+      - "taiga.homelab.local"
+      - "erpnext.homelab.local"
+
+init:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 512Mi
+
+supersetNode:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 20m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+  initContainers:
+    - name: wait-for-db-and-migrations
+      image: "postgres:14-alpine"
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: DB_HOST
+          value: superset-postgresql
+        - name: DB_PORT
+          value: "5432"
+      command:
+        - /bin/sh
+        - -c
+        - |
+          # Wait for DB to be reachable
+          until pg_isready -h "$DB_HOST" -p "$DB_PORT"; do
+            echo "Waiting for postgres..."
+            sleep 2
+          done
+          echo "Postgres is ready. Sleeping 90s for superset-init-db migrations to finish..."
+          sleep 90
+  connections:
+    db_host: superset-postgresql
+    db_port: "5432"
+    db_user: superset
+    db_pass: supersetpassword
+    db_name: superset
+    redis_host: superset-redis
+    redis_port: "6379"
+  
+  extraContainers:
+    - name: nginx-sidecar
+      image: nginx:stable-alpine
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
+        limits:
+          cpu: 50m
+          memory: 64Mi
+      ports:
+        - name: https-internal
+          containerPort: 443
+      volumeMounts:
+        - name: superset-tls
+          mountPath: /etc/nginx/certs
+          readOnly: true
+        - name: superset-nginx-conf
+          mountPath: /etc/nginx/conf.d/default.conf
+          subPath: default.conf
+          readOnly: true
+
+supersetWorker:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 20m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi
+  initContainers:
+    - name: wait-for-db-and-migrations
+      image: "postgres:14-alpine"
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: DB_HOST
+          value: superset-postgresql
+        - name: DB_PORT
+          value: "5432"
+      command:
+        - /bin/sh
+        - -c
+        - |
+          # Wait for DB to be reachable
+          until pg_isready -h "$DB_HOST" -p "$DB_PORT"; do
+            echo "Waiting for postgres..."
+            sleep 2
+          done
+          echo "Postgres is ready. Sleeping 90s for superset-init-db migrations to finish..."
+          sleep 90
+
+supersetCeleryBeat:
+  enabled: true
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 512Mi
+  initContainers:
+    - name: wait-for-db-and-migrations
+      image: "postgres:14-alpine"
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: DB_HOST
+          value: superset-postgresql
+        - name: DB_PORT
+          value: "5432"
+      command:
+        - /bin/sh
+        - -c
+        - |
+          # Wait for DB to be reachable
+          until pg_isready -h "$DB_HOST" -p "$DB_PORT"; do
+            echo "Waiting for postgres..."
+            sleep 2
+          done
+          echo "Postgres is ready. Sleeping 90s for superset-init-db migrations to finish..."
+          sleep 90
+
+configOverrides:
+  superset_config.py: |
+    import os
+    from flask_appbuilder.security.manager import AUTH_OID, AUTH_REMOTE_USER, AUTH_DB, AUTH_LDAP, AUTH_OAUTH
+
+    SECRET_KEY = os.environ.get("SUPERSET_SECRET_KEY", "Kovu/Elx4dtEXuDLb655BMR1ZS//ZZnEiBhHsuLd0POAEPJl7fEnsinL")
+    ENABLE_PROXY_FIX = True
+    AUTH_TYPE = AUTH_OAUTH
+    AUTH_USER_REGISTRATION = True
+    AUTH_USER_REGISTRATION_ROLE = "Alpha"
+
+    from superset.security import SupersetSecurityManager
+
+    class CustomSecurityManager(SupersetSecurityManager):
+        def oauth_user_info(self, provider, response=None):
+            if provider == 'authentik':
+                me = self.appbuilder.sm.oauth_remotes[provider].get('userinfo').json()
+                return {
+                    'username': me.get('preferred_username', me.get('sub')),
+                    'name': me.get('name', ''),
+                    'email': me.get('email', ''),
+                    'first_name': me.get('given_name', ''),
+                    'last_name': me.get('family_name', ''),
+                }
+            return super().oauth_user_info(provider, response)
+
+    CUSTOM_SECURITY_MANAGER = CustomSecurityManager
+
+    OAUTH_PROVIDERS = [
+        {
+            'name':'authentik',
+            'token_key':'access_token',
+            'icon':'fa-address-card',
+            'remote_app': {
+                'client_id': os.environ.get("SUPERSET_CLIENT_ID"),
+                'client_secret': os.environ.get("SUPERSET_CLIENT_SECRET"),
+                'server_metadata_url': 'http://authentik-server.authentik.svc.cluster.local/application/o/superset/.well-known/openid-configuration',
+                'api_base_url': 'http://authentik-server.authentik.svc.cluster.local/application/o/superset/',
+                'client_kwargs': {
+                    'scope': 'openid profile email'
+                },
+                'access_token_url': 'http://authentik-server.authentik.svc.cluster.local/application/o/token/',
+                'authorize_url': 'https://authentik.homelab.local/application/o/authorize/',
+                'userinfo_endpoint': 'http://authentik-server.authentik.svc.cluster.local/application/o/userinfo/'
+            }
+        }
+    ]
+
+extraEnv:
+  SUPERSET_CLIENT_ID: "superset-app"
+  SUPERSET_CLIENT_SECRET: "superset-secret-token"
+  SUPERSET_SECRET_KEY: "Kovu/Elx4dtEXuDLb655BMR1ZS//ZZnEiBhHsuLd0POAEPJl7fEnsinL"
+  SSL_CERT_FILE: "/etc/ssl/certs/homelab-ca.crt"
+  REQUESTS_CA_BUNDLE: "/etc/ssl/certs/homelab-ca.crt"
+
+extraVolumes:
+  - name: homelab-ca
+    configMap:
+      name: homelab-ca
+  - name: superset-tls
+    secret:
+      secretName: superset-tls
+  - name: superset-nginx-conf
+    configMap:
+      name: superset-nginx-conf
+
+extraVolumeMounts:
+  - name: homelab-ca
+    mountPath: /etc/ssl/certs/homelab-ca.crt
+    subPath: homelab-ca.crt
+  - name: superset-tls
+    mountPath: /etc/nginx/certs
+    readOnly: true
+  - name: superset-nginx-conf
+    mountPath: /etc/nginx/conf.d/default.conf
+    subPath: default.conf
+    readOnly: true
+
+bootstrapScript: |
+  # Unset SSL trust to allow pip to reach the internet for dependency installation
+  unset SSL_CERT_FILE
+  unset REQUESTS_CA_BUNDLE
+  pip install --target /app/.venv/lib/python3.10/site-packages authlib psycopg2-binary redis

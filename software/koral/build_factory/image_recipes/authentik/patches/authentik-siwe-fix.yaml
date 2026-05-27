@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentik-worker
+  namespace: authentik
+spec:
+  template:
+    spec:
+      containers:
+        - name: authentik
+          volumeMounts:
+            - name: siwe-blueprint-vol
+              mountPath: /blueprints/siwe-source-blueprint.yaml
+              subPath: siwe-source-blueprint.yaml
+      volumes:
+        - name: siwe-blueprint-vol
+          configMap:
+            name: siwe-blueprint

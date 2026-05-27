@@ -22,3 +22,10 @@ docs/a2a_telemetry/history_buffer/
 docs/a2a_telemetry/history_buffer/raw_shell/
 docs/a2a_telemetry/traces/
 docs/a2a_telemetry/history_buffer/
+
+# --- Koral Build Factory ---
+software/koral/build_factory/build_out/
+software/koral/build_factory/tmp_layers/
+software/koral/build_out/
+software/koral/patches/
+

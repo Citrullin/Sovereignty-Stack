@@ -1,0 +1,84 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: nextcloud-mariadb-secret
+  namespace: nextcloud
+type: Opaque
+stringData:
+  MARIADB_ROOT_PASSWORD: "change_me"
+  MARIADB_DATABASE: "nextcloud"
+  MARIADB_USER: "nextcloud"
+  MARIADB_PASSWORD: "change_me"
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nextcloud-mariadb
+  namespace: nextcloud
+  labels:
+    app: nextcloud-mariadb
+spec:
+  serviceName: nextcloud-mariadb
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nextcloud-mariadb
+  template:
+    metadata:
+      labels:
+        app: nextcloud-mariadb
+    spec:
+      containers:
+        - name: mariadb
+          image: mariadb:10.6
+          ports:
+            - containerPort: 3306
+              name: mysql
+          envFrom:
+            - secretRef:
+                name: nextcloud-mariadb-secret
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+          readinessProbe:
+            exec:
+              command:
+                - bash
+                - -c
+                - "mysqladmin ping -u root -p${MARIADB_ROOT_PASSWORD}"
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: nextcloud-mariadb-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nextcloud-mariadb-data
+  namespace: nextcloud
+spec:
+  storageClassName: local-path
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nextcloud-mariadb
+  namespace: nextcloud
+spec:
+  selector:
+    app: nextcloud-mariadb
+  ports:
+    - name: mysql
+      port: 3306
+      targetPort: 3306
