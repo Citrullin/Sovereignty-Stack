@@ -381,27 +381,6 @@ spec:
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: n8n
-  namespace: n8n
-spec:
-  hosts:
-  - "n8n.homelab.local"
-  gateways:
-  - istio-system/homelab-gateway
-  http:
-  - route:
-    - destination:
-        host: n8n.n8n.svc.cluster.local
-        port:
-          number: 80
-      headers:
-        request:
-          set:
-            x-forwarded-proto: https
----
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
   name: tooljet
   namespace: tooljet
 spec:

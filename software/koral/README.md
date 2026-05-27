@@ -44,19 +44,51 @@ We are fully migrating Koral deployment from legacy runtime Ansible playbooks to
 - **SUSE Fleet Recovery:** Encrypted Koral Images are pushed to upstream SUSE Fleet management clusters. If a local hub suffers physical or cryptographic failure, it can be instantly recovered and bootstrapped from the Fleet.
 
 
+### Service Portfolio
+
+To maintain absolute transparency and sovereignty, all 17 integrated service layers are categorized below. Each runs as an immutable, signed OCI payload inside the zero-trust cluster.
+
+#### Identity & Security
+
 | Service | Role | Sovereignty Notes |
-|---|---|---|
+| :--- | :--- | :--- |
+| **Authentik** | Central OIDC / SSO provider | The single auth gateway. Everything speaks OIDC. SIWE relay optionally makes wallet = identity. |
+| **Istio** | Zero-trust service mesh | mTLS between all services, traffic policy enforcement, observability. |
+| **Step-certificates** | Internal PKI / Certificate authority | Automated, cryptographically secure certificate management (Smallstep) ensuring secure communication and cryptographic identity inside the cluster. |
+
+#### Collaboration & Productivity
+
+| Service | Role | Sovereignty Notes |
+| :--- | :--- | :--- |
 | **Nextcloud** | Files, Calendar, Contacts, Talk, Office | Self-hosted data. Optional IPFS backup for decentralized resilience. |
-| **ERPNext** | ERP, Accounting, HR, Inventory, CRM | On-chain payment integration via `deIBAN`/`deSWIFT` (§23) |
-| **ChiefOnboarding** | Employee / member onboarding workflows | Plugin option: dispatch a hardware wallet (NFC disc / Ledger) as part of new member onboarding |
-| **Coder** | Cloud development environments | Simple k8s-native dev environment deployments for distributed teams |
-| **Paralus** | Kubernetes cluster audit & RBAC | Audit logs can be ZK-proved and attached on-chain for verifiable governance trails |
-| **Gitea** | Git hosting, Helm chart registry | Sovereign code hosting. Future: SIWE commit signing per §17 |
-| **Listmonk** | Email marketing & newsletters | Can be enriched with on-chain relationship data (wallet-verified subscribers) |
-| **Apache Superset** | Dashboarding & analytics | Can consume on-chain telemetry from Heartbeat Oracles (§12) |
-| **X-Road** *(optional)* | Inter-organizational data exchange | Estonian model for sovereign data sharing between hubs. Aligned with EU data sovereignty regulations |
-| **Authentik** | Central OIDC / SSO provider | The single auth gateway. Everything speaks OIDC. SIWE relay optionally makes wallet = identity |
-| **Istio** | Zero-trust service mesh | mTLS between all services, traffic policy enforcement, observability |
+| **Collabora** | Office document editing | Fully integrated with Nextcloud, enabling collaborative real-time editing without leaking data to proprietary document clouds. |
+| **Bookstack** | Sovereign wiki and internal documentation | Structured markdown-based knowledge management. Can be backed up to IPFS or Git repositories to prevent documentation loss. |
+| **Taiga** | Agile project management and tracking | Sovereign project and issue tracking. Supports cryptographic export/import of project structures for portability. |
+| **Whiteboard** | Digital collaboration & whiteboarding | Ephemeral or persistent collaborative drawing board run entirely locally with zero external tracking. |
+
+#### Business Operations
+
+| Service | Role | Sovereignty Notes |
+| :--- | :--- | :--- |
+| **ERPNext** | ERP, Accounting, HR, Inventory, CRM | On-chain payment integration via `deIBAN`/`deSWIFT` (§23). Complete operational sovereignty. |
+| **ChiefOnboarding** | Employee / member onboarding workflows | Plugin option: dispatch a hardware wallet (NFC disc / Ledger) as part of new member onboarding. |
+| **Listmonk** | Email marketing & newsletters | Can be enriched with on-chain relationship data (wallet-verified subscribers) and self-hosted SMTP relays. |
+
+#### Data & Integration
+
+| Service | Role | Sovereignty Notes |
+| :--- | :--- | :--- |
+| **Apache Superset** | Dashboarding & analytics | Can consume on-chain telemetry from Heartbeat Oracles (§12) and read directly from local sovereign databases. |
+| **X-Road** *(optional)* | Inter-organizational data exchange | Estonian model for sovereign data sharing between hubs. Aligned with EU data sovereignty regulations. |
+
+#### DevOps & Infrastructure
+
+| Service | Role | Sovereignty Notes |
+| :--- | :--- | :--- |
+| **Coder** | Cloud development environments | Simple k8s-native dev environment deployments for distributed teams, keeping source code strictly in sovereign clusters. |
+| **Paralus** | Kubernetes cluster audit & RBAC | Audit logs can be ZK-proved and attached on-chain for verifiable governance trails. |
+| **Gitea** | Git hosting, Helm chart registry | Sovereign code hosting. Future: SIWE commit signing per §17. |
+| **Velero** | Cluster backup and disaster recovery | Automated back-up of cluster state and persistent volumes directly to sovereign Object Storage (S3/MinIO/IPFS). |
 
 ## Key Integration Points
 
