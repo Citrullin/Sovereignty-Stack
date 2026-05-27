@@ -1,9 +1,6 @@
 # Koral — Pan-European Federated Sovereign Hub
 
-> **⚠️ Proprietary:** Koral is currently **closed-source** by partner agreement
-> (Philipp Blum + Michael). The long-term intent is to open-source the stack once
-> the business is established. Contributions and adaptations of the open components
-> (Nextcloud, ERPNext, etc.) remain under their respective OSS licenses.
+> **🔓 Sovereign Open Source:** Koral is fully open-source, designed as a highly reproducible template for continental service providers to bootstrap decentralized, zero-trust infrastructure.
 
 ## Investment Thesis
 
@@ -33,14 +30,19 @@ All services run in a **Kubernetes cluster** fortified by two primary security l
 1. **Network Zero-Trust:** **Istio service mesh** enforces mTLS between all services. All services authenticate via a single **Authentik** OIDC provider.
 2. **Supply Chain Zero-Trust:** A **Kyverno admission controller** enforces Decentralized Verification ([§50](../../docs/architecture/verification/50_ai_auditor_and_decentralized_verification.md)). The cluster will only pull and execute **Koral Images** if they are signed and validated.
 
-### Koral Image & Patches Pipeline
+### Recursive OCI Synthesis Model (Koral Images & Patches)
 
-We transition Koral deployment from legacy Ansible models to the **Koral Image** paradigm:
-- **Base Koral Image:** Read-only core OS/binary layer.
-- **Koral Patches:** Light, region-specific configuration overlays, stitched daemonlessly inside a TEE (using `umoci`/`buildah`/`skopeo` surgery).
+We are fully migrating Koral deployment from legacy runtime Ansible playbooks to a distro-agnostic **Recursive OCI Synthesis Model**. This shifts configuration from runtime live-pod patching to immutable build-time composition:
+
+- **Root Koral Image:** A single signed OCI image acting as an installer payload. It can recursively contain nested signed Koral images (base platforms like Nextcloud, ERPNext, Authentik) alongside regional/jurisdictional patches.
+- **Recursive Synthesis Engine (`build_factory`):** Instead of Ansible scripts, the `koral_synthesis.sh` engine processes individual service recipes in `software/koral/build_factory/image_recipes/`. It stitches files and templates into layered OCI structures and compiles a deterministic linked-list synthesis manifest (`koral-manifest.json`).
+- **Tail-Call Execution:** The recursive unpacking pipeline processes layers and patches until it hits the final "tail-call", producing an end-state payload ready to be flashed directly to hardware (constrained devices, USB installers) or executed as K3s/Kubernetes pods.
+- **Strict Cryptographic & Enclave Enforcement:**
+  - **Production Mode:** All layers, patches, and configurations are cryptographically signed down to the Git commit level. Execution and composition must run inside verified Trusted Execution Environments (TEE) (Intel TDX / AMD SEV-SNP).
+  - **Development Mode:** Bypasses TEE and signing requirements to facilitate local prototyping, but **strictly emits prominent terminal warning banners** on every build alerting developers of the unsecure signing environment.
 - **Zot Local Registry:** Each federated Koral Hub hosts its images locally using a fast, simple Zot registry server.
-- **SUSE Fleet Recovery:** Encrypted Koral Images are pushed to an upstream SUSE Fleet management cluster. If a local hub suffers hardware or cryptographic failure, it can be instantly bootstrapped and recovered from the Fleet.
-- **Intel SGXv2 Security Fallback:** If local hosts lack full confidential hypervisors (Intel TDX / SEV-SNP), the build scripts fallback to non-secure signing in clear RAM. **Every build triggers strict warning prompts** indicating that it is unsecure and must only be used for testing.
+- **SUSE Fleet Recovery:** Encrypted Koral Images are pushed to upstream SUSE Fleet management clusters. If a local hub suffers physical or cryptographic failure, it can be instantly recovered and bootstrapped from the Fleet.
+
 
 | Service | Role | Sovereignty Notes |
 |---|---|---|
