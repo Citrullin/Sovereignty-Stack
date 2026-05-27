@@ -20,16 +20,16 @@ The stack is a full-stack architecture that bridges the physical and digital wor
 The Sovereignty Stack does not just "hope" the code is correct; it proves it through a recursive verification loop:
 
 1. **Sociological Intent (Gherkin):** Human-readable BDD scenarios define the "Rules of Engagement" for the collective.
-2. **Formal Specification (TLA+):** The Gherkin intents are transpiled into mathematical state machines to check for systemic liveness and safety invariants.
-3. **Rust Implementation (FSM):** The logic is implemented in memory-safe Rust using strict Finite State Machine patterns.
-4. **Agentic Auditing (A2A):** Autonomous agents scan the repository and verify cryptographic health metrics via the [A2A Communication Protocol](docs/architecture/A2A_COMMUNICATION_PROTOCOL.md).
+2. **Formal Specification (TLA+ Superposition):** The Gherkin intents are transpiled into mathematical state machines. Rather than attempting to deterministically verify probabilistic LLMs, the TLA+ models a **Quantum Superposition** of all possible agent outcomes. The system bounds the possibility space, ensuring that regardless of an LLM's non-deterministic action, the system maintains strict liveness and safety invariants.
+3. **Rust Implementation (FSM):** The logic is implemented in memory-safe Rust using strict Finite State Machine patterns bounded by the TLA+ models.
+4. **Agentic Orchestration & Discovery:** Autonomous LLM agents do not verify the math; they act *on behalf* of the user to engage with Federated Manifolds. Each Manifold maintains its own isolated **Agent Registry** (a localized address space). LLMs discover each other across manifolds to negotiate zero-value state messages and dynamically "Block-Build" asset routing.
 5. **Confidential Deployment:** The verified binaries are deployed in Trusted Execution Environments (TEEs) with remote attestation, ensuring the operator cannot mutate the state.
 
 ## The Investment Thesis
 
-We live in a low-trust, multi-polar world. True sovereignty requires escaping the "Syndicate" (centralized cloud monopolies and captured decentralized rails) by returning to tangible, sociological trust mechanisms.
+We live in a low-trust, multi-polar world. True sovereignty requires leveraging the highly stable, low-entropy **Banking Well**—the legacy monolithic networks like Ethereum that are undergoing a necessary, cooperative transformation into restricted, compliance-heavy rails run by **Federated TradFi** and Dual TradFi/DeFi. 
 
-By combining federated systems with blockchain verification, we can create resilient collectives that own their data, devices, and minds. The goal is to extend existing sociological mechanisms (like [community keychains](hardware/tiny-pay/img/community_NFT_keychain.jpg) or face-to-face handshakes) with cryptographic permanence and sovereignty features.
+Rather than viewing this centralization as a failure, we support it as a stabilizing anchor for the global ecosystem. Alongside this regulated Banking Well, the Sovereignty Stack establishes independent, low-entropy **Sector Wells** (such as specialized manifolds for Tinyblock, the Chocolate industry, or the NASDAQ). These local Wells connect and route regulated stablecoins across one another not via vulnerable bridges, but through **Quantum-Coupled Membranes** and physical **NFC-Enabled Crypto-Native Cash** (Tiny-Pay hardware). This physical and cryptographic membrane approach synchronizes state and facilitates frictionless asset transit across isolated networks while keeping the underlying value safely anchored.
 
 For the deep-dive philosophical background, read the **[Concepts Manifesto](concepts/)**.
 
@@ -55,6 +55,7 @@ The stack solves the "Sovereignty Gap" by replacing the "Trust but Verify" parad
 | **Build Env** | Shared VM/Runner | TEE (Intel TDX / AMD SEV) | Build process is a "Black Box" even to root. |
 
 For the formal threat model, see [`docs/architecture/THREAT_MODEL.md`](docs/architecture/THREAT_MODEL.md).
+For the tunneling protocol and intent-based routing, see the [Unified Manifold Interface (UMI)](docs/architecture/UNIFIED_MANIFOLD_INTERFACE.md).
 
 ---
 
