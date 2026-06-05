@@ -26,3 +26,15 @@ To ensure Solvers do not create Destructive Interference (e.g., failing to fulfi
 
 - **The Slag Penalty:** If a Solver locks an intent but fails to collapse it successfully within the Time-To-Live (TTL), they accrue **Social Slag**.
 - **Slashing as Kinetic Drain:** Their staked collateral (Kinetic Energy) is slashed and redirected to the user as a "Latency Rebate," ensuring that the Thermodynamic friction of the failure is borne entirely by the inefficient router, not the sovereign user.
+
+### 1.4 Liquidity Depth Reporting and Settlement Probability
+
+To optimize routing through the mesh without relying on centralized hubs or deterministic bridges, the system introduces **Liquidity Depth Reporting**:
+- **On-Block Reporting:** Each active manifold, and every entity active on the chains, periodically publishes their localized liquidity depth, either directly on their blocks or parallel to them.
+- **Liquidity Mesh Density:** These reports collectively form a real-time, decentralized map of the liquidity depth across the entire Sovereign Mesh.
+
+Using this map, routers and users calculate the **Probability of Settlement**:
+- **Custom Client Strategies:** Users execute localized routing strategies to determine the settlement probability of a transient state packet over a specific path.
+- **Asset Preference Rules:** Users specify strategies that prioritize preferred assets or make illiquid assets liquid on the fly.
+- **Path Selection:** The system selects routes based on the mathematical probability that the packet will successfully settle given the current liquidity depth and the preferred asset pathways.
+

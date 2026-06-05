@@ -45,3 +45,17 @@ Tinyblock utilizes ERC-3475 to issue bonds backed by future resonance rather tha
 - **Senior Tranche A:** Backed by physical inventory (Smart Containers / Physical Anchors).
 - **Junior Tranche D:** Backed by "Innovative Potential" (future $C_r$).
 - **Margin Call:** Triggered by a drop in TinyMeritRank via the Vibe-Oracle, rather than a fiat price drop.
+
+### 0.5 Token Utility and Eurovision-Style Federated Voting
+
+The $TINY token functions as the "community stock" of the Tinyblock ecosystem, serving three primary utilities:
+1. **Network Fees:** Used for transaction fees and prioritizing transient state packets within the manifolds.
+2. **Set & Hardware Purchases:** Required to purchase standardized physical sets, edge computing hardware, and smart containers.
+3. **Global DAO Governance:** Used for voting on global protocol configurations, standard updates, and strategic reserves.
+
+To maintain equilibrium between regional economic variations and local exchange rates, $TINY token distribution uses a **Eurovision-Style Federated Voting** model:
+- **Regional DAOs** (e.g., Desertmonitor) distribute their own localized merit rank/tokens based on local events.
+- Annually, each Regional DAO presents its accomplishments (infrastructure built, local services rendered, verified social impact).
+- Regional DAOs cast votes for other regions (excluding themselves) in a federated scoring system.
+- Global $TINY token allocations are distributed to the regions proportionally based on the federated votes received. This prevents global central entities from determining local value, balancing local and global exchange rates.
+

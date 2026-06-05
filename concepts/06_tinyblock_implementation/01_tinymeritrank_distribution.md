@@ -45,3 +45,11 @@ Where $C_{r,i}^\tau$ is the raw accumulated resonance score from the AI auditing
 
 - **Signed Commits:** Every commit is tied to the developer's SIWE key and localized AI agent. Hit-and-run attacks destroy the developer's $C_r$.
 - **No Blind Upgrades:** Tinyblock specifically disables auto-upgrading to prevent centralized supply-chain capture, ensuring the manifold's Topology requires explicit physical consensus to alter.
+
+### 1.5 Regional DAO Merit Tokens
+
+Rather than a single global reputation metric, each Regional DAO (such as Desertmonitor) issues its own distinct, non-transferable **Regional Merit Token** (e.g., `$DESERTMERIT`).
+- **Local Issuance:** These local merit tokens are distributed dynamically based on local achievements, verified physical actions, regional events, and cooperative labor.
+- **Vibe Equilibrium:** The localized merit tokens reflect a region's internal constructive interference and serve as the basis for voting in the global Eurovision-style federated governance.
+- **Non-Financialized Rank:** Because they are non-transferable, they cannot be bought, sold, or pooled to capture regional governance.
+
