@@ -28,19 +28,21 @@ To guarantee that software cannot be tampered with between compilation and execu
 
 #### Tier 1: The Hardened Build Factory (Synthesis)
 Traditional, vulnerable CI/CD runner machines are eliminated. Binary compilation and image creation occur inside a hardware-encrypted **Trusted Execution Environment (TEE)** (such as AMD SEV-SNP, Intel TDX, or Enarx WebAssembly enclaves).
-- **The Black Box Merge:** Inside the TEE, `buildah` and `umoci` merge the Base and Patch layers. Because memory space is hardware-encrypted, not even a host system administrator with root access can inspect execution memory or inject backdoors.
+- **The Black Box Merge:** Inside the TEE, `buildah` and `umoci` merge the Base and Patch layers to produce the **Koral Image**. Because memory space is hardware-encrypted, not even a host system administrator with root access can inspect execution memory or inject backdoors.
+- **Intel SGXv2 Security Fallback:** In environments utilizing Intel SGXv2 clients where full confidential VM enclaves (such as Intel TDX) are unavailable, the build system defaults to a **non-secure execution runtime**. Every build process must issue explicit, high-visibility warnings to the user stating that signing keys and boot parameters are exposed to host RAM, and that the resulting Koral Images are strictly for sandbox testing and development.
 - **Physical Protocol & `in-toto` Attestations:** For constrained edge devices and POS terminals, compiling the software is insufficient. The build factory generates an `in-toto` attestation linking the digital software release to the physical deployment protocol. Before a device is flashed, the attestation bundle digests:
   - The cryptographic signature of the compiled OCI firmware.
   - The hash of the X-ray scan of the physical data cable utilized to write the binary.
   - The digital signatures (NFC taps) of the physical operators executing the flashing and inspection process.
 
 #### Tier 2: The Attestation & Metadata Registry (Storage & Boot Auditing)
-- **Zot Registry:** An OCI-native registry used to host the entire tree of configuration patches, container layers, and signed attestation bundles.
+- **Zot Registry:** A simple, lightweight OCI-native registry used to host the entire tree of Koral Patches, container layers, and signed Koral Images locally at each hub, with recovery configurations pushed upstream to **SUSE Fleet** management clusters.
 - **Keylime (Remote Boot Attestation):** Provides remote platform integrity monitoring. Keylime continuously monitors the Trusted Platform Module (TPM) and Platform Configuration Register (PCR) states of active hardware nodes. If an adversary attempts to swap physical components or tamper with the bootloader, the resulting cryptographic state mismatch immediately triggers a "poison pill" routine, erasing local sovereign keys.
 - **Sigstore (Rekor):** An immutable transparency log recording every applied configuration patch and hardware attestation.
 
 #### Tier 3: The Confidential Runtime Tier (Execution)
 Once deployed, the runtime environment isolates the application from host operating system vulnerabilities and hypervisor-level attacks:
 - **Confidential Containers (CoCo):** Integrates Kata Containers with hardware enclaves. When Podman or Kubernetes initiates the container, it executes inside a hardware-encrypted virtual machine.
-- **Key Broker Service (KBS):** The OCI image remains encrypted at rest within the registry. The decryption key is only released by the KBS inside the TEE after the enclave provides a hardware-signed cryptographic quote proving it is running the exact, untampered container image verified in Tier 1.
+- **Key Broker Service (KBS):** The Koral Image remains encrypted at rest within the registry. The decryption key is only released by the KBS inside the TEE after the enclave provides a hardware-signed cryptographic quote proving it is running the exact, untampered container image verified in Tier 1.
 - **`systemd-sysext` OS Extensions:** Host-level operating system patching is managed by dropping signed `.raw` system images into `/var/lib/extensions`. The host OS merges them immutably at runtime via OverlayFS, applying container-patching paradigms to the underlying system.
+
