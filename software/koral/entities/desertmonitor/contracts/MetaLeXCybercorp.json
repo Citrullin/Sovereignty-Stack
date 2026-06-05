@@ -1,0 +1,30 @@
+{
+  "contractName": "MetaLeXCybercorp",
+  "comment": "MetaLeX cybercorp contract configuration for Desertmonitor, defining its status as a Regional DAO within the Tinyblock ecosystem with localized merit tokens and Eurovision-style federated governance.",
+  "repository": "https://github.com/MetaLex-Tech/cybercorps-contracts",
+  "governanceAgent": {
+    "name": "Desertmonitor Merit Governance Agent",
+    "did": "did:key:z6MkMeritGovAgentDesertmonitor888",
+    "operator": "Philipp-Alexander Blum"
+  },
+  "entityType": "Regional DAO",
+  "tokenomics": {
+    "regionalMeritToken": {
+      "name": "Desertmonitor Merit Rank Token",
+      "distribution": "Distributed locally based on events, works, and contributions"
+    },
+    "federatedDistribution": {
+      "mechanism": "Eurovision-style federated voting",
+      "purpose": "Equilibrium-focused peer voting across Regional DAOs to distribute the global $TINY token, accounting for local exchange rates"
+    },
+    "generalToken": {
+      "symbol": "$TINY",
+      "role": "Community stock",
+      "utility": [
+        "Fee payments",
+        "Hardware set purchases",
+        "Voting on the general Tinyblock DAO"
+      ]
+    }
+  }
+}

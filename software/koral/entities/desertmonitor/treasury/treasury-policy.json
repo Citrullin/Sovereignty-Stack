@@ -1,0 +1,53 @@
+{
+  "transparencyLevel": "Tiered",
+  "comment": "Commercial entity with proprietary supplier agreements. Tiered disclosure rules applied. Corporate SEPA micro-liquidity isolated from personal Gnosis Pay.",
+  "vaults": [
+    {
+      "address": "0xABC1234567890123456789012345678901234567",
+      "network": "tinyblock",
+      "purpose": "ValidatorRewardsHolding"
+    },
+    {
+      "address": "0xDEF1234567890123456789012345678901234567",
+      "network": "ethereum",
+      "purpose": "RetailOperationsReserve"
+    },
+    {
+      "address": "IBANDE123456789012345678",
+      "network": "sepa-corporate",
+      "purpose": "MicroLiquidityGateway"
+    }
+  ],
+  "authorizedSpenders": [
+    {
+      "did": "did:key:z6MkAdminDesertmonitorOwner888",
+      "role": "ChiefOperationsOfficer",
+      "limitUSD": 50000
+    }
+  ],
+  "microLiquidity": {
+    "sepaCryptoSwapEnabled": true,
+    "maxLiquidityLimitEUR": 2500.00,
+    "purpose": "Tinyblock intent-based bridge support within legal reserve range",
+    "restrictions": {
+      "forbidMemecoins": true,
+      "useMonerium": true,
+      "comment": "Reserve liquidity is managed via corporate Monerium SEPA-to-Crypto integrations within the legal reserve limit."
+    }
+  },
+  "liquidationStrategy": {
+    "preferredInflowAssets": ["EUR", "USDT", "TNY"],
+    "assetLiquidationOrder": [
+      {
+        "asset": "TNY",
+        "priority": 1,
+        "description": "Liquidate partial validator rewards while keeping mandatory staking bonding requirements."
+      },
+      {
+        "asset": "USDT",
+        "priority": 2,
+        "description": "Draw from stable reserves last to preserve capital stability."
+      }
+    ]
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "transparencyLevel": "Absolute-100%",
+  "comment": "Public stabilization foundation. Mandatory cryptographic disclosure of all vaults, activities, and pay packages.",
+  "vaults": [
+    {
+      "address": "0xNEF9999999999999999999999999999999999999",
+      "network": "ethereum",
+      "purpose": "PrimaryStabilizationPool"
+    },
+    {
+      "address": "0xNEFSOL777777777777777777777777777777777",
+      "network": "solana",
+      "purpose": "SolanaBridgeStabilizationVault"
+    },
+    {
+      "address": "0xNEFTNY555555555555555555555555555555555",
+      "network": "tinyblock",
+      "purpose": "TinyblockValidationStakingPool"
+    },
+    {
+      "address": "0xNEFGNO888888888888888888888888888888888",
+      "network": "sepa-monerium-corporate",
+      "purpose": "StabilizationRoutingHub"
+    }
+  ],
+  "authorizedSpenders": [
+    {
+      "did": "did:key:z6MkBoardMemberFederated222",
+      "role": "FederatedBoardSpender",
+      "limitUSD": 1000000
+    }
+  ],
+  "payPackagesDisclosure": {
+    "publicAuditing": true,
+    "members": [
+      {
+        "role": "BoardMember",
+        "compensationGNO": 5000,
+        "frequency": "annually"
+      },
+      {
+        "role": "CoreContributor",
+        "compensationGNO": 2500,
+        "frequency": "annually"
+      }
+    ]
+  },
+  "liquidationStrategy": {
+    "preferredInflowAssets": ["ETH", "SOL", "USDC", "GNO", "MEME"],
+    "assetLiquidationOrder": [
+      {
+        "asset": "MEME",
+        "priority": 1,
+        "description": "Inject/liquidate memecoin and hyperliquidity flows immediately into destabilizing Manifolds to stabilize market pegs."
+      },
+      {
+        "asset": "GNO",
+        "priority": 2,
+        "description": "Utilize corporate Monerium SEPA integration to route stabilization flows in native GNO/stablecoins."
+      },
+      {
+        "asset": "SOL",
+        "priority": 3,
+        "description": "Utilize Solana-based liquid assets to settle multi-polar arbitrage and stabilization tasks."
+      },
+      {
+        "asset": "USDC",
+        "priority": 4,
+        "description": "Deploy stable USDC reserves to defend peg parameters or injection thresholds."
+      },
+      {
+        "asset": "ETH",
+        "priority": 5,
+        "description": "Utilize core Ethereum foundation assets as final settlement reserve."
+      }
+    ]
+  }
+}

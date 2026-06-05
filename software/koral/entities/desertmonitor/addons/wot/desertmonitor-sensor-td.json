@@ -1,0 +1,25 @@
+{
+  "@context": "https://www.w3.org/2019/wot/td/v1",
+  "id": "urn:dev:ops:desertmonitor-sensor-1234",
+  "title": "Desertmonitor Environment Sensor Node",
+  "@type": "Thing",
+  "securityDefinitions": {
+    "nosec_sc": {
+      "scheme": "nosec"
+    }
+  },
+  "security": [
+    "nosec_sc"
+  ],
+  "properties": {
+    "temperature": {
+      "type": "number",
+      "readOnly": true,
+      "forms": [
+        {
+          "href": "coap://[fd00::1]/temp"
+        }
+      ]
+    }
+  }
+}

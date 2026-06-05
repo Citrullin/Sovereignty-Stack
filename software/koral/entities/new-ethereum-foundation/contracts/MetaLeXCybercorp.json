@@ -1,0 +1,11 @@
+{
+  "contractName": "MetaLeXCybercorp",
+  "comment": "MetaLeX cybercorp contract configuration for the New Ethereum Foundation (NEF).",
+  "repository": "https://github.com/MetaLex-Tech/cybercorps-contracts",
+  "governanceAgent": {
+    "name": "NEF Merit Governance Agent",
+    "did": "did:key:z6MkMeritGovAgentNef888",
+    "operator": "Philipp-Alexander Blum"
+  }
+}
+

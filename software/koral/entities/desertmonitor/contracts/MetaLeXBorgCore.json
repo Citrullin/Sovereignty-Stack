@@ -1,0 +1,27 @@
+{
+  "contractName": "MetaLeXBorgCore",
+  "comment": "MetaLeX borg-core contract bridging Desertmonitor DAO to Estonian OÜ (limited liability company).",
+  "framework": "MetaLeX BORG (CyBernetic ORGanization)",
+  "jurisdiction": "Estonia (EE)",
+  "legalEntity": "Desertmonitor OÜ",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "isResolutionValid",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "governanceMapping": {
+    "votingThresholdPercentage": 51,
+    "noticePeriodDays": 7,
+    "liabilityLimitEUR": 2500
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "contractName": "NefStabilizer",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "manifold",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "injectStabilizingLiquidity",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "economicParameters": {
+    "supportedManifolds": ["ethereum", "solana", "tinyblock"],
+    "stabilizationThreshold": 80
+  }
+}

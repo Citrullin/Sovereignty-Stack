@@ -1,0 +1,30 @@
+{
+  "contractName": "DesertmonitorRewards",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "adjustRiskWeight",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getValidatorShare",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "economicParameters": {
+    "validatorRewardSharePercentage": 15,
+    "retailMarkupPercentage": 5,
+    "bondingCurveSlope": "0.001"
+  }
+}
