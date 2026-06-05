@@ -89,6 +89,16 @@ To maintain absolute transparency and sovereignty, all 17 integrated service lay
 | **Paralus** | Kubernetes cluster audit & RBAC | Audit logs can be ZK-proved and attached on-chain for verifiable governance trails. |
 | **Gitea** | Git hosting, Helm chart registry | Sovereign code hosting. Future: SIWE commit signing per §17. |
 | **Velero** | Cluster backup and disaster recovery | Automated back-up of cluster state and persistent volumes directly to sovereign Object Storage (S3/MinIO/IPFS). |
+## Build Prerequisites & Tooling
+
+To compile the Koral platform constitutions, configure entities, and synthesize recursive OCI images, the following host tools are required:
+
+- **yq (v4+)**: Command-line YAML processor, used to dynamically parse configuration files (like `koral-project.yaml`).
+- **podman** or **buildah**: Container engines used to compile the distro-agnostic base OCI images.
+- **oras**: OCI Registry As Storage CLI, used to package and push non-container artifacts (firmware binaries, genesis block templates).
+- **cosign**: Cryptographic container signing tool, used to verify the integrity and provenance of OCI images.
+- **skopeo**: Utility for copying OCI images between registries and local directories.
+- **umoci**: OCI image modification tool, used to unpack and repackage container layer structures (essential for Yocto/Buildroot mapper pipelines).
 
 ## Key Integration Points
 
