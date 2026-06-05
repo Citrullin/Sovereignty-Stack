@@ -1,0 +1,37 @@
+# Koral Project Configuration & Constitution Descriptor for Desertmonitor
+name: desertmonitor-constitution
+version: 1.0.0
+genesis:
+  walletType: "Ledger Nano S"
+  ledgerType: "ethereum"
+  adminAddress: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+  oidcRelay: "https://oidc.desertmonitor.sovereign-stack.local"
+
+addons:
+  paralus:
+    enabled: true
+    features: ["kubernetes_audit", "rbac"]
+  nextcloud:
+    enabled: true
+    features: ["document_audit"]
+  erpnext:
+    enabled: true
+    features: ["financial_audit"]
+  wot:
+    enabled: true
+    thingDescriptions:
+      - path: "addons/wot/desertmonitor-sensor-td.json"
+        thingModel: "addons/wot/desertmonitor-sensor-tm.json"
+  tinyblock:
+    enabled: true
+    chainGenesis: "addons/tinyblock/genesis.json"
+    validators:
+      - "did:key:z6MkValAgentDesertmonitor999"
+  embedded:
+    enabled: true
+    buildSystem: "yocto"
+    targetDid: "did:koral:mapper:nxp-imx8-pos"
+
+quantumStateTransitions:
+  crossManifoldRipples: true
+  riskAssessmentModel: "QSP-V1"
