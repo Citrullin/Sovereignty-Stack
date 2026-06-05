@@ -2,6 +2,7 @@
 # For Intel SGXv2 clients (Defaulting to non-secure execution with strict warnings)
 
 SHELL := /usr/bin/bash
+ENTITY ?= desertmonitor
 .DEFAULT_GOAL := help
 
 .PHONY: help build-all clean warn-security
@@ -27,11 +28,11 @@ build-all: warn-security synthesis-dev
 
 synthesis-dev: warn-security
 	@chmod +x scripts/koral_synthesis.sh
-	@KORAL_ENV=dev ./scripts/koral_synthesis.sh
+	@KORAL_ENV=dev ./scripts/koral_synthesis.sh --entity $(ENTITY)
 
 synthesis-prod:
 	@chmod +x scripts/koral_synthesis.sh
-	@KORAL_ENV=prod ./scripts/koral_synthesis.sh
+	@KORAL_ENV=prod ./scripts/koral_synthesis.sh --entity $(ENTITY)
 
 clean:
 	@echo "Cleaning Koral build workspace..."

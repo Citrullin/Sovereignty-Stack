@@ -1,0 +1,26 @@
+# Koral Base OCI Installer & Synthesis Image
+FROM alpine:3.18
+
+# Install standard utilities and OCI-native tooling
+RUN apk add --no-cache \
+    bash \
+    curl \
+    git \
+    openssh-client \
+    podman \
+    buildah \
+    cosign \
+    jq
+
+# Install ORAS CLI
+RUN curl -LO "https://github.com/oras-project/oras/releases/download/v1.1.0/oras_1.1.0_linux_amd64.tar.gz" && \
+    mkdir -p /usr/local/bin && \
+    tar -zxf oras_1.1.0_linux_amd64.tar.gz -C /usr/local/bin oras && \
+    rm oras_1.1.0_linux_amd64.tar.gz
+
+# Set up work directory and copy project metadata/governance scripts
+WORKDIR /koral
+COPY scripts/ /koral/scripts/
+
+ENV KORAL_ENV=dev
+ENTRYPOINT ["/koral/scripts/koral_synthesis.sh"]

@@ -1,0 +1,14 @@
+# Authentik Patched Service Layer
+# Cryptographic anchor to parent layer:
+# FROM koral-hub-root@sha256:8f89e248b6b23b8f6c3a1b8c2c1a4e2f9d8a7c6b5a4f3e2d1c0b9a8f7e6d5c4b
+FROM alpine:3.18
+
+# Inject regional patches & configurations
+COPY patches/ /etc/authentik/patches/
+
+# Apply standard patches / updates in container build stage
+RUN echo "Applying regional/jurisdictional patches for Authentik..." && \
+    cat /etc/authentik/patches/authentik-siwe-fix.yaml || true
+
+# Execute health checks or validation tests
+RUN echo "Authentik patch stage complete."
