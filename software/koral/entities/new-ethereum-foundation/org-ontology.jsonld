@@ -1,0 +1,138 @@
+{
+  "@context": {
+    "schema": "https://schema.org/",
+    "did": "https://www.w3.org/ns/did/v1#",
+    "qsp": "https://koral.io/ns/qsp#",
+    "organization": "schema:Organization",
+    "name": "schema:name",
+    "didIdentifier": "did:identifier",
+    "hasAgentLiability": "qsp:hasAgentLiability",
+    "operatedBy": "qsp:operatedBy",
+    "stabilizingBoard": "qsp:stabilizingBoard",
+    "crossReference": "qsp:crossReference",
+    "hasContract": "qsp:hasContract",
+    "hasGovernance": "qsp:hasGovernance",
+    "hasAddon": "qsp:hasAddon",
+    "hasTreasury": "qsp:hasTreasury",
+    "hasRoutingStrategy": "qsp:hasRoutingStrategy",
+    "hasVetoMechanism": "qsp:hasVetoMechanism",
+    "hasProcess": "qsp:hasProcess"
+  },
+  "@graph": [
+    {
+      "@id": "urn:koral:org:new-ethereum-foundation",
+      "@type": "organization",
+      "name": "New Ethereum Foundation",
+      "didIdentifier": "did:key:z6MkNewEthereumFoundation000",
+      "description": "Federated Stabilizing Board balancing DAOs and multi-polar manifolds (Solana, Ethereum, and forks) with probabilistic settling.",
+      "crossReference": {
+        "description": "Cross-reference Desertmonitor as primary microblock retail operations provider",
+        "entityDid": "did:key:z6MkgDesertmonitorEU123456789"
+      },
+      "stabilizingBoard": {
+        "@type": "schema:GovernmentBoard",
+        "governedManifolds": ["ethereum", "solana", "tinyblock"],
+        "votingWeightToken": "did:key:z6MkVoteWeightTokenSystem444"
+      },
+      "hasContract": [
+        {
+          "@id": "urn:koral:contract:nef-stabilizer",
+          "@type": "qsp:SmartContract",
+          "name": "NefStabilizer",
+          "url": "contracts/NefStabilizer.json"
+        },
+        {
+          "@id": "urn:koral:contract:nef-legal",
+          "@type": "qsp:LegalWrapperContract",
+          "name": "MetaLeXBorgCore",
+          "url": "contracts/MetaLeXBorgCore.json"
+        },
+        {
+          "@id": "urn:koral:contract:nef-cybercorp",
+          "@type": "qsp:LegalWrapperContract",
+          "name": "MetaLeXCybercorp",
+          "url": "contracts/MetaLeXCybercorp.json"
+        }
+      ],
+      "hasGovernance": [
+        {
+          "@id": "urn:koral:governance:nef-stabilizer-sociological-intents",
+          "@type": "qsp:SociologicalIntents",
+          "name": "New Ethereum Foundation Multi-Manifold Stabilization Gherkin",
+          "url": "governance/sociological-intents/nef_stabilizer.feature"
+        },
+        {
+          "@id": "urn:koral:governance:nef-culture-philosophy",
+          "@type": "qsp:CulturalPhilosophy",
+          "name": "New Ethereum Foundation Culture and Philosophy Gherkin",
+          "url": "governance/sociological-intents/culture_and_philosophy.feature"
+        }
+      ],
+      "hasProcess": [
+        {
+          "@id": "urn:koral:process:nef-human-stabilization-review",
+          "@type": "qsp:BusinessProcessModel",
+          "name": "NEF Human Stabilization Review Process",
+          "url": "governance/processes/human_stabilization_review.bpmn",
+          "isPublic": true,
+          "description": "Public BPMN model describing the human-in-the-loop review for manifold stabilization."
+        }
+      ],
+      "hasTreasury": [
+        {
+          "@id": "urn:koral:treasury:nef-policy",
+          "@type": "qsp:TreasuryPolicy",
+          "name": "New Ethereum Foundation Absolute Treasury Policy and Stabilization Liquidation Strategy",
+          "url": "treasury/treasury-policy.json"
+        }
+      ],
+      "hasAddon": [
+        {
+          "@id": "urn:koral:addon:nef-tinyblock",
+          "@type": "qsp:BlockchainAddon",
+          "name": "NEF Tinyblock EVM Manifold Config",
+          "manifold": "tinyblock",
+          "genesisUrl": "addons/tinyblock/genesis.json"
+        }
+      ],
+      "hasRoutingStrategy": {
+        "@id": "urn:koral:routing:nef-metric-diversity-routing",
+        "@type": "qsp:MetricDiversityRoutingStrategy",
+        "description": "Observes Metric Diversity and adjusts stability based on global Liquidity Depth Mesh."
+      },
+      "hasVetoMechanism": {
+        "@id": "urn:koral:veto:nef-miner-dao-veto",
+        "@type": "qsp:MinerDaoVeto",
+        "name": "Miner DAO Veto (Big Red Button)",
+        "description": "Enables the Miner DAO to veto state transitions to prevent capture."
+      },
+      "hasAgentLiability": [
+        {
+          "@id": "urn:koral:agent:nef-stabilizer-agent",
+          "@type": "schema:SoftwareApplication",
+          "name": "NEF Stabilizer Agent",
+          "didIdentifier": "did:key:z6MkNefStabilizerAgent111",
+          "operatedBy": "did:key:z6MkBoardMemberFederated222"
+        },
+        {
+          "@id": "urn:koral:agent:nef-merit-governance-agent",
+          "@type": "schema:SoftwareApplication",
+          "name": "NEF Merit Governance Agent",
+          "didIdentifier": "did:key:z6MkMeritGovAgentNef888",
+          "operatedBy": "did:key:z6MkPhilippAlexanderBlumBerlin999"
+        }
+      ]
+    },
+    {
+      "@id": "urn:koral:person:philipp-alexander-blum",
+      "@type": "schema:Person",
+      "name": "Philipp-Alexander Blum",
+      "didIdentifier": "did:key:z6MkPhilippAlexanderBlumBerlin999",
+      "schema:address": {
+        "@type": "schema:PostalAddress",
+        "schema:addressLocality": "Berlin",
+        "schema:addressCountry": "Germany"
+      }
+    }
+  ]
+}

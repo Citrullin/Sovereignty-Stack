@@ -1,0 +1,30 @@
+{
+  "@context": {
+    "schema": "https://schema.org/",
+    "did": "https://www.w3.org/ns/did/v1#",
+    "qsp": "https://koral.io/ns/qsp#",
+    "organization": "schema:Organization",
+    "name": "schema:name",
+    "didIdentifier": "did:identifier",
+    "hasGovernance": "qsp:hasGovernance",
+    "hasTreasury": "qsp:hasTreasury"
+  },
+  "@graph": [
+    {
+      "@id": "urn:koral:org:ethereum",
+      "@type": "organization",
+      "name": "Ethereum Manifold",
+      "didIdentifier": "did:key:z6MkEthereumManifold000",
+      "description": "Ethereum decentralized ledger manifold supporting smart contracts and global state consistency.",
+      "hasGovernance": [
+        {
+          "@id": "urn:koral:governance:ethereum-culture-philosophy",
+          "@type": "qsp:CulturalPhilosophy",
+          "name": "Ethereum Culture and Philosophy Gherkin",
+          "url": "governance/sociological-intents/culture_and_philosophy.feature"
+        }
+      ],
+      "hasTreasury": []
+    }
+  ]
+}

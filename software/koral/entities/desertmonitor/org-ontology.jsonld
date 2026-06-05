@@ -1,0 +1,166 @@
+{
+  "@context": {
+    "schema": "https://schema.org/",
+    "did": "https://www.w3.org/ns/did/v1#",
+    "qsp": "https://koral.io/ns/qsp#",
+    "micar": "https://koral.io/ns/micar#",
+    "organization": "schema:Organization",
+    "name": "schema:name",
+    "didIdentifier": "did:identifier",
+    "hasAgentLiability": "qsp:hasAgentLiability",
+    "operatedBy": "qsp:operatedBy",
+    "role": "schema:roleName",
+    "crossReference": "qsp:crossReference",
+    "hasContract": "qsp:hasContract",
+    "hasGovernance": "qsp:hasGovernance",
+    "hasAddon": "qsp:hasAddon",
+    "hasTreasury": "qsp:hasTreasury",
+    "hasOracle": "qsp:hasOracle",
+    "hasRoutingStrategy": "qsp:hasRoutingStrategy",
+    "hasSLA": "qsp:hasSLA",
+    "hasProcess": "qsp:hasProcess"
+  },
+  "@graph": [
+    {
+      "@id": "urn:koral:org:desertmonitor",
+      "@type": "organization",
+      "name": "Desertmonitor",
+      "didIdentifier": "did:key:z6MkgDesertmonitorEU123456789",
+      "description": "Engineering company in the EU, Estonia. DAO service provider for Tinyblock, Microblock/Nanoblock Retailer and Specialty supplier.",
+      "micar:complianceJurisdiction": "EE",
+      "micar:entityType": "DAOServiceProvider",
+      "crossReference": {
+        "description": "Cross-reference governance board stability through New Ethereum Foundation",
+        "entityDid": "did:key:z6MkNewEthereumFoundation000"
+      },
+      "hasContract": [
+        {
+          "@id": "urn:koral:contract:desertmonitor-rewards",
+          "@type": "qsp:SmartContract",
+          "name": "DesertmonitorRewards",
+          "url": "contracts/DesertmonitorRewards.json"
+        },
+        {
+          "@id": "urn:koral:contract:desertmonitor-legal",
+          "@type": "qsp:LegalWrapperContract",
+          "name": "MetaLeXBorgCore",
+          "url": "contracts/MetaLeXBorgCore.json"
+        },
+        {
+          "@id": "urn:koral:contract:desertmonitor-cybercorp",
+          "@type": "qsp:LegalWrapperContract",
+          "name": "MetaLeXCybercorp",
+          "url": "contracts/MetaLeXCybercorp.json"
+        }
+      ],
+      "hasGovernance": [
+        {
+          "@id": "urn:koral:governance:desertmonitor-sociological-intents",
+          "@type": "qsp:SociologicalIntents",
+          "name": "Desertmonitor Validation and Retail Operations Gherkin",
+          "url": "governance/sociological-intents/desertmonitor.feature"
+        },
+        {
+          "@id": "urn:koral:governance:desertmonitor-culture-philosophy",
+          "@type": "qsp:CulturalPhilosophy",
+          "name": "Desertmonitor Culture and Philosophy Gherkin",
+          "url": "governance/sociological-intents/culture_and_philosophy.feature"
+        }
+      ],
+      "hasProcess": [
+        {
+          "@id": "urn:koral:process:desertmonitor-retail-fulfillment",
+          "@type": "qsp:BusinessProcessModel",
+          "name": "Desertmonitor Retail Fulfillment Process",
+          "url": "governance/processes/retail_fulfillment.bpmn",
+          "isPublic": false,
+          "description": "Internal BPMN model for hardware/software retail operations involving human personnel."
+        }
+      ],
+      "hasTreasury": [
+        {
+          "@id": "urn:koral:treasury:desertmonitor-policy",
+          "@type": "qsp:TreasuryPolicy",
+          "name": "Desertmonitor Treasury Policy and Liquidation Strategy",
+          "url": "treasury/treasury-policy.json"
+        }
+      ],
+      "hasAddon": [
+        {
+          "@id": "urn:koral:addon:tinyblock",
+          "@type": "qsp:BlockchainAddon",
+          "name": "Tinyblock EVM Manifold Config",
+          "manifold": "tinyblock",
+          "genesisUrl": "addons/tinyblock/genesis.json"
+        },
+        {
+          "@id": "urn:koral:addon:wot",
+          "@type": "qsp:WebOfThingsAddon",
+          "name": "Web of Things Node Config",
+          "thingDescriptionUrl": "addons/wot/desertmonitor-sensor-td.json",
+          "thingModelUrl": "addons/wot/desertmonitor-sensor-tm.json"
+        }
+      ],
+      "hasOracle": [
+        {
+          "@id": "urn:koral:oracle:desertmonitor-heartbeat",
+          "@type": "qsp:HeartbeatOracle",
+          "name": "Desertmonitor Heartbeat Oracle",
+          "description": "Periodically reports edge node liveness and telemetry."
+        },
+        {
+          "@id": "urn:koral:oracle:desertmonitor-actuator",
+          "@type": "qsp:ActuatorOracle",
+          "name": "Desertmonitor Actuator Oracle",
+          "description": "Controls physical power relays and interface components."
+        }
+      ],
+      "hasRoutingStrategy": {
+        "@id": "urn:koral:routing:desertmonitor-probability-routing",
+        "@type": "qsp:ProbabilityRoutingStrategy",
+        "description": "Uses Liquidity Depth Reporting and Settlement Probability calculation."
+      },
+      "hasSLA": {
+        "@id": "urn:koral:sla:desertmonitor-dsla",
+        "@type": "qsp:DecentralizedSLA",
+        "name": "Desertmonitor Decentralized SLA",
+        "description": "Enforces physical uptime and hardware performance thresholds."
+      },
+      "hasAgentLiability": [
+        {
+          "@id": "urn:koral:agent:desertmonitor-validator-agent",
+          "@type": "schema:SoftwareApplication",
+          "name": "Desertmonitor Validator Agent",
+          "didIdentifier": "did:key:z6MkValAgentDesertmonitor999",
+          "operatedBy": "did:key:z6MkAdminDesertmonitorOwner888"
+        },
+        {
+          "@id": "urn:koral:agent:desertmonitor-retail-agent",
+          "@type": "schema:SoftwareApplication",
+          "name": "Desertmonitor Retail Agent",
+          "didIdentifier": "did:key:z6MkRetailAgentDesertmonitor777",
+          "operatedBy": "did:key:z6MkAdminDesertmonitorOwner888"
+        },
+        {
+          "@id": "urn:koral:agent:desertmonitor-merit-governance-agent",
+          "@type": "schema:SoftwareApplication",
+          "name": "Desertmonitor Merit Governance Agent",
+          "didIdentifier": "did:key:z6MkMeritGovAgentDesertmonitor888",
+          "operatedBy": "did:key:z6MkPhilippAlexanderBlumBerlin999"
+        }
+      ],
+      "comment": "GDPR Compliance: Internal personnel who do not operate public AI agents are omitted from public registry records."
+    },
+    {
+      "@id": "urn:koral:person:philipp-alexander-blum",
+      "@type": "schema:Person",
+      "name": "Philipp-Alexander Blum",
+      "didIdentifier": "did:key:z6MkPhilippAlexanderBlumBerlin999",
+      "schema:address": {
+        "@type": "schema:PostalAddress",
+        "schema:addressLocality": "Berlin",
+        "schema:addressCountry": "Germany"
+      }
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_NefStabilization"
+                  targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="Process_HumanStabilizationReview" isExecutable="false">
+    <bpmn:startEvent id="StartEvent_StabilizationAlert" name="Manifold Imbalance Detected">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Task_BoardReview" name="Federated Board Review (Human in the Loop)">
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_StabilizationAlert" targetRef="Task_BoardReview" />
+    <bpmn:exclusiveGateway id="Gateway_Decision" name="Approve Stabilization?">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_Approve</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Reject</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_BoardReview" targetRef="Gateway_Decision" />
+    <bpmn:serviceTask id="Task_ExecuteAction" name="Execute Stabilization Action">
+      <bpmn:incoming>Flow_Approve</bpmn:incoming>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_Approve" name="Yes" sourceRef="Gateway_Decision" targetRef="Task_ExecuteAction" />
+    <bpmn:endEvent id="EndEvent_Stabilized" name="State Stabilized">
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_ExecuteAction" targetRef="EndEvent_Stabilized" />
+    <bpmn:endEvent id="EndEvent_Rejected" name="Action Rejected">
+      <bpmn:incoming>Flow_Reject</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_Reject" name="No" sourceRef="Gateway_Decision" targetRef="EndEvent_Rejected" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_HumanStabilizationReview">
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

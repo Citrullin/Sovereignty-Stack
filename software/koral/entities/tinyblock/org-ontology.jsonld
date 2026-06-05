@@ -1,0 +1,30 @@
+{
+  "@context": {
+    "schema": "https://schema.org/",
+    "did": "https://www.w3.org/ns/did/v1#",
+    "qsp": "https://koral.io/ns/qsp#",
+    "organization": "schema:Organization",
+    "name": "schema:name",
+    "didIdentifier": "did:identifier",
+    "hasGovernance": "qsp:hasGovernance",
+    "hasTreasury": "qsp:hasTreasury"
+  },
+  "@graph": [
+    {
+      "@id": "urn:koral:org:tinyblock",
+      "@type": "organization",
+      "name": "Tinyblock DAO",
+      "didIdentifier": "did:key:z6MkTinyblockManifold000",
+      "description": "Tinyblock DAO and Manifold Chain offering high-frequency microblock verification.",
+      "hasGovernance": [
+        {
+          "@id": "urn:koral:governance:tinyblock-culture-philosophy",
+          "@type": "qsp:CulturalPhilosophy",
+          "name": "Tinyblock Culture and Philosophy Gherkin",
+          "url": "governance/sociological-intents/culture_and_philosophy.feature"
+        }
+      ],
+      "hasTreasury": []
+    }
+  ]
+}
