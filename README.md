@@ -76,7 +76,7 @@ document is split into domain-specific subdirectories — read it as a stack, no
 | [`software/bit.block/`](software/bit.block/) | Arduino WoT firmware — W3C Thing Description PoC | §12, §16, §11 |
 | [`software/tinyblock/`](software/tinyblock/) | LDraw parts submodule + AI training benchmark images | §44 |
 | [`software/web-of-things/`](software/web-of-things/) | RIOT-OS WoT + Arduino WebThings submodules | §12, §13 |
-| [`software/koral/`](software/koral/) | Sovereign Hub — k8s, Nextcloud, ERPNext, OIDC, Istio ⚠️ proprietary | §4, §16, §18, §46 |
+| [`software/koral/`](software/koral/) | Sovereign Hub — k8s, Nextcloud, ERPNext, OIDC, Istio | §4, §16, §18, §46 |
 | [`software/chain/`](software/chain/) | Smart contract specs: $TINY, ERC-3475 bonds, TinyMeritRank, deIBAN | §39–43, §46 |
 
 ## Quick Start
