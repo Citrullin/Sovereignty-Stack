@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1000" height="500"
+     viewBox="0 0 1000 500"
+     xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10"
+            refX="10" refY="3" orient="auto">
+      <path d="M0,0 L10,3 L0,6 Z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <text x="500" y="40" font-size="24" text-anchor="middle"
+        font-family="Arial" font-weight="bold">
+    Small Payment (Cash-like)
+  </text>
+
+  <!-- NFC -->
+  <rect x="50" y="150" width="250" height="150"
+        rx="15" ry="15"
+        fill="#fff0e6" stroke="#000" stroke-width="2"/>
+  <text x="175" y="185" font-size="16" text-anchor="middle"
+        font-family="Arial" font-weight="bold">
+    NFC Tag (Key A)
+  </text>
+  <text x="70" y="215" font-size="13" font-family="Arial">
+    Signs payment intent
+  </text>
+  <text x="70" y="240" font-size="13" font-family="Arial">
+    Amount ≤ threshold
+  </text>
+
+  <!-- Smart Account -->
+  <rect x="380" y="150" width="300" height="150"
+        rx="15" ry="15"
+        fill="#f2f2f2" stroke="#000" stroke-width="2"/>
+  <text x="530" y="185" font-size="16" text-anchor="middle"
+        font-family="Arial" font-weight="bold">
+    Smart Account
+  </text>
+  <text x="400" y="215" font-size="13" font-family="Arial">
+    Policy: Key A allowed
+  </text>
+
+  <!-- Merchant -->
+  <rect x="760" y="150" width="180" height="150"
+        rx="15" ry="15"
+        fill="#e8ffe8" stroke="#000" stroke-width="2"/>
+  <text x="850" y="200" font-size="16" text-anchor="middle"
+        font-family="Arial" font-weight="bold">
+    Merchant
+  </text>
+
+  <!-- Arrows -->
+  <line x1="300" y1="225" x2="380" y2="225"
+        stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="680" y1="225" x2="760" y2="225"
+        stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <text x="500" y="420" font-size="14" text-anchor="middle"
+        font-family="Arial" font-style="italic">
+    Instant, physical, cash-like payment, no authority involved.
+  </text>
+
+</svg>

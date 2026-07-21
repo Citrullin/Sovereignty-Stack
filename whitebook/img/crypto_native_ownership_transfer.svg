@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="600"
+     viewBox="0 0 1200 600"
+     xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10"
+            refX="10" refY="3" orient="auto">
+      <path d="M0,0 L10,3 L0,6 Z" fill="#333"/>
+    </marker>
+  </defs>
+
+  <text x="600" y="40" font-size="24" text-anchor="middle"
+        font-family="Arial" font-weight="bold">
+    Ownership Transfer (Authority Can Veto)
+  </text>
+
+  <!-- Smart Account -->
+  <rect x="450" y="180" width="300" height="160"
+        rx="15" ry="15"
+        fill="#f2f2f2" stroke="#000" stroke-width="2"/>
+  <text x="600" y="215" font-size="16" text-anchor="middle"
+        font-family="Arial" font-weight="bold">
+    Smart Account
+  </text>
+  <text x="470" y="245" font-size="13" font-family="Arial">
+    Requires Key C
+  </text>
+  <text x="470" y="270" font-size="13" font-family="Arial">
+    Authority veto window
+  </text>
+
+  <!-- Ownership -->
+  <rect x="100" y="180" width="250" height="160"
+        rx="15" ry="15"
+        fill="#e8ffe8" stroke="#000" stroke-width="2"/>
+  <text x="225" y="215" font-size="15" text-anchor="middle"
+        font-family="Arial" font-weight="bold">
+    Ownership (Key C)
+  </text>
+
+  <!-- Authority -->
+  <rect x="850" y="180" width="250" height="160"
+        rx="15" ry="15"
+        fill="#e6f0ff" stroke="#000" stroke-width="2"/>
+  <text x="975" y="215" font-size="15" text-anchor="middle"
+        font-family="Arial" font-weight="bold">
+    Authority (Key B)
+  </text>
+
+  <!-- Arrows -->
+  <line x1="350" y1="260" x2="450" y2="260"
+        stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="750" y1="260" x2="850" y2="260"
+        stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <text x="600" y="520" font-size="14" text-anchor="middle"
+        font-family="Arial" font-style="italic">
+    Physical possession alone can never transfer ownership.
+  </text>
+
+</svg>

@@ -1,0 +1,27 @@
+<svg width="400" height="600" xmlns="http://www.w3.org/2000/svg">
+<text x="200" y="30" font-size="16" font-family="Arial" text-anchor="middle">IBAN Verification</text>
+<rect x="50" y="50" width="300" height="40" fill="#e8ffe8" stroke="black"/>
+<text x="200" y="75" text-anchor="middle" font-size="13" font-family="Arial">Send From/To IBAN</text>
+<line x1="200" y1="90" x2="200" y2="109" stroke="black" marker-end="url(#arrow)"/>
+<rect x="50" y="112" width="300" height="40" fill="#e6f0ff" stroke="black"/>
+<text x="200" y="137" text-anchor="middle" font-size="13" font-family="Arial">Parse IBAN</text>
+<line x1="200" y1="152" x2="200" y2="165" stroke="black" marker-end="url(#arrow)"/>
+<rect x="50" y="174" width="300" height="40" fill="#e6f0ff" stroke="black"/>
+<text x="200" y="199" text-anchor="middle" font-size="13" font-family="Arial">Query Root Resolver</text>
+<line x1="200" y1="214" x2="200" y2="236" stroke="black" marker-end="url(#arrow)"/>
+<rect x="50" y="236" width="300" height="40" fill="#e6f0ff" stroke="black"/>
+<text x="200" y="261" text-anchor="middle" font-size="13" font-family="Arial">Route to Country Resolver</text>
+<line x1="200" y1="276" x2="200" y2="289" stroke="black" marker-end="url(#arrow)"/>
+<rect x="50" y="298" width="300" height="40" fill="#e6f0ff" stroke="black"/>
+<text x="200" y="323" text-anchor="middle" font-size="13" font-family="Arial">Route to Bank Resolver</text>
+<line x1="200" y1="338" x2="200" y2="351" stroke="black" marker-end="url(#arrow)"/>
+<rect x="50" y="360" width="300" height="40" fill="#ffdddd" stroke="black"/>
+<text x="200" y="385" text-anchor="middle" font-size="13" font-family="Arial">Verify ENS Claim and vIBAN</text>
+<line x1="200" y1="400" x2="200" y2="413" stroke="black" marker-end="url(#arrow)"/>
+<rect x="50" y="422" width="300" height="40" fill="#e6f0ff" stroke="black"/>
+<text x="200" y="447" text-anchor="middle" font-size="13" font-family="Arial">Proceed if Valid</text>
+<line x1="200" y1="462" x2="200" y2="475" stroke="black" marker-end="url(#arrow)"/>
+<rect x="50" y="484" width="300" height="40" fill="#e8ffe8" stroke="black"/>
+<text x="200" y="509" text-anchor="middle" font-size="13" font-family="Arial">Send/Swap according to accepted</text>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="0" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="black" /></marker></defs>
+</svg>
