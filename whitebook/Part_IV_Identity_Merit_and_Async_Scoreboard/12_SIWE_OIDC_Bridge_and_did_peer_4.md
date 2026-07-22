@@ -4,7 +4,7 @@
 
 Traditional domain registries (ICANN, Web3 ENS domains) function as speculative real estate casinos. The Sovereign Stack replaces them with **Universal `did:peer:4` Cryptographic Identifiers**.
 
-Every entity within the Sovereign Stack, whether a BGP Border Router, a validator node, an ERC-4337 smart wallet, an IoT Heartbeat Oracle, a Gachapon machine, or a MetaLeX enterprise org, is natively represented and indexed internally as a **`did:peer` Document**.
+Every entity within the Sovereign Stack, whether a BGP Border Router, a validator node, an ERC-4337 smart wallet, an IoT Heartbeat Oracle, a local manifold node, or a MetaLeX enterprise org, is natively represented and indexed internally as a **`did:peer` Document**.
 
 ---
 
@@ -28,7 +28,7 @@ $$\text{Seed} \xrightarrow{\text{BIP-39 / HKDF}} S_{\text{master}}$$
    $$D_{\text{bytes}} = \text{CBOR}(D)$$
    $$H = \text{SHA2-256}(D_{\text{bytes}})$$
    $$\text{Short-Form DID} = \text{did:peer:4z} \parallel \text{Base58BTC}(H)$$
-3. **Offline Handshake (ISO/IEC 18013-5):** During physical contact, two operators tap devices using NFC (NTAG215) or tap an NFC disc at a Gachapon physical node. The short-form hash trades in **<100ms** over NFC, automatically upgrading to high-bandwidth Bluetooth Low Energy (BLE) or WireGuard (`wg0`) to sync heavier data.
+3. **Offline Handshake (ISO/IEC 18013-5):** During physical contact, two operators tap devices using NFC (NTAG215) or tap an NFC disc at a local manifold node. The short-form hash trades in **<100ms** over NFC, automatically upgrading to high-bandwidth Bluetooth Low Energy (BLE) or WireGuard (`wg0`) to sync heavier data.
 
 ![ENS Text Record Validation Flow](../img/ens_record_validation.svg)
 *Figure 12.1: Resolving text records and cryptographic public keys against DID resolvers.*

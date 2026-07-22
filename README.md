@@ -6,46 +6,47 @@
 
 ## 1. The Vision
 
-The "World Computer" paradigm has reached its thermodynamic limit. Monolithic public blockchains, burdened by speculative volatility and gas congestion, are undergoing a process of **Gravitational Stabilization**—transforming into highly regulated, low-entropy settlement networks (**Banking Wells**). 
+The classical centralized internet and monolithic public blockchain paradigms have reached their limits. Monolithic architectures, burdened by global consensus constraints, speculative volatility, and governance cartels, fail to scale for localized, real-world coordination.
 
-The **Sovereign Stack** does not resist this stabilization. Instead, it leverages Banking Wells as secure global settlement anchors while routing high-frequency execution to independent, localized **Sector Manifolds**. These manifolds peer directly with one another, routing assets and state changes not through fragile centralized bridges, but via **Quantum-Coupled Membranes** and physical hardware attestation.
+The **Sovereign Stack** bypasses these legacy constraints. Instead of anchoring to central public chains, it coordinates independent, localized **Sector Manifolds** in an autonomous **Sovereign Mesh**. These manifolds peer directly with one another, routing assets and state changes peer-to-peer using **Althea BGP routing** and **cross-manifold Lock mechanisms**, verified via hardware attestation and decentralized proofs.
 
 ```mermaid
 graph TD
     subgraph Client Layer [Edge Client & Authentication]
-        User["NFC Disc / Passkey (3FSA)"] -->|ISO 18013-5 NFC Tap| Gachapon["Gachapon Node: Physical Rollup"]
+        User["NFC Disc / Passkey (3FSA)"] -->|Offline NFC Tap| Node["Local Manifold Node"]
         User -->|SIWE-OIDC Bridge| Koral["Koral Hub: Nextcloud, Gitea, ERPNext"]
     end
 
     subgraph Execution Layer [Sector Manifolds]
-        Gachapon -->|FCFS Tx Pool| Reth["sovereign-reth Stateless Engine"]
+        Node -->|FCFS Tx Pool| Reth["sovereign-reth Stateless Engine"]
         Reth -->|Stateless WitnessDB| WASM["PGlite WASM Edge Sync"]
-        Reth -->|CMIP / BGP Route| Mesh["6LoWPAN WireGuard Mesh Network"]
+        Reth -->|6LoWPAN / UDP Mesh| Mesh["Embedded Mesh Network (Avalanche Snow)"]
     end
 
-    subgraph Settlement Layer [Regulated Banking Well]
-        Reth -->|EIP-4844 Blob Space| Base["Legacy L1 / Banking Well Settlement"]
-        BORG["MetaLeX BORG Contracts"] -->|ERC-3475 Multi-Tranche Collateral| Base
-        DSLA["DSLA Heartbeat Oracles"] -->|Slashing / STO Kill-Switch| BORG
+    subgraph Coordination Layer [Sovereign Mesh & Auditing]
+        Reth -->|CMIP / BGP Route| BGP["Althea Pay-per-Forward BGP Routing"]
+        BGP -->|Cross-Manifold Locks| Settlement["P2P Settlement & Namespace Enforcement"]
+        Audit["DAO Verifiable Auditing"] -->|DAS & Witness Proofs| IPFS["IPFS Storage"]
     end
 
-    style Gachapon fill:#1e222a,stroke:#528bff,stroke-width:1.5px,color:#abb2bf
+    style Node fill:#1e222a,stroke:#528bff,stroke-width:1.5px,color:#abb2bf
     style Reth fill:#1e222a,stroke:#528bff,stroke-width:1.5px,color:#abb2bf
-    style Base fill:#1e222a,stroke:#98c379,stroke-width:1.5px,color:#abb2bf
+    style BGP fill:#1e222a,stroke:#98c379,stroke-width:1.5px,color:#abb2bf
     style Koral fill:#1e222a,stroke:#c678dd,stroke-width:1px,color:#abb2bf
 ```
 
-This is a pragmatic, "boring reality" approach to decentralization: bringing real-world systems, legal structures, and physical industrial hardware on-chain and enforcing them via verifiable cryptography.
+This is a pragmatic, local-first approach to decentralization: bringing real-world systems, self-hosted services, and physical industrial hardware together and enforcing coordination via verifiable cryptography.
 
 ---
 
 ## 2. Key Architecture Components
 
-- **Physicalization of Trust (L0 Hardware):** Trust is anchored directly in physical hardware. `sovereign-reth` runs on bare-metal physical nodes, such as the **Gachapon Machine** (a Physicalized Based Rollup Node) and smart [bit.block microbricks](hardware/bit.block/), using physical [NFC Social Badges / Wahfare discs](hardware/tiny-pay/) for 3-Factor Sovereign Auth and Crypto-Native Cash.
-- **Post-ICANN BGP Routing:** Manifolds function as Autonomous Systems (AS), completely replacing legacy IP/DNS. Cross-manifold transactions are routed like IP packets using Althea pay-per-forward economics and $\le 7$-hop KZG Vector Commitment trajectories.
-- **Stateless Execution (`sovereign-reth`):** Nodes operate statelessly on physical edge hardware. Embedded WASM CRDT databases (PGlite) handle zero-latency edge synchronization, flushing state diffs to the public chain as succinct zkVM proofs.
+- **Physicalization of Trust (L0 Hardware):** Trust is anchored directly in physical hardware. `sovereign-reth` runs on bare-metal physical nodes and smart [bit.block microbricks](hardware/bit.block/), using physical [NFC Social Badges](hardware/tiny-pay/) for 3-Factor Sovereign Auth and Crypto-Native Cash (using post-quantum W-OTS+).
+- **Post-ICANN BGP Routing & Namespace Enforcement:** Manifolds function as Autonomous Systems (AS), completely replacing legacy IP/DNS. Cross-manifold transactions are routed like IP packets using Althea pay-per-forward economics and dynamic BGP negotiations with complete namespace enforcement.
+- **Stateless Execution (`sovereign-reth` & Blind Courier):** Nodes operate statelessly on physical edge hardware, implementing **Blind Courier** for private, stateless witness routing. Embedded WASM CRDT databases (PGlite) handle zero-latency edge synchronization.
 - **Universal `did:peer:4` Identity:** Decentralized identities replace IPs and Web2 logins. A single 256-bit entropy seed derives keys for EVM execution (secp256k1), WireGuard peering (Ed25519), and Sync Committees (BLS12-381) via BIP-32.
-- **Decentralized Service Level Agreements (DSLA):** Subjective legal contracts are replaced by deterministic hardware **Heartbeat Oracles** and **Actuator Kill-Switches** enforcing pre-emptive, algorithmic compliance.
+- **Decentralized Service Level Agreements (DSLA):** Subjective legal contracts are replaced by deterministic hardware **Heartbeat Oracles** and **Actuator Kill-Switches** enforcing pre-emptive compliance.
+- **Automated Epistemology Engine:** A machine-verifiable pipeline that binds sociological intent ([Gherkin scenarios](docs/architecture/testing/features/)) to formal mathematical specifications (TLA+) and cryptographically signed execution traces ([OCI/TPM attestations](docs/architecture/verification/51_confidential_deployment_oci_surgery.md)). This forms the absolute truth boundary of the manifold by modeling a **Quantum Superposition** of all possible agent outcomes.
 
 ---
 

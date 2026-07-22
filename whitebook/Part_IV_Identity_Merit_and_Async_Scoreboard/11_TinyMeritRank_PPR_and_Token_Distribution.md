@@ -17,7 +17,7 @@ $$\mathbf{R} = (1-d)\mathbf{s} + d \cdot \mathbf{W} \cdot \mathbf{R}$$
 Where:
 - $\mathbf{R} \in \mathbb{R}^N$: The normalized merit score vector across $N$ network entities ($\sum_i R_i = 1$).
 - $d \in (0, 1)$: The damping factor ($d = 0.85$), representing temporal reputation decay over time.
-- $\mathbf{s} \in \mathbb{R}^N$: The personalized preference vector, anchored in trusted bootstrap seed nodes (e.g. physical Gachapon operators, hardware-attested TEE validators).
+- $\mathbf{s} \in \mathbb{R}^N$: The personalized preference vector, anchored in trusted bootstrap seed nodes (e.g. physical mesh operators, hardware-attested TEE validators).
 - $\mathbf{W} \in \mathbb{R}^{N \times N}$: The column-stochastic adjacency matrix representing verified constructive interactions (DSLA uptime attestations, code commit reviews, physical microbrick vends).
 
 ```text
@@ -58,7 +58,7 @@ TinyMeritRank scores dictate non-transferable governance rights ($SOV_{\text{mer
 1. **Non-Transferable ERC-20 / Soulbound Token:** $SOV_{\text{merit}}$ tokens cannot be transferred or sold on speculative secondary markets ($Transfer() \implies \text{revert()}$).
 2. **Merit Minting Function:** At each epoch checkpoint, merit tokens are minted directly proportional to steady-state rank $R_i^*$:
    $$\Delta SOV_{\text{merit}}^{(i)} = \text{EpochEmission} \cdot R_i^*$$
-3. **Sybil Resistance:** Because $\mathbf{s}$ is anchored in physical hardware nodes (Gachapon machines, TEEs), spinning up millions of virtual Sybil identities yields $R_{\text{sybil}} \to 0$, protecting the manifold from governance capture.
+3. **Sybil Resistance:** Because $\mathbf{s}$ is anchored in physical hardware nodes (local manifold nodes, TEEs), spinning up millions of virtual Sybil identities yields $R_{\text{sybil}} \to 0$, protecting the manifold from governance capture.
 
 ---
 

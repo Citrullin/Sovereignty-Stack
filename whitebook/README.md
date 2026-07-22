@@ -45,7 +45,7 @@ Our architecture is anchored by **`sovereign-reth`**, a pure-stateless, witness-
 ## Whitebook Structure
 
 ### [Part I: Quantum Social Physics & Velocity Mathematics](Part_I_Quantum_Social_Physics_and_Velocity_Math/)
-- [01. Gravitational Stabilization & Banking Wells](Part_I_Quantum_Social_Physics_and_Velocity_Math/01_Gravitational_Stabilization_and_Banking_Wells.md)
+- [01. Quantum Social Physics & Sovereign Mesh Formalism](Part_I_Quantum_Social_Physics_and_Velocity_Math/01_Quantum_Social_Physics_and_Sovereign_Mesh_Formalism.md)
 - [02. Velocity Economics: Solow, Minsky, and Fisher](Part_I_Quantum_Social_Physics_and_Velocity_Math/02_Velocity_Economics_Solow_Minsky_and_Fisher.md)
 - [03. Web3 Collateralized Bonds & Systemic Valuation](Part_I_Quantum_Social_Physics_and_Velocity_Math/03_Web3_Bonds_and_Systemic_Valuation.md)
 

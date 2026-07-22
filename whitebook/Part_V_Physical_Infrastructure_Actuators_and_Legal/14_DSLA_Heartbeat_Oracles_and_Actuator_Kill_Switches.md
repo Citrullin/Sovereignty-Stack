@@ -11,7 +11,7 @@ In sovereign industrial infrastructure, subjective "trust" and post-facto legal 
 +-----------------------------------------------------------------------------------+
 |                     DSLA & SIL-3 Actuator Interlock Architecture                  |
 +-----------------------------------------------------------------------------------+
-| [ Industrial Hardware Node ] (Solar Inverter / PLC / Gachapon Machine)           |
+| [ Industrial Hardware Node ] (Solar Inverter / PLC / Assembly Machine)            |
 |         |                                                                         |
 |         v (Continuous 100ms Heartbeat Packet)                                     |
 | [ TEE / SE Heartbeat Oracle ] ---> Signed Telemetry Proof ($MV = PQ$)             |
@@ -31,12 +31,12 @@ In sovereign industrial infrastructure, subjective "trust" and post-facto legal 
 
 ## 14.2 Heartbeat Oracles & Silicon Root-of-Trust
 
-A **Heartbeat Oracle** is a firmware module running within a Trusted Execution Environment (TEE) or Secure Element (SE) embedded inside industrial machinery (e.g. AI NPU Gateway, PLC, solar inverter, Gachapon node).
+A **Heartbeat Oracle** is a firmware module running within a Trusted Execution Environment (TEE) or Secure Element (SE) embedded inside industrial machinery (e.g. AI NPU Gateway, PLC, solar inverter, local manifold node).
 
 ### 14.2.1 Real-World Productivity Telemetry ($MV = PQ$)
 Every 100ms, the Heartbeat Oracle constructs a signed telemetry packet:
 
-$$\text{Packet} = \text{Sign}_{K_{\text{SE}}}\left( \text{Timestamp} \parallel \text{RPM} \parallel \text{Torque} \parallel \text{KW\_Output} \parallel \text{Capsule\_Vends} \right)$$
+$$\text{Packet} = \text{Sign}_{K_{\text{SE}}}\left( \text{Timestamp} \parallel \text{RPM} \parallel \text{Torque} \parallel \text{KW\_Output} \parallel \text{Units\_Produced} \right)$$
 
 The telemetry data proves real-world industrial output ($Q$), satisfying the Fisher Equation of Exchange ($MV = PQ$). If internal voltage sensors detect physical casing tampering or environmental anomalies, the Secure Element self-erases its private key root, halting valid heartbeat signatures.
 
@@ -54,7 +54,7 @@ Soft contract logic can contain software bugs. Actuators controlling physical po
 
 ## 14.4 Edge AI Vision Transformers (Microblock Assembly Parsing)
 
-For edge assembly lines and Gachapon machines running MobileViT / YOLO vision models on local NPUs:
+For edge assembly lines and local vision systems running MobileViT / YOLO vision models on local NPUs:
 
 ![Microblock AI Vision Layer 0 Ground Truth](../img/microblock_segmentation_layer.png)
 *Figure 14.2: Layer 0 Ground Truth origin placement for assembly vision parsing.*

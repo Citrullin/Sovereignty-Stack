@@ -86,25 +86,28 @@ Every cross-manifold request is serialized into a compact **Cross-Manifold Inten
 
 ---
 
-## 8.4 Transactions as Packet Trajectories & The 7-Hop Rule
+## 8.4 Transactions as Packet Trajectories, Namespaces, & BGP Route Setup
 
-Rather than viewing cross-manifold calls as isolated bridge events, the stack treats every cross-manifold execution as a **Routed Packet Trajectory** ($\le 7$ Hops).
+Rather than viewing cross-manifold calls as isolated bridge events, the stack treats every cross-manifold execution as a **Routed Packet Trajectory** ($\le 7$ Hops) negotiated dynamically by Althea BGP routers.
 
-### 8.4.1 KZG Vector Commitments for Trajectory Verification
-The entire 7-hop trajectory path is committed into a single **KZG Vector Commitment**:
+### 8.4.1 Automated Route Negotiation
+Border routers running `sovereign-reth` automatically establish peerings with adjacent manifolds using mDNS and WireGuard. They continuously negotiate routing paths over the UDP-based Althea pay-per-forward protocol, dynamically updating routing tables based on real-time bandwidth costs and cross-manifold asset liquidity.
 
-$$e(C_{\text{trajectory}} - [y]_1, G_2) \stackrel{?}{=} e(\pi, [s - z]_2)$$
-
-Where $\pi$ is the constant-size 48-byte KZG opening proof verified by revm precompile `0xff`.
+### 8.4.2 Namespace and DNS Enforcement
+All routing destinations are represented by `did:peer:4` identities. The routing layer natively enforces DID namespace routing:
+- **No ICANN Dependency:** The system does not resolve traditional DNS records. Instead, border routers route intents based on DID namespace matching and content-addressed IPLD hashes.
+- **Verification:** Merkle proofs verify that a destination DID matches the claimed manifold namespace before any packets are routed, preventing DNS hijacking.
 
 ---
 
-## 8.5 The Cross-Manifold Actor System (Distributed Saga Rollbacks)
+## 8.5 Cryptographic Lock Mechanisms for Cross-Manifold Settlements
 
-Cross-manifold state changes operate as a **Distributed Actor System** executing a Saga pattern:
-- **`LOCK_ASSETS`:** Source locks assets in an immutable escrow contract.
-- **`COMMIT`:** Target verifies execution and issues settlement proof.
-- **`ROLLBACK`:** If execution fails or lock expires, the source Actor automatically executes a `ROLLBACK`, unlocking funds back to the sender.
+Cross-manifold state changes operate via strict **Cryptographic Lock Mechanisms** (Hashed Time-Lock Contracts / HTLCs) executed on-chain within each manifold's local state machine to prevent double-spending and bridge failure without a centralized coordinator:
+
+1. **`LOCK_ASSETS` (Commitment Phase):** The sending manifold locks the required assets in an escrow contract, generating a cryptographic commit $H(s)$ using a secret preimage $s$. The assets are locked with a strict expiration block height $T$.
+2. **`BGP_FORWARD` (Routing Phase):** The Althea BGP routers propagate the locked state proof across the mesh. Intermediate nodes verify the commitment trajectory using KZG vector commitments.
+3. **`RELEASE` (Settlement Phase):** The receiving manifold claims the assets by presenting the valid preimage $s$ before block height $T$ is reached. The disclosure of $s$ automatically unlocks the corresponding funds on the sending manifold.
+4. **`EXPIRY_ROLLBACK` (Timeout Phase):** If the preimage is not presented before $T$, the lock expires, and the assets are programmatically returned to the sender, ensuring zero capital leakage.
 
 ---
 

@@ -12,7 +12,7 @@ Before a transaction can tunnel, the UMI must map the local potential field. Thi
 
 ### Stage 1: Local Field Discovery (The "Beacon" Phase)
 The UMI (e.g., a Point-of-Sale terminal or mobile device) performs a Broadcast Discovery to find the path of least resistance.
-*   **mDNS (Multicast DNS):** The terminal broadcasts a packet on the local mesh: *"I am looking for an `_umi-rpc._tcp.local` service."*
+*   **mDNS (Multicast DNS):** The terminal broadcasts a packet on the local mesh: *"I am looking for an `_umi-rpc._udp.local` service."*
 *   **The Manifest:** Local agents respond with their supported rails (ETH-L2, SEPA-INSTANT, LOCAL-CREDIT) and current "Pressure" (server latency, gas fees).
 
 ### Stage 2: Remote Rail Discovery (The "Radar" Phase)

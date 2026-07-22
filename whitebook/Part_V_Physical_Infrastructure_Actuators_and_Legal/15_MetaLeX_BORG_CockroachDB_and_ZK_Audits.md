@@ -71,13 +71,14 @@ Inside regional availability zones, private enterprise data (inventory, accounti
 1. **CDC Stream Processing:** Operational mutations across Nextcloud and ERPNext databases trigger real-time CockroachDB Change Data Capture (CDC) events.
 2. **SMT Commitment Construction:** A local watcher processes mutation events and updates a 256-bit **Sparse Merkle Tree (SMT)** representing enterprise state:
    $$H_{root}^{(t)} = \text{SMT-Update}\left(H_{root}^{(t-1)}, \text{Key}, \text{ValueHash}\right)$$
-3. **KZG Vector Commitment:** The root state diff sequence is compressed into a constant-size KZG vector commitment $C_{state}$ flushed asynchronously to the public chain.
+3. **Sovereign Manifold Commitment:** The root state diff sequence is compressed into a constant-size KZG vector commitment $C_{\text{state}}$. This commitment and its corresponding witness proofs are broadcasted locally and stored on IPFS.
+4. **Data Availability Sampling (DAS):** Other nodes in the regional mesh perform Data Availability Sampling (DAS) on the IPFS-bound witness logs, verifying state availability without needing to download the entire database, ensuring autonomous manifold operation.
 
 ---
 
 ## 15.4 Zero-Knowledge Reality Auditing (SP1 zkVM Execution)
 
-Enterprises require regulatory compliance without leaking raw operational data (pricing, margins, suppliers) to third parties or competitors.
+Enterprises require regulatory compliance and verification by the local DAO without leaking raw operational data (pricing, margins, suppliers) to third parties or competitors.
 
 ### 15.4.1 Formal zk-SNARK Audit Protocol
 1. **Circuit Evaluation:** A local zero-knowledge virtual machine (**SP1 zkVM**) executes an audit program $\mathbb{C}(x, w)$:
@@ -85,7 +86,7 @@ Enterprises require regulatory compliance without leaking raw operational data (
    - **Private Witness ($w$):** Raw database rows from CockroachDB (private inventory balances, financial ledgers).
 2. **Proof Generation:** SP1 evaluates $\mathbb{C}(x,w)$ and emits a succinct Groth16 / PLONK ZK-SNARK proof $\pi$:
    $$\mathbb{C}(x, w) = 1 \implies \text{Generate Proof } \pi$$
-3. **Public Verification:** Smart contracts on the public Scoreboard verify $\pi$ in $O(1)$ time, confirming absolute legal compliance without disclosing private enterprise data.
+3. **Manifold Verification:** The local DAO verifies $\pi$ on the sovereign manifold's local consensus layer. This confirms absolute compliance and integrity in a decentralized, self-hosted fashion without exposing raw private database files.
 
 ---
 
@@ -100,3 +101,4 @@ For government agencies utilizing legacy IT infrastructure, the stack deploys an
 - **MetaLeX Borg Integration:** Implemented in [`crates/consensus/src/metalex.rs`](file:///home/citrullin/git/sovereign-reth/crates/consensus/src/metalex.rs).
 - **X-Road Relay Server:** Implemented in [`crates/network/src/xroad.rs`](file:///home/citrullin/git/sovereign-reth/crates/network/src/xroad.rs).
 - **Recursive OCI Builder Engine:** Implemented in [`software/koral/build_factory/koral_synthesis.sh`](file:///home/citrullin/git/sovereign_stack_vision/software/koral/build_factory/koral_synthesis.sh).
+

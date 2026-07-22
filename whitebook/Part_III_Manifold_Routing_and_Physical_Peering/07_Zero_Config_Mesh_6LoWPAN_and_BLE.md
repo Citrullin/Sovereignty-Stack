@@ -50,8 +50,8 @@ To query state diffs or submit intents over 6LoWPAN, edge gateways transcode sta
 - Verbose strings (`"method": "eth_call"`) map to single-byte integer keys (`0x01: 0x0A`).
 - Hex cryptographic strings (`0x9bb...78f`) compress to raw byte arrays (`b"\x9b\xb..."`), shrinking payload footprint by **up to 70%**.
 
-### 7.3.3 Freestanding Embedded Network Engine (`smoltcp`)
-Bare-metal microcontrollers run **`smoltcp`**, a event-driven Rust networking stack with zero heap allocation. `smoltcp` handles 6LoWPAN frame reassembly, CoAP datagram dispatch, and link-local IPv6 address autoconfiguration without requiring POSIX OS abstractions.
+### 7.3.3 Freestanding Embedded Network Engine (`embassy-net` UDP/CoAP)
+Bare-metal microcontrollers run **`embassy-net`** (or a similar heapless, UDP-only event-driven Rust network engine). This engine handles 6LoWPAN frame reassembly, CoAP datagram dispatch, and link-local IPv6 address autoconfiguration. It is configured to run strictly without TCP stack overhead to prevent network congestion over the 127-byte MTU physical layer.
 
 ---
 
@@ -69,7 +69,22 @@ Once mDNS resolves link-local parameters:
 
 ---
 
+## 7.5 Avalanche Snow Consensus for Embedded Edge Nodes
+
+Monolithic global state consensus is incompatible with edge hardware and lossy 6LoWPAN/BLE mesh links. The Sovereign Stack coordinates local edge nodes using **Avalanche Snow Consensus**—a lightweight, metastable consensus protocol based on randomized sub-sampling.
+
+### 7.5.1 Sub-Sampling Verification
+Instead of executing complex proof validations or communicating with a global validator set:
+1. **Transaction Broadcast:** An embedded node broadcasts an intent (e.g. an offline NFC transaction) to its immediate geographic peer group over the UDP mesh.
+2. **Randomized Querying:** Each validator node queries a small, randomly sampled subset of its peers (typically $k=10$ nodes) for their opinion on the transaction's validity.
+3. **Metastable Convergence:** If a supermajority ($x \ge \alpha$) of the sampled peers agree, the node updates its local state. This process repeats over a small number of rounds ($m \approx 20$), forcing the entire network to rapidly converge on a single, metastable decision in sub-second times with minimal packet exchange.
+4. **Autonomous Execution:** By relying on Avalanche Snow, low-power microcontrollers can securely resolve double-spending risks locally, updating the local manifold ledger with zero dependency on external settlement networks.
+
+---
+
 ## Codebase Implementation in `sovereign-reth`
 
 - **WireGuard Interface Management:** Implemented in [`crates/network/src/wireguard.rs`](file:///home/citrullin/git/sovereign-reth/crates/network/src/wireguard.rs).
 - **Single-Key Handshake Derivation:** Implemented in [`crates/network/src/handshake.rs`](file:///home/citrullin/git/sovereign-reth/crates/network/src/handshake.rs).
+- **Embedded Avalanche Consensus Engine:** Implemented in [`crates/consensus/src/avalanche.rs`](file:///home/citrullin/git/sovereign-reth/crates/consensus/src/avalanche.rs).
+

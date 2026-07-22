@@ -75,7 +75,7 @@ To reduce witness payload size from ~5MB (standard Merkle-Patricia Trees) down t
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ```
 
-With 256-width branching factors, Verkle tree proofs maintain constant $O(1)$ verification complexity, enabling microcontrollers and physical Gachapon nodes to verify full block transitions over lossy wireless links.
+With 256-width branching factors, Verkle tree proofs maintain constant $O(1)$ verification complexity, enabling microcontrollers and embedded edge nodes to verify full block transitions over lossy wireless links.
 
 ---
 
@@ -89,7 +89,18 @@ Stateless execution is non-blocking, allowing `sovereign-reth` to execute indepe
 
 ---
 
+## 4.6 The Blind Courier Protocol
+
+To ensure absolute privacy and transport neutrality across the mesh, `sovereign-reth` implements the **Blind Courier Protocol** for transaction propagation:
+
+1. **Blind Packaging:** The transaction sender (the client) packages the transaction along with the minimal necessary state witness ($\Delta$) required for its execution. The witness is cryptographically bound to the transaction payload.
+2. **Untrusted Relaying:** The package is handed off to adjacent peers (couriers) on the mesh network. Because the witness is self-contained and signed, these couriers do not need local state databases or consensus access to validate the package. They act "blindly," forwarding the state-witness payload over the WireGuard/6LoWPAN mesh.
+3. **Stateless Verification:** When the payload reaches a stateless `sovereign-reth` execution engine, the engine validates the cryptographic bindings. Any modification of the witness or transaction by a courier invalidates the signature, preventing routing attacks or censorship.
+
+---
+
 ## Codebase Implementation in `sovereign-reth`
 
 - **Witness Engine & WitnessDatabase:** Implemented in [`crates/consensus/src/stateless.rs`](file:///home/citrullin/git/sovereign-reth/crates/consensus/src/stateless.rs).
+- **Blind Courier Protocol Handler:** Implemented in [`crates/network/src/courier.rs`](file:///home/citrullin/git/sovereign-reth/crates/network/src/courier.rs).
 - **Node Type Execution Modes:** Stateful Gateway (`--node-type replica`) vs. Stateless Validator (`--node-type validator`) defined in [`crates/node/src/config.rs`](file:///home/citrullin/git/sovereign-reth/crates/node/src/config.rs).

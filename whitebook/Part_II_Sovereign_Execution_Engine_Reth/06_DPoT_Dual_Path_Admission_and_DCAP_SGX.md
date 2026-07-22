@@ -53,7 +53,7 @@ To prevent forcing on-chain smart contracts to parse heavy X.509 certificate cha
 
 ## 6.3 Path B: Vanilla Social Reputation (TinyMeritRank)
 
-Edge operators running low-power microcontrollers (Gachapon machines, microbricks) without TEE hardware enroll via **Path B (Vanilla Social)**:
+Edge operators running low-power microcontrollers (embedded local nodes, microbricks) without TEE hardware enroll via **Path B (Vanilla Social)**:
 
 - **Merit Rank Threshold:** The node must possess a **TinyMeritRank** score $R_i \ge R_{\text{admission}}$ calculated via static Personalized PageRank (PPR) over constructive network interactions.
 - **Social Endorsements:** Requires cryptographically signed attestation vouchers from at least 3 existing active validators in good standing.

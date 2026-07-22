@@ -12,7 +12,7 @@ Where:
 - $M$ is the effective circulating monetary supply (Stablecoins, EURe, e-CNY, Manifold tokens).
 - $V$ is the transactional velocity of capital across the manifold per unit time ($V = \frac{\text{Total Volume}}{M}$).
 - $P$ is the average price index of goods, compute services, and bandwidth.
-- $Q$ is the real-world physical and industrial output verified by **IoT Heartbeat Oracles** and **Gachapon Point-of-Sale Nodes**.
+- $Q$ is the real-world physical and industrial output verified by **IoT Heartbeat Oracles** and **Sovereign Point-of-Sale Nodes**.
 
 ![Velocity of Money Historical Data](../img/b28ba-velocity-of-money-1900-2020.webp)
 *Figure 2.1: Macroeconomic velocity of money cycles illustrating systemic collapse under zero-velocity financial stagnation.*
@@ -75,7 +75,7 @@ $$\frac{dK}{dt} = s \cdot Q(V) - \gamma_{\text{deprec}} K$$
 
 $$\frac{dD}{dt} = r_{\text{interest}} D - \phi \left( Q(V) - K \right)$$
 
-Where $s$ is the savings rate reinvested into physical hardware nodes (Gachapon machines, microbricks), $\gamma_{\text{deprec}}$ is hardware depreciation, $r_{\text{interest}}$ is the cross-manifold borrow rate, and $\phi$ is the debt repayment rate enforced by **MetaLeX BORG smart contracts**.
+Where $s$ is the savings rate reinvested into physical hardware nodes (local manifold nodes, microbricks), $\gamma_{\text{deprec}}$ is hardware depreciation, $r_{\text{interest}}$ is the cross-manifold borrow rate, and $\phi$ is the debt repayment rate enforced by **MetaLeX BORG smart contracts**.
 
 ---
 
